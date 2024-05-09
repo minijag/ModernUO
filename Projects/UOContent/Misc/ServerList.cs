@@ -44,7 +44,7 @@ namespace Server.Misc
         {
             Address = ServerConfiguration.GetOrUpdateSetting("serverListing.address", null);
             AutoDetect = ServerConfiguration.GetOrUpdateSetting("serverListing.autoDetect", true);
-            ServerName = ServerConfiguration.GetOrUpdateSetting("serverListing.serverName", "ModernUO");
+            ServerName = ServerConfiguration.GetOrUpdateSetting("serverListing.serverName", "Zodiac");
         }
 
         public static void Initialize()
