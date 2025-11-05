@@ -81,7 +81,7 @@ namespace Server.Poker
 			return string.Format( "<BASEFONT COLOR=#{0:X6}>{1}</BASEFONT>", color, text );
 		}
 
-		public override void OnResponse( NetState state, RelayInfo info )
+		public override void OnResponse( NetState state, in RelayInfo info )
 		{
 			Mobile from = state.Mobile;
 
@@ -118,14 +118,14 @@ namespace Server.Poker
 				else if ( info.IsSwitched( (int)Buttons.Bet ) )
 				{
 					int bet = 0;
-					TextRelay relay = info.GetTextEntry( (int)Buttons.txtBet);
+					string text = info.GetTextEntry( (int)Buttons.txtBet);
 
-					try { bet = Convert.ToInt32( info.GetTextEntry( (int)Buttons.txtBet).Text ); }
+					try { bet = Convert.ToInt32( text ); }
 					catch { }
 
 					if ( bet < m_Game.Dealer.BigBlind )
 					{
-						from.SendMessage( 0x22, "Your must bet at least {0}gp.", m_Game.BigBlind );
+						from.SendMessage( 0x22, $"Your must bet at least {m_Game.BigBlind}gp." );
 
 						from.CloseGump<PokerBetGump>();
 						from.SendGump( new PokerBetGump( m_Game, m_Player, m_CanCall ) );
@@ -150,9 +150,9 @@ namespace Server.Poker
 				else if ( info.IsSwitched( (int)Buttons.Raise ) ) //Same as bet, but add value to current bet
 				{
 					int bet = 0;
-					TextRelay relay = info.GetTextEntry( (int)Buttons.txtBet );
+					string text = info.GetTextEntry( (int)Buttons.txtBet );
 
-					try { bet = Convert.ToInt32( info.GetTextEntry( (int)Buttons.txtBet ).Text ); }
+					try { bet = Convert.ToInt32( text ); }
 					catch { }
 
 					if ( bet < 100 )

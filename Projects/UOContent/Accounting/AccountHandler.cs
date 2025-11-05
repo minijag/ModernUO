@@ -53,7 +53,7 @@ public static class AccountHandler
 
     public static void Configure()
     {
-        MaxAccountsPerIP = ServerConfiguration.GetOrUpdateSetting("accountHandler.maxAccountsPerIP", 1);
+        MaxAccountsPerIP = ServerConfiguration.GetOrUpdateSetting("accountHandler.maxAccountsPerIP", 3);
         AutoAccountCreation = ServerConfiguration.GetOrUpdateSetting("accountHandler.enableAutoAccountCreation", true);
         PasswordCommandEnabled = ServerConfiguration.GetOrUpdateSetting(
             "accountHandler.enablePlayerPasswordCommand",

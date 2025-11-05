@@ -1,4 +1,5 @@
 using System;
+using Org.BouncyCastle.Crypto.Operators;
 using Server.Gumps;
 using Server.Mobiles;
 using Server.Network;
@@ -61,26 +62,29 @@ namespace Server.Poker
 			if ( layout == 0 )
 			{
 				this.AddLabel( 200, 261, 1149, "(not enough gold)" );
-				this.AddButton( 163, 292, 242, 241, (int)Handlers.btnCancel, GumpButtonType.Reply, 0 );
+				this.AddButton( 163, 292, 242, 241, (int)Buttons.Cancel, GumpButtonType.Reply, 0 );
 			}
 			else if ( layout == 1 )
 			{
 				this.AddImageTiled( 200, 261, 80, 19, 0xBBC );
 				this.AddAlphaRegion( 200, 261, 80, 19 );
-				this.AddTextEntry( 203, 261, 77, 19, 68, (int)Handlers.txtBuyInAmount, m_Game.Dealer.MinBuyIn.ToString() );
-				this.AddButton( 123, 292, 247, 248, (int)Handlers.btnOkay, GumpButtonType.Reply, 0 );
-				this.AddButton( 200, 292, 242, 241, (int)Handlers.btnCancel, GumpButtonType.Reply, 0 );
+				this.AddTextEntry( 203, 261, 77, 19, 68, (int)TextEntries.BuyInAmount, m_Game.Dealer.MinBuyIn.ToString() );
+				this.AddButton( 200, 292, 242, 241, (int)Buttons.Cancel, GumpButtonType.Reply, 0 );
+				this.AddButton( 123, 292, 247, 248, (int)Buttons.Okay, GumpButtonType.Reply, 0 );
 			}
 		}
-
-		public enum Handlers
+		public enum Buttons
 		{
-			btnOkay = 1,
-			btnCancel,
-			txtBuyInAmount
+			Cancel = 0,
+			Okay
 		}
 
-		public override void OnResponse( NetState state, RelayInfo info )
+		public enum TextEntries
+		{
+			BuyInAmount = 0
+		}
+
+		public override void OnResponse( NetState state, in RelayInfo info )
 		{
 			Mobile from = state.Mobile;
 			int buyInAmount = 0;
@@ -92,7 +96,9 @@ namespace Server.Poker
 				{
 					try
 					{
-						buyInAmount = Convert.ToInt32( ( info.TextEntries[0] ).Text );
+						string textEntry = info.GetTextEntry(0);
+						from.SendMessage( 0x22, $"{ info.GetTextEntry(0)} { info.GetTextEntry(1)} {info.GetTextEntry(2)}" );
+						buyInAmount = Convert.ToInt32( textEntry );
 					}
 					catch
 					{
@@ -107,11 +113,10 @@ namespace Server.Poker
 						m_Game.AddPlayer( player );
 					}
 					else
-						from.SendMessage( 0x22, "You may not join with that amount of gold. Minimum buy-in: " + Convert.ToString( m_Game.Dealer.MinBuyIn ) +
-							", Maximum buy-in: " + Convert.ToString( m_Game.Dealer.MaxBuyIn ) );
+						from.SendMessage( 0x22, $"You may not join with {buyInAmount}. Minimum buy-in: {Convert.ToString( m_Game.Dealer.MinBuyIn )}, Maximum buy-in: {Convert.ToString( m_Game.Dealer.MaxBuyIn )}"  );
 				}
 				else
-					from.SendMessage( 0x22, "You may not join with that amount of gold. Minimum buy-in: " + Convert.ToString( m_Game.Dealer.MinBuyIn ) +
+					from.SendMessage( 0x22, "Bank balance too low. Minimum buy-in: " + Convert.ToString( m_Game.Dealer.MinBuyIn ) +
 						", Maximum buy-in: " + Convert.ToString( m_Game.Dealer.MaxBuyIn ) );
 			}
 			else if ( info.ButtonID == 2 )
