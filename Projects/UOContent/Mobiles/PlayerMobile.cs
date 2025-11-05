@@ -740,9 +740,6 @@ namespace Server.Mobiles
             }
         }
 
-        public PokerGame PokerGame { get; internal set; }
-
-
         public void ClearQuestArrow() => m_QuestArrow = null;
 
         public override void ToggleFlying()
