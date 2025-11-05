@@ -3666,7 +3666,8 @@
   {
     "category": "Mobiles.Uncategorized",
     "objects": [
-      { "type": "TownCrier" }
+      { "type": "TownCrier" },
+      { "type": "PokerDealer" }
     ]
   },
   {

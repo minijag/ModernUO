@@ -39,7 +39,7 @@ namespace Server.Poker
 			btnOkay
 		}
 
-		public override void OnResponse( NetState state, RelayInfo info )
+		public override void OnResponse( NetState state, in RelayInfo info )
 		{
 			Mobile from = state.Mobile;
 

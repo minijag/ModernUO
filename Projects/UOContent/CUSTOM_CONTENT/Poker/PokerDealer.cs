@@ -181,7 +181,8 @@ namespace Server.Poker
 					if ( m != null && m.Mobile != null && m.Mobile.BankBox != null )
 					{
 						m.Mobile.BankBox.DropItem( new BankCheck( award ) );
-						World.Broadcast( 1161, true, "{0} has won the poker jackpot of {1} gold with {2}", m.Mobile.Name, award.ToString( "#,###" ), HandRanker.RankString( m_JackpotWinners.Hand ) );
+						string message = string.Format("{0} has won the poker jackpot of {1} gold with {2}", m.Mobile.Name, award.ToString( "#,###" ));
+						World.Broadcast( 1161, true, message );
 					}
 				}
 
@@ -192,18 +193,25 @@ namespace Server.Poker
 
 		public override void OnDoubleClick( Mobile from )
 		{
+			m_Active = true;
+			m_MinBuyIn = 1;
+			m_MaxBuyIn = 10;
+			m_MaxPlayers = 5;
 			if ( !m_Active )
 				from.SendMessage( 0x9A, "This table is inactive" );
 			else if ( !InRange( from.Location, 8 ) )
-				from.PrivateOverheadMessage( Server.Network.MessageType.Regular, 0x22, true, "I am too far away to do that", from.NetState );
+				from.PrivateOverheadMessage( MessageType.Regular, 0x22, true, "I am too far away to do that", from.NetState );
 			else if ( m_MinBuyIn == 0 || m_MaxBuyIn == 0 )
-				from.SendMessage( 0x9A, "This table is inactive" );
+				from.SendMessage( 0x9A, "This table is inactive - Buy In Zero" );
 			else if ( m_MinBuyIn > m_MaxBuyIn )
-				from.SendMessage( 0x9A, "This table is inactive" );
+				from.SendMessage( 0x9A, "This table is inactive - Min greater than Max buyin" );
 			else if ( m_Seats.Count < m_MaxPlayers )
-				from.SendMessage( 0x9A, "This table is inactive" );
+				from.SendMessage( 0x9A,  $"This table is inactive - {m_Seats.Count} Seats less than Max Players {m_MaxPlayers}" );
 			else if ( m_Game.GetIndexFor( from ) != -1 )
+			{
+				from.SendMessage( 0x9A, " m_Game.GetIndexFor( from ) != -1 " );
 				return; //TODO: Grab more chips from the player's bankbox
+			}
 			else if ( m_Game.Players.Count >= m_MaxPlayers )
 			{
 				from.SendMessage( 0x22, "This table is full" );
@@ -247,6 +255,7 @@ namespace Server.Poker
 				{
 					PlayerMobile pm = (PlayerMobile)m;
 
+					// TODO: Maybe implemented this wrong, I added PokerGame property on PlayerMobile base class
 					PokerGame game = pm.PokerGame;
 
 					if ( game != null )
@@ -276,6 +285,7 @@ namespace Server.Poker
             {
                 PlayerMobile pm = (PlayerMobile)from;
 
+				// TODO: Maybe implemented this wrong, I added PokerGame property on PlayerMobile base class
                 PokerGame game = pm.PokerGame;
 
                 if (game != null)

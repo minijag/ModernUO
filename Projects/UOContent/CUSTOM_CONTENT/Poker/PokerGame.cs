@@ -81,11 +81,11 @@ namespace Server.Poker
 
 		public void PokerMessage( Mobile from, string message )
 		{
-			from.PublicOverheadMessage( Server.Network.MessageType.Regular, 0x9A, true, message );
+			from.PublicOverheadMessage( MessageType.Regular, 0x9A, true, message );
 
 			for ( int i = 0; i < m_Players.Count; ++i )
 				if ( m_Players[i].Mobile != null )
-					m_Players[i].Mobile.SendMessage( 0x9A, "[{0}]: {1}", from.Name, message );
+					m_Players[i].Mobile.SendMessage( 0x9A, $"[{from.Name}]: {message}" );
 		}
 
 		public void PokerGame_PlayerMadeDecision( PokerPlayer player )
@@ -718,7 +718,7 @@ namespace Server.Poker
 				return;
 
 			if ( !m_Dealer.InRange( from.Location, 8 ) )
-				from.PrivateOverheadMessage( Server.Network.MessageType.Regular, 0x22, true, "I am too far away to do that", from.NetState );
+				from.PrivateOverheadMessage( MessageType.Regular, 0x22, true, "I am too far away to do that", from.NetState );
 			else if ( GetIndexFor( from ) != -1 )
 				from.SendMessage( 0x22, "You are already seated at this table" );
 			else if ( m_Players.Count >= m_Dealer.MaxPlayers )
@@ -817,7 +817,7 @@ namespace Server.Poker
 					else
 					{
 						Banker.Deposit( from.BankBox, player.Gold );
-						from.SendMessage( 0x22, "{0}gp has been deposited into your bankbox.", player.Gold );
+						from.SendMessage( 0x22, $"{player.Gold}gp has been deposited into your bankbox." );
 					}
 				}
 
