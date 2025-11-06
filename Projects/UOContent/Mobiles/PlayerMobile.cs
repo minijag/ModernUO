@@ -25,7 +25,6 @@ using Server.Misc;
 using Server.Movement;
 using Server.Multis;
 using Server.Network;
-using Server.Poker;
 using Server.Regions;
 using Server.SkillHandlers;
 using Server.Spells;
