@@ -15,7 +15,7 @@
 
 using System.Buffers;
 using CommunityToolkit.HighPerformance;
-using Server.Engines.Help;
+using Server.Engines.Help.Custom;
 using Server.Engines.MLQuests;
 using Server.Engines.Virtues;
 using Server.Guilds;
@@ -337,7 +337,7 @@ public static class IncomingPlayerPackets
 
     public static void HelpRequest(NetState state, SpanReader reader)
     {
-        HelpGump.HelpRequest(state.Mobile);
+        HelpGumpCustom.HelpRequest(state.Mobile);
     }
 
     public static void SetWarMode(NetState state, SpanReader reader)

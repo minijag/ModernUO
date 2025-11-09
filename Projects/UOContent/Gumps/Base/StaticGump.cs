@@ -34,7 +34,7 @@ public abstract class StaticGump<TSelf> : BaseGump where TSelf : StaticGump<TSel
     private static byte[] _staticStrings;
 
     // Turn this off if you want to generate a new gump each time for testing
-    protected virtual bool Cached => true;
+    protected virtual bool Cached => false;
 
     public override int Switches => _switches;
     public override int TextEntries => _textEntries;
