@@ -220,7 +220,7 @@ namespace Server.Multis
          * 'walking' in piloting mode has a 1s interval, speed 0x2
          */
 
-        private static bool NewBoatMovement => Core.HS;
+        private static bool NewBoatMovement => true;
 
         public override bool HandlesOnSpeech => true;
 
