@@ -2837,6 +2837,18 @@ namespace Server.Mobiles
 
             switch (version)
             {
+                case 35: // Added OreMinedThisSession
+                    {
+                        if (version >= 35)
+                        {
+                            OreMinedTotal = reader.ReadInt();
+                        }
+                        else
+                        {
+                            OreMinedTotal = 0; // Default for older saves
+                        }
+                        goto case 34;
+                    }
                 case 34: // Acquired Recipes is now a Set
                 case 33: // Removes champion title
                 case 32: // Removes virtue properties
@@ -3181,7 +3193,7 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(34); // version
+            writer.Write(35); // version
 
             if (Stabled == null)
             {
@@ -3193,6 +3205,8 @@ namespace Server.Mobiles
                 writer.Write(Stabled);
             }
 
+            writer.Write(OreMinedTotal);
+            
             if (m_StuckMenuUses != null)
             {
                 writer.Write(true);

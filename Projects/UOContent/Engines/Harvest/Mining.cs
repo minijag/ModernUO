@@ -1,4 +1,5 @@
 using System;
+using Server.Engines.Harvest.Custom;
 using Server.Items;
 using Server.Mobiles;
 using Server.Targeting;
@@ -320,6 +321,12 @@ namespace Server.Engines.Harvest
             }
             else
             {
+                PlayerMobile player = from as PlayerMobile;
+                if (player != null)
+                {
+                    MiningTracker.OnOreMined(player, item, item.Amount);
+                }
+                
                 base.SendSuccessTo(from, item, resource);
             }
         }
