@@ -298,12 +298,6 @@ namespace Server.Engines.Harvest
                 return false;
             }
 
-            if (from.Mounted)
-            {
-                from.SendLocalizedMessage(501864); // You can't mine while riding.
-                return false;
-            }
-
             if (from.IsBodyMod && !from.Body.IsHuman)
             {
                 from.SendLocalizedMessage(501865); // You can't mine while polymorphed.
@@ -342,12 +336,6 @@ namespace Server.Engines.Harvest
                                  mobile.SandMining))
             {
                 OnBadHarvestTarget(from, tool, toHarvest);
-                return false;
-            }
-
-            if (from.Mounted)
-            {
-                from.SendLocalizedMessage(501864); // You can't mine while riding.
                 return false;
             }
 

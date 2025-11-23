@@ -2847,14 +2847,7 @@ namespace Server.Mobiles
             {
                 case 35: // Added OreMinedThisSession
                     {
-                        if (version >= 35)
-                        {
-                            OreMinedTotal = reader.ReadInt();
-                        }
-                        else
-                        {
-                            OreMinedTotal = 0; // Default for older saves
-                        }
+                        OreMinedTotal = reader.ReadInt();
                         goto case 34;
                     }
                 case 34: // Acquired Recipes is now a Set
@@ -3202,6 +3195,7 @@ namespace Server.Mobiles
             base.Serialize(writer);
 
             writer.Write(35); // version
+
 
             if (Stabled == null)
             {

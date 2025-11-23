@@ -413,6 +413,9 @@ namespace Server.Engines.Harvest
             if (!from.Mounted)
             {
                 from.Animate(def.EffectActions.RandomElement(), 5, 1, true, false, 0);
+            } else {
+                from.Animate(26, 7, 1, true, false, 0);
+                //from.Animate(def.EffectActions.RandomElement(), 5, 1, true, false, 0);
             }
         }
 
