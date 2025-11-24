@@ -3196,6 +3196,7 @@ namespace Server.Mobiles
 
             writer.Write(35); // version
 
+            writer.Write(OreMinedTotal);
 
             if (Stabled == null)
             {
@@ -3207,8 +3208,6 @@ namespace Server.Mobiles
                 writer.Write(Stabled);
             }
 
-            writer.Write(OreMinedTotal);
-            
             if (m_StuckMenuUses != null)
             {
                 writer.Write(true);

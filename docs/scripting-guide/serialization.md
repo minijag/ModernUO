@@ -196,3 +196,28 @@ title: Serialization
         Non-entity classes cannot be serialized by reference since that would require a reference Serial or ID. This means if the object is a serializable property on multiple objects, it will be serialized
         multiple times and will effectively get duplicated on world load. Consider either making it an `ISerializable` type and building world load/save mechanisms, or do not serialize the nested object directly.
         Instead opt for a global lookup, serialize with generic persistence, and then reattach to the objects using the `WorldLoad` event sink.
+
+    !!! Note -
+        The old Serialization / Deserialization method is still active in Player Mobile,  Here is a summary of how it works.
+    /// <summary>
+    /// Deserializes PlayerMobile from save file.
+    /// 
+    /// RULE: Read fields in EXACT same order as Serialize() writes them.
+    /// The save stream is sequential - order matters!
+    /// 
+    /// VERSIONING: Version number at start allows backward compatibility.
+    /// - Increment version when adding fields (e.g., writer.Write(36))
+    /// - Switch cases fall through: "case 36: read new field; goto case 35;"
+    /// - Use "if (version >= X)" for new fields, "if (version < X)" to skip old ones
+    /// 
+    /// EDGE CASES:
+    /// - Conditional reads: Check version before reading optional fields
+    /// - Migrations: Transform old format to new (see case 17 for example)
+    /// - Nullables: Read count first, create collection if count > 0
+    /// - Defaults: Set default values for fields missing in old saves
+    /// 
+    /// MISTAKES TO AVOID:
+    /// - Wrong read order (corrupts data)
+    /// - Forgetting version increment
+    /// - Not handling old versions (breaks compatibility)
+    /// </summary>
