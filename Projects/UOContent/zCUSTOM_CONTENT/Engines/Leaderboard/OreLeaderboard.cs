@@ -1,4 +1,4 @@
-/* using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,27 +14,34 @@ namespace Server.Engines.Custom
         public DateTime LastUpdated { get; set; }
     }
 
+    public class OreLeaderboardData
+    {
+        public DateTime LastUpdated { get; set; }
+        public List<OreLeaderboardEntry> Entries { get; set; } = new();
+    }
+
     public static class OreLeaderboard
     {
         private static readonly string SavePath = Path.Combine(Core.BaseDirectory, "Data", "ore-leaderboard.json");
         private static List<OreLeaderboardEntry> _cachedLeaderboard = new();
         private static DateTime _lastUpdated = DateTime.MinValue;
-        private static Timer _updateTimer;
-        // private static TimerExecutionToken _updateTimerToken;
+        private static TimerExecutionToken _updateTimerToken;
 
         public static void Configure()
         {
+            // Load cached leaderboard from JSON (doesn't require mobiles to be loaded)
             LoadLeaderboard();
 
-            // Start timer to recalculate every 24 hours
-            _updateTimer = new Timer(TimeSpan.FromSeconds(5.0), TimeSpan.FromSeconds(5.0))
-            {
-                
-            };
-            _updateTimer.Start();
-            //Timer.StartTimer(TimeSpan.FromHours(24.0), TimeSpan.FromHours(24.0), UpdateLeaderboard, out _updateTimerToken);
+            // Subscribe to world load event to update leaderboard after all mobiles are loaded
+            EventSink.WorldLoad += EventSink_WorldLoad;
 
-            // Also recalculate on startup
+            // Start 24-hour timer using timewheel to recalculate leaderboard
+            Timer.StartTimer(TimeSpan.FromHours(24.0), TimeSpan.FromHours(24.0), UpdateLeaderboard, out _updateTimerToken);
+        }
+
+        private static void EventSink_WorldLoad()
+        {
+            // Update leaderboard after all PlayerMobiles are loaded
             UpdateLeaderboard();
         }
 
@@ -52,7 +59,7 @@ namespace Server.Engines.Custom
                     .Where(pm => pm.TotalOreMined > 0)
                     .OrderByDescending(pm => pm.TotalOreMined)
                     .Take(10)
-                    .Select((pm, index) => new OreLeaderboardEntry
+                    .Select(pm => new OreLeaderboardEntry
                     {
                         PlayerName = pm.Name ?? "Unknown",
                         TotalOreMined = pm.TotalOreMined,
@@ -77,7 +84,7 @@ namespace Server.Engines.Custom
         {
             try
             {
-                var data = new
+                var data = new OreLeaderboardData
                 {
                     LastUpdated = _lastUpdated,
                     Entries = _cachedLeaderboard
@@ -101,25 +108,22 @@ namespace Server.Engines.Custom
         {
             try
             {
-                var data = JsonConfig.Deserialize<Dictionary<string, object>>(SavePath);
+                var data = JsonConfig.Deserialize<OreLeaderboardData>(SavePath);
                 
-                if (data != null && data.ContainsKey("LastUpdated"))
+                if (data != null)
                 {
-                    if (DateTime.TryParse(data["LastUpdated"].ToString(), out var lastUpdated))
-                    {
-                        _lastUpdated = lastUpdated;
-                    }
-
-                    // Try to load entries (JSON structure might vary)
-                    // If load fails, we'll just recalculate
+                    _lastUpdated = data.LastUpdated;
+                    _cachedLeaderboard = data.Entries ?? new List<OreLeaderboardEntry>();
+                    
+                    Console.WriteLine($"[OreLeaderboard] Loaded {_cachedLeaderboard.Count} entries from cache (last updated: {_lastUpdated})");
                 }
             }
             catch
             {
-                // If file doesn't exist or is corrupted, that's fine - we'll recalculate
+                // If file doesn't exist or is corrupted, that's fine - we'll recalculate on world load
                 _lastUpdated = DateTime.MinValue;
+                _cachedLeaderboard = new List<OreLeaderboardEntry>();
             }
         }
     }
 }
- */
