@@ -22,7 +22,8 @@ namespace Server.Engines.Custom
 
     public static class OreLeaderboard
     {
-        private static readonly string SavePath = Path.Combine(Core.BaseDirectory, "Data", "ore-leaderboard.json");
+        // Save in Saves directory so it's automatically included in backups
+        private static string SavePath => Path.Combine(World.SavePath, "Data", "ore-leaderboard.json");
         private static List<OreLeaderboardEntry> _cachedLeaderboard = new();
         private static DateTime _lastUpdated = DateTime.MinValue;
         private static TimerExecutionToken _updateTimerToken;
