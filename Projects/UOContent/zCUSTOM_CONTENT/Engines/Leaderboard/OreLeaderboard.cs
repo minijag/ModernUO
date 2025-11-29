@@ -37,7 +37,7 @@ namespace Server.Engines.Custom
             EventSink.WorldLoad += EventSink_WorldLoad;
 
             // Start 24-hour timer using timewheel to recalculate leaderboard
-            Timer.StartTimer(TimeSpan.FromHours(24.0), TimeSpan.FromHours(24.0), UpdateLeaderboard, out _updateTimerToken);
+            Timer.StartTimer(TimeSpan.FromHours(1.0), TimeSpan.FromHours(1.0), UpdateLeaderboard, out _updateTimerToken);
         }
 
         private static void EventSink_WorldLoad()
