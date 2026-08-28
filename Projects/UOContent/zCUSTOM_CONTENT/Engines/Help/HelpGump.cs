@@ -56,6 +56,9 @@ public class ContainedMenu : QuestionMenu
 
 public sealed class HelpGumpCustom : DynamicGump
 {
+    // Installed in the local ClassicUO gumpart.mul by the Help Gump client-art deployment.
+    private const int OrnateFrameGumpId = 60000;
+
     public enum GumpFontColor
     {
         White = 0xFFFFFF,
@@ -93,46 +96,61 @@ public sealed class HelpGumpCustom : DynamicGump
             return;
         }
 
-        // Colors
-        var titleColor = 0x433622; // White
-        var mainTextColor = 0x8E7C5C; // Yellow
-        var subTextColor = 0x988D7B; // Gray
+        const int x = 50;
+        const int y = 25;
+        const int width = 540;
+        const int height = 430;
 
-        //EBCF8A
-        titleColor = 0xF4A462; // White
-        mainTextColor = 0xFFD080; // Yellow
-        subTextColor = 0xA3906F; // Gray
-
-        
-        titleColor = 0x739ad1; // White
-        mainTextColor = 0xF4A462; // Yellow
-        subTextColor = 0xA3906F; // Gray
-
-        builder.AddBackground(50, 25, 540, 430, 5100);
+        const string titleColor = "#F4D27A";
+        const string actionColor = "#FFE8A6";
+        const string bodyColor = "#F2F0E8";
         builder.AddPage(0);
-        
-        // Close button
-        builder.AddButton(425, 415, 2073, 2072, 0, GumpButtonType.Reply, 0);
-        
-        // Centered title "Help Menu"
-        builder.AddHtml(150, 50, 360, 40, titleColor, "<CENTER>Help Menu</CENTER>", false, false);
-        
-        // Option 1: Character is stuck
-        builder.AddButton(75, 125, 2362, 2151, 2, GumpButtonType.Reply, 0);
-        builder.AddHtml(110, 120, 450, 20, mainTextColor, "My character is stuck in the game", false, false);
-        builder.AddHtml(110, 140, 450, 40, subTextColor, "Covers a case when your character is stuck in a location they cannot move out of", false, false);
-        
-        // Option 2: Harassment
-        builder.AddButton(75, 205, 2362, 2151, 7, GumpButtonType.Reply, 0);
-        builder.AddHtml(110, 200, 450, 20, mainTextColor, "Another player is harassing me", false, false);
-        builder.AddHtml(110, 220, 450, 40, subTextColor, "I am verbally harassed by another player and want to report it", false, false);
-        
-        // Option 3: Report a bug
-        builder.AddButton(75, 285, 2362, 2151, 3, GumpButtonType.Reply, 0);
-        builder.AddHtml(110, 280, 450, 20, mainTextColor, "Report a bug", false, false);
-        builder.AddHtml(110, 300, 450, 40, subTextColor, "To report a bug, use the Discord channel. Type /report to describe the issue", false, false);
+        // Two client alpha regions compose to approximately 80% opacity. Keep them full-panel so
+        // text never lands on a darker (or lighter) stacked region.
+        builder.AddImageTiled(x + 12, y + 12, width - 24, height - 24, 2624);
+        builder.AddAlphaRegion(x + 12, y + 12, width - 24, height - 24);
+        builder.AddAlphaRegion(x + 12, y + 12, width - 24, height - 24);
+        builder.AddImage(x, y, OrnateFrameGumpId);
 
+        builder.AddHtml(x + 22, y + 19, width - 44, 22, "HELP MENU", titleColor, 5, align: TextAlignment.Center);
+        builder.AddHtml(
+            x + 22, y + 40, width - 44, 14, "Choose the kind of help you need.", bodyColor, 1, align: TextAlignment.Center
+        );
 
+        builder.AddImageTiled(x + 30, y + 67, width - 60, 1, 9107);
+        builder.AddImageTiled(x + 40, y + 69, width - 80, 1, 9157);
+
+        AddHelpOption(
+            ref builder, x + 28, y + 82, width - 56, 2, "I'M STUCK",
+            "Get help if your character cannot move or escape.", actionColor, bodyColor
+        );
+        AddHelpOption(
+            ref builder, x + 28, y + 170, width - 56, 7, "REPORT HARASSMENT",
+            "Report a player who is breaking the rules.", actionColor, bodyColor
+        );
+        AddHelpOption(
+            ref builder, x + 28, y + 258, width - 56, 3, "REPORT A BUG",
+            "Send a bug report to help improve Zodiac.", actionColor, bodyColor
+        );
+
+        builder.AddImageTiled(x + 30, y + 360, width - 60, 1, 9107);
+        builder.AddButton(x + width - 130, y + height - 50, 4005, 4007, 0, GumpButtonType.Reply, 0);
+        builder.AddHtml(x + width - 100, y + height - 50, 70, 20, "CLOSE", actionColor, 2);
+    }
+
+    private static void AddHelpOption(
+        ref DynamicGumpBuilder builder, int x, int y, int width, int buttonId, string title, string description,
+        string titleColor, string bodyColor
+    )
+    {
+        const int height = 72;
+
+        builder.AddImageTiled(x, y, width, 1, 9107);
+        builder.AddImageTiled(x, y + height - 1, width, 1, 9107);
+
+        builder.AddButton(x + 18, y + 24, 4005, 4007, buttonId, GumpButtonType.Reply, 0);
+        builder.AddHtml(x + 54, y + 11, width - 70, 22, title, titleColor, 3);
+        builder.AddHtml(x + 54, y + 36, width - 70, 22, description, bodyColor, 1);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
