@@ -56,8 +56,6 @@ public class ContainedMenu : QuestionMenu
 
 public sealed class HelpGumpCustom : DynamicGump
 {
-    // Installed in the local ClassicUO gumpart.mul by the Help Gump client-art deployment.
-    private const int OrnateFrameGumpId = 60000;
 
     public enum GumpFontColor
     {
@@ -105,20 +103,12 @@ public sealed class HelpGumpCustom : DynamicGump
         const string actionColor = "#FFE8A6";
         const string bodyColor = "#F2F0E8";
         builder.AddPage(0);
-        // Two client alpha regions compose to approximately 80% opacity. Keep them full-panel so
-        // text never lands on a darker (or lighter) stacked region.
-        builder.AddImageTiled(x + 12, y + 12, width - 24, height - 24, 2624);
-        builder.AddAlphaRegion(x + 12, y + 12, width - 24, height - 24);
-        builder.AddAlphaRegion(x + 12, y + 12, width - 24, height - 24);
-        builder.AddImage(x, y, OrnateFrameGumpId);
+        CustomGumpStyle.AddWalnutSteelPanel(ref builder, x, y, width, height);
 
         builder.AddHtml(x + 22, y + 19, width - 44, 22, "HELP MENU", titleColor, 5, align: TextAlignment.Center);
         builder.AddHtml(
             x + 22, y + 40, width - 44, 14, "Choose the kind of help you need.", bodyColor, 1, align: TextAlignment.Center
         );
-
-        builder.AddImageTiled(x + 30, y + 67, width - 60, 1, 9107);
-        builder.AddImageTiled(x + 40, y + 69, width - 80, 1, 9157);
 
         AddHelpOption(
             ref builder, x + 28, y + 82, width - 56, 2, "I'M STUCK",
@@ -133,7 +123,6 @@ public sealed class HelpGumpCustom : DynamicGump
             "Send a bug report to help improve Zodiac.", actionColor, bodyColor
         );
 
-        builder.AddImageTiled(x + 30, y + 360, width - 60, 1, 9107);
         builder.AddButton(x + width - 130, y + height - 50, 4005, 4007, 0, GumpButtonType.Reply, 0);
         builder.AddHtml(x + width - 100, y + height - 50, 70, 20, "CLOSE", actionColor, 2);
     }
@@ -143,11 +132,6 @@ public sealed class HelpGumpCustom : DynamicGump
         string titleColor, string bodyColor
     )
     {
-        const int height = 72;
-
-        builder.AddImageTiled(x, y, width, 1, 9107);
-        builder.AddImageTiled(x, y + height - 1, width, 1, 9107);
-
         builder.AddButton(x + 18, y + 24, 4005, 4007, buttonId, GumpButtonType.Reply, 0);
         builder.AddHtml(x + 54, y + 11, width - 70, 22, title, titleColor, 3);
         builder.AddHtml(x + 54, y + 36, width - 70, 22, description, bodyColor, 1);

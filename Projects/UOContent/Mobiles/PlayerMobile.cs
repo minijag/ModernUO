@@ -2845,6 +2845,11 @@ namespace Server.Mobiles
 
             switch (version)
             {
+                case 36: // Added unified leaderboard totals
+                    {
+                        DeserializeLeaderboardStats(reader);
+                        goto case 35;
+                    }
                 case 35: // Added OreMinedThisSession
                     {
                         OreMinedTotal = reader.ReadInt();
@@ -3194,7 +3199,9 @@ namespace Server.Mobiles
         {
             base.Serialize(writer);
 
-            writer.Write(35); // version
+            writer.Write(36); // version
+
+            SerializeLeaderboardStats(writer);
 
             writer.Write(OreMinedTotal);
 

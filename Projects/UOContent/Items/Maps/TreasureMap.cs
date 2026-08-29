@@ -792,6 +792,7 @@ public partial class TreasureMap : MapItem
                 m_Chest.Temporary = false;
                 m_TreasureMap.Completed = true;
                 m_TreasureMap.CompletedBy = m_From;
+                Engines.Custom.LeaderboardService.Record(m_From, Engines.Custom.LeaderboardStat.TreasureMapsCompleted, 1);
 
                 var spawns = m_TreasureMap.Level switch
                 {

@@ -389,6 +389,14 @@ public partial class Account : IAccount, IComparable<Account>
         PasswordAlgorithm = AccountSecurity.CurrentAlgorithm;
     }
 
+    // Used only by the local Shard Account Keeper bridge. The GUI sends an Argon2 hash,
+    // never a plaintext password; this method runs inside the shard process.
+    public void SetArgon2PasswordHashForMaintenance(string hash)
+    {
+        Password = hash;
+        PasswordAlgorithm = PasswordProtectionAlgorithm.Argon2;
+    }
+
     public bool CheckPassword(string plainPassword)
     {
         var phrase = _passwordAlgorithm is PasswordProtectionAlgorithm.SHA1 or PasswordProtectionAlgorithm.SHA2

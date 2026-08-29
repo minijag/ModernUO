@@ -33,7 +33,15 @@ namespace Server.Targets
 
             if (targeted is ICarvable carvable)
             {
+                var hidesBefore = from.Backpack?.GetAmount(typeof(BaseHides)) ?? 0;
                 carvable.Carve(from, m_Item);
+                var hidesAfter = from.Backpack?.GetAmount(typeof(BaseHides)) ?? 0;
+                if (hidesAfter > hidesBefore)
+                {
+                    Server.Engines.Custom.LeaderboardService.Record(
+                        from, Server.Engines.Custom.LeaderboardStat.LeatherGathered, hidesAfter - hidesBefore
+                    );
+                }
             }
             else if (targeted is SwampDragon pet && pet.HasBarding)
             {

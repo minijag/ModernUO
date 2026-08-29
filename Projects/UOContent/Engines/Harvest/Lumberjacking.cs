@@ -4,8 +4,17 @@ using Server.Targeting;
 
 namespace Server.Engines.Harvest
 {
-    public class Lumberjacking : HarvestSystem
-    {
+public class Lumberjacking : HarvestSystem
+{
+        public override void SendSuccessTo(Mobile from, Item item, HarvestResource resource)
+        {
+            if (from is Mobiles.PlayerMobile && item is Log)
+            {
+                Server.Engines.Custom.LeaderboardService.Record(from, Server.Engines.Custom.LeaderboardStat.LumberHarvested, item.Amount);
+            }
+
+            base.SendSuccessTo(from, item, resource);
+        }
         private static Lumberjacking m_System;
 
         private static readonly int[] m_TreeTiles =

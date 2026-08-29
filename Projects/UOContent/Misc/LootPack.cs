@@ -149,6 +149,13 @@ namespace Server
 
                 if (item != null)
                 {
+                    // Score the configured average before the item enters a container. This is immune
+                    // to player-added corpse gold and does not depend on what gets looted.
+                    if (item is Gold && cont.RootParent is BaseCreature creature)
+                    {
+                        creature.RecordGeneratedLootGold(entry.Quantity.GetAverage());
+                    }
+
                     if (!item.Stackable || !cont.TryDropItem(from, item, false))
                     {
                         cont.DropItem(item);
@@ -1107,5 +1114,7 @@ namespace Server
 
             return v;
         }
+
+        public int GetAverage() => Bonus + Count * (Sides + 1) / 2;
     }
 }

@@ -1,0 +1,23 @@
+[
+  {
+    "Username": "admin",
+    "AccessLevel": "Player",
+    "Characters": 0,
+    "LastLogin": "2026-08-28T23:04:50.7379121Z",
+    "Banned": false
+  },
+  {
+    "Username": "minijag",
+    "AccessLevel": "Owner",
+    "Characters": 1,
+    "LastLogin": "2026-08-29T01:06:27.1957348Z",
+    "Banned": false
+  },
+  {
+    "Username": "player1",
+    "AccessLevel": "Player",
+    "Characters": 3,
+    "LastLogin": "2025-11-21T03:59:03.8469549Z",
+    "Banned": false
+  }
+]

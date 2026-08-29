@@ -116,6 +116,7 @@ namespace Server.Engines.Craft
 
         private int m_ResHue;
         private CraftSystem m_System;
+        private Mobile _leaderboardPlayer;
         private int _itemId;
 
         public CraftItem(Type type, TextDefinition groupName, TextDefinition name) : this(type, groupName, name, -1)
@@ -739,6 +740,7 @@ namespace Server.Engines.Craft
                 m_ResHue = 0;
                 m_ResAmount = 0;
                 m_System = craftSystem;
+                _leaderboardPlayer = from;
 
                 index = IsQuantityType(types)
                     ? ConsumeQuantity(ourPack, types, amounts)
@@ -777,6 +779,22 @@ namespace Server.Engines.Craft
 
         private void OnResourceConsumed(Item item, int amount)
         {
+            if (_leaderboardPlayer is PlayerMobile)
+            {
+                var stat = item switch
+                {
+                    Board => Custom.LeaderboardStat.BoardsUsed,
+                    BaseLeather or BaseHides => Custom.LeaderboardStat.LeatherUsed,
+                    BaseIngot => Custom.LeaderboardStat.IngotsUsed,
+                    _ => (Custom.LeaderboardStat?)null
+                };
+
+                if (stat.HasValue)
+                {
+                    Custom.LeaderboardService.Record(_leaderboardPlayer, stat.Value, amount);
+                }
+            }
+
             if (!RetainsColorFrom(m_System, item.GetType()))
             {
                 return;
