@@ -1,0 +1,1 @@
+Audit passed: 26 existing spawners, 2 obsolete deck portal pairs, 7 wild occupants; no players, pets, houses or unknown items.

@@ -1,0 +1,1 @@
+Moved 5 spawners, removed 4 old portal pairs, created 2 deck portal pairs, rescued 0 stranded wild creatures. World save confirmed 2026-09-28 14:01:13 local in Backups/ArborMazeV3-20260928/install2.stdout.log. Installation request retired after confirmation.

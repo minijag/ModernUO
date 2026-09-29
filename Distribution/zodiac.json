@@ -1435,40 +1435,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "721025d5-8c90-42a5-b2ab-55179e53215e",
-    "location": {
-      "x": 1927,
-      "y": 914,
-      "z": 2
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orcishlord",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "4c01f03a-6c40-4c33-9d61-c3ef16642bb0",
     "location": {
       "x": 1681,
@@ -2980,11 +2946,386 @@
   },
   {
     "type": "Spawner",
-    "name": "Spawner",
-    "guid": "92ef59bc-175c-4fa9-b133-ae85562f41c0",
+    "name": "Morgan Castle: throne guard east 930",
+    "guid": "de724a94-1b61-470d-a3be-e80a1eccf927",
     "location": {
-      "x": 5479,
-      "y": 920,
+      "x": 5509,
+      "y": 930,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "true"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: throne guard west 930",
+    "guid": "32087419-4d52-44ae-9e2f-bb15923caa35",
+    "location": {
+      "x": 5511,
+      "y": 930,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "false"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: throne guard east 934",
+    "guid": "5a5429f6-24b1-4691-af2c-a7dc051fd3d4",
+    "location": {
+      "x": 5509,
+      "y": 934,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "true"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: throne guard west 934",
+    "guid": "194cc069-ed8c-447b-aa39-865f92834595",
+    "location": {
+      "x": 5511,
+      "y": 934,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "false"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: throne guard east 938",
+    "guid": "1126050d-6f0a-4d97-9d65-3691220146bb",
+    "location": {
+      "x": 5509,
+      "y": 938,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "true"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: throne guard west 938",
+    "guid": "16af8f40-59f1-44d1-8451-596be66348e6",
+    "location": {
+      "x": 5511,
+      "y": 938,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "false"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: throne guard east 942",
+    "guid": "f5078ae1-56a8-489c-acd5-1f9e3159cffd",
+    "location": {
+      "x": 5509,
+      "y": 942,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "true"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: throne guard west 942",
+    "guid": "ae75d981-f9e8-4b6c-bad9-ce8222100be4",
+    "location": {
+      "x": 5511,
+      "y": 942,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganThroneGuard",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "false"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: library assistant 5468-914",
+    "guid": "c0b63714-a4dd-47d4-a648-8d7e0b7845b8",
+    "location": {
+      "x": 5468,
+      "y": 914,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "library-assistant"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: library assistant 5473-915",
+    "guid": "3023056d-7039-4c7a-820e-56dae2e182d2",
+    "location": {
+      "x": 5473,
+      "y": 915,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "library-assistant"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: library assistant 5468-929",
+    "guid": "5e29115e-a5e1-4cdf-b118-fbf21ac8b06e",
+    "location": {
+      "x": 5468,
+      "y": 929,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "library-assistant"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: library assistant 5476-931",
+    "guid": "eeca036d-27da-446c-9918-e73eb0c198a3",
+    "location": {
+      "x": 5476,
+      "y": 931,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "library-assistant"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: kitchen assistant 5450-939",
+    "guid": "990d00db-5377-43dd-8480-37fd5982726f",
+    "location": {
+      "x": 5450,
+      "y": 939,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "kitchen-assistant"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: kitchen assistant 5457-939",
+    "guid": "0cd40d37-a607-4db5-94d9-ddb351c73aa5",
+    "location": {
+      "x": 5457,
+      "y": 939,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "kitchen-assistant"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: kitchen assistant 5459-950",
+    "guid": "1d556b2a-ed3a-4100-8417-0b275a476e44",
+    "location": {
+      "x": 5459,
+      "y": 950,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "kitchen-assistant"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5444-917",
+    "guid": "ce2cc7d4-c732-434f-885c-d90382ea5618",
+    "location": {
+      "x": 5444,
+      "y": 917,
       "z": 0
     },
     "map": "Felucca",
@@ -2992,13 +3333,489 @@
     "minDelay": "00:05:00",
     "maxDelay": "00:10:00",
     "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
+    "homeRange": 0,
+    "walkingRange": 0,
     "entries": [
       {
-        "name": "infestedrat",
+        "name": "MorganCastleResident",
         "probability": 100,
-        "maxCount": 1
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5444-926",
+    "guid": "b10349ea-1f9c-4d5e-9188-60c61de1d739",
+    "location": {
+      "x": 5444,
+      "y": 926,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5453-940",
+    "guid": "bb644939-4a24-4457-96f0-42afc316aeae",
+    "location": {
+      "x": 5453,
+      "y": 940,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5473-952",
+    "guid": "9ef286af-7a40-48ca-861e-8755d8256e99",
+    "location": {
+      "x": 5473,
+      "y": 952,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5459-967",
+    "guid": "01064eb0-f00d-4038-948a-732ee1cdb2a5",
+    "location": {
+      "x": 5459,
+      "y": 967,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5468-916",
+    "guid": "4ab01edf-b4c9-44bc-8545-ce9c690393a1",
+    "location": {
+      "x": 5468,
+      "y": 916,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5485-946",
+    "guid": "2920ba77-e19b-4e20-ac5b-d44403580274",
+    "location": {
+      "x": 5485,
+      "y": 946,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5505-912",
+    "guid": "f16f355b-899d-49c5-97b1-57f4f3ca60a2",
+    "location": {
+      "x": 5505,
+      "y": 912,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5516-912",
+    "guid": "ba74c7b7-7804-4b93-929c-a8180025a0fc",
+    "location": {
+      "x": 5516,
+      "y": 912,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: prisoner 5510-949",
+    "guid": "cb2db23f-37b8-44cf-abe2-b683e54c19b7",
+    "location": {
+      "x": 5510,
+      "y": 949,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "prisoner"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: king",
+    "guid": "f422581e-ae08-4a97-ad41-bcb74f7ed90f",
+    "location": {
+      "x": 5509,
+      "y": 948,
+      "z": 27
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "king"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: jester",
+    "guid": "ecc314fe-4cec-42da-bb6b-a23ecbc5bd49",
+    "location": {
+      "x": 5507,
+      "y": 948,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "jester"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: scholar",
+    "guid": "a2ebfc5d-1aa9-42d5-96e5-3c4f31318876",
+    "location": {
+      "x": 5469,
+      "y": 916,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "scholar"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: cook",
+    "guid": "f8c2af3c-d885-4333-b016-face0bf87701",
+    "location": {
+      "x": 5457,
+      "y": 945,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "cook"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: swordsman",
+    "guid": "b9becef3-3476-47fd-9def-8ed6426cc040",
+    "location": {
+      "x": 5506,
+      "y": 945,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "swordsman"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: swordsman",
+    "guid": "862b940d-68d0-4706-b498-921f2c2fe775",
+    "location": {
+      "x": 5512,
+      "y": 945,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "swordsman"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: sentry",
+    "guid": "7b037100-5434-4b21-8b79-758db260a2a2",
+    "location": {
+      "x": 5448,
+      "y": 914,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "sentry"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: sentry",
+    "guid": "1103b2a7-30e1-44ef-a05d-ee99e2bcfc9e",
+    "location": {
+      "x": 5451,
+      "y": 914,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "sentry"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: archer",
+    "guid": "cb925be6-c330-4b86-be86-f584235a2410",
+    "location": {
+      "x": 5434,
+      "y": 938,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "archer"
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Morgan Castle: archer",
+    "guid": "47ea6c21-19e7-406d-bcc2-93b7ca123943",
+    "location": {
+      "x": 5515,
+      "y": 938,
+      "z": 22
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:10:00",
+    "team": 0,
+    "homeRange": 0,
+    "walkingRange": 0,
+    "entries": [
+      {
+        "name": "MorganCastleResident",
+        "probability": 100,
+        "maxCount": 1,
+        "parameters": "archer"
       }
     ]
   },
@@ -3379,30 +4196,6 @@
         "name": "bloodelemental",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "fd994cf0-45d6-4d20-b4d5-4fe6a9a3170c",
-    "location": {
-      "x": 1834,
-      "y": 957,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 30,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bird",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -5012,40 +5805,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "3f250854-0520-4a79-970d-033adeae26db",
-    "location": {
-      "x": 1858,
-      "y": 925,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orcishlord",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "d75c909e-9fad-4937-84ec-002c80620fc6",
     "location": {
       "x": 1730,
@@ -5266,40 +6025,6 @@
         "name": "timberwolf",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "9a46f44c-e8d8-4c36-a06c-52d695408933",
-    "location": {
-      "x": 1869,
-      "y": 969,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orcishlord",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -6916,30 +7641,6 @@
         "name": "bloodelemental",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "722cade6-8b44-428f-bdc7-815930ca4914",
-    "location": {
-      "x": 1834,
-      "y": 909,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 30,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bird",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -9169,40 +9870,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "e9c836d8-9709-4408-8749-f3ea6ed67fa2",
-    "location": {
-      "x": 1793,
-      "y": 943,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "blackbear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "grizzlybear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "timberwolf",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "21ee8fd5-ca54-4134-8e53-992a3e332e3d",
     "location": {
       "x": 5685,
@@ -11322,30 +11989,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "ea8efcbb-9248-4551-b543-1b81b2f87173",
-    "location": {
-      "x": 1825,
-      "y": 930,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 30,
-    "walkingRange": 30,
-    "entries": [
-      {
-        "name": "wanderinghealer",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "73391803-76fa-4f22-80b7-205753d917bf",
     "location": {
       "x": 5550,
@@ -12062,45 +12705,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "c8e7385e-cf0e-4187-9822-53e0f57eacdb",
-    "location": {
-      "x": 5470,
-      "y": 913,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": 1,
-    "entries": [
-      {
-        "name": "orcishmage",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "5679b5c2-15f9-4980-b1e5-5679f00bc762",
     "location": {
       "x": 993,
@@ -12607,30 +13211,6 @@
       },
       {
         "name": "pig",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "a2b46ccc-5d63-429b-b368-636f34adb65e",
-    "location": {
-      "x": 5472,
-      "y": 941,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "lockmoorguard",
         "probability": 100,
         "maxCount": 1
       }
@@ -13654,40 +14234,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "c61e5810-9a87-4951-9d25-01c1f71a7069",
-    "location": {
-      "x": 1860,
-      "y": 972,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "blackbear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "grizzlybear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "timberwolf",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "a9902965-a4aa-473b-abca-d450bfebc5bf",
     "location": {
       "x": 1243,
@@ -14091,40 +14637,6 @@
         "name": "daemon",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "ee695077-189d-4767-b65a-0d2d533e922d",
-    "location": {
-      "x": 1885,
-      "y": 965,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orcishlord",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -16661,30 +17173,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "3997bff9-b1ca-46df-9c74-103b0efe4ae5",
-    "location": {
-      "x": 5304,
-      "y": 905,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "lockmoorguard",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "dadbe3c5-f135-4d8d-aa2d-3bce35044fd6",
     "location": {
       "x": 1692,
@@ -17038,30 +17526,6 @@
     "entries": [
       {
         "name": "cyclops",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "f076efc2-56ad-412f-a23a-f75344d633cb",
-    "location": {
-      "x": 5297,
-      "y": 921,
-      "z": 5
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "lockmoorguard",
         "probability": 100,
         "maxCount": 1
       }
@@ -17622,35 +18086,6 @@
         "name": "spectralstudent",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "51d4f2f2-f332-45b9-b9d2-85aefeffb969",
-    "location": {
-      "x": 5487,
-      "y": 944,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orcbrute",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orcarcher",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -18230,30 +18665,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "58b92e3e-e7d0-480f-b10c-18e30713d5bd",
-    "location": {
-      "x": 5297,
-      "y": 965,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgelockmoorarcher",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "ee055bbf-9cea-4d00-aece-21f5028ca53c",
     "location": {
       "x": 819,
@@ -18368,40 +18779,6 @@
         "name": "terathanwarrior",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "b9fdfc8d-6beb-4b09-81f8-ee328069b484",
-    "location": {
-      "x": 1891,
-      "y": 899,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "orcishlord",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -21019,30 +21396,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "d026b810-fd9b-4fc1-b469-923acd68f780",
-    "location": {
-      "x": 5432,
-      "y": 945,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "infestedrat",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "0a23edec-1c6e-4675-858e-263f2e946c63",
     "location": {
       "x": 1233,
@@ -21471,40 +21824,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "7e7af264-adb5-48f9-a259-b722111c9c57",
-    "location": {
-      "x": 1929,
-      "y": 941,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "blackbear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "grizzlybear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "timberwolf",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "978b2801-a7fd-4f3b-801d-c64730335888",
     "location": {
       "x": 5285,
@@ -21694,30 +22013,6 @@
     "entries": [
       {
         "name": "skeleton",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "35ed71e1-d0b1-4dd7-b015-fdb4250b030f",
-    "location": {
-      "x": 1902,
-      "y": 933,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 10,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
         "probability": 100,
         "maxCount": 1
       }
@@ -23391,30 +23686,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "23e122d9-bfd6-4f05-891f-7365009ccbb5",
-    "location": {
-      "x": 1804,
-      "y": 947,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "hind",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "6826600e-b95d-433c-aee4-6d8e7cf60a1f",
     "location": {
       "x": 5282,
@@ -23551,30 +23822,6 @@
     "entries": [
       {
         "name": "crazedlumberjack",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "e94cc7f3-8685-4b0b-af2f-ca9e075627b2",
-    "location": {
-      "x": 1890,
-      "y": 929,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 10,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orcishmage",
         "probability": 100,
         "maxCount": 1
       }
@@ -26018,30 +26265,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "59ef0811-f7bd-4a48-9a85-bddbe2e4d792",
-    "location": {
-      "x": 5292,
-      "y": 960,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgelockmoorarcher",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "891f7f6f-8f02-4e67-bca6-a27dbb0fc745",
     "location": {
       "x": 5819,
@@ -27596,30 +27819,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "056e7857-83ca-4f9e-809c-db95cf6e3af8",
-    "location": {
-      "x": 5444,
-      "y": 925,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orcishlord",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "20ac542a-c9b8-4919-b6f5-aefdc9eae2ab",
     "location": {
       "x": 1456,
@@ -27932,30 +28131,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "a6720159-49d4-49ba-9ae9-0db1218f6a86",
-    "location": {
-      "x": 5279,
-      "y": 909,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorNoble",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "294495b0-6862-485c-a00a-fa52c3039e27",
     "location": {
       "x": 740,
@@ -28175,30 +28350,6 @@
     "entries": [
       {
         "name": "bird",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "75131f02-a28c-497c-ac43-a46fb5773865",
-    "location": {
-      "x": 5453,
-      "y": 949,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "vampireoutcast",
         "probability": 100,
         "maxCount": 1
       }
@@ -29653,30 +29804,6 @@
     "entries": [
       {
         "name": "mapmaker",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "fb95b001-b068-43e9-9c62-a1eb1f0c6a57",
-    "location": {
-      "x": 5299,
-      "y": 965,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgelockmoorguard",
         "probability": 100,
         "maxCount": 1
       }
@@ -31961,30 +32088,6 @@
     "entries": [
       {
         "name": "Llama",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "63f133d7-21fe-4b3e-8ed1-94c1cb8115af",
-    "location": {
-      "x": 5304,
-      "y": 955,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgelockmoorarcher",
         "probability": 100,
         "maxCount": 1
       }
@@ -34686,30 +34789,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "650199ac-545d-4077-a4b3-29e58b5058f7",
-    "location": {
-      "x": 5290,
-      "y": 929,
-      "z": 44
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 0,
-    "walkingRange": 0,
-    "entries": [
-      {
-        "name": "lockmoorguard",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "5450aa01-007a-4b5f-a6df-6ed2fc9db7ea",
     "location": {
       "x": 694,
@@ -34906,30 +34985,6 @@
         "name": "tinker",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "356bc78d-0980-4e2d-8438-a3341b3f9e2d",
-    "location": {
-      "x": 1841,
-      "y": 943,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "hind",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -35579,30 +35634,6 @@
     "entries": [
       {
         "name": "bonemagi",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "b9fca195-2db6-49d9-9533-e5141422c130",
-    "location": {
-      "x": 5433,
-      "y": 928,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "infestedrat",
         "probability": 100,
         "maxCount": 1
       }
@@ -36278,30 +36309,6 @@
     "entries": [
       {
         "name": "crazedminer",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "a7879b46-76e0-4c71-978d-37641b050fef",
-    "location": {
-      "x": 5335,
-      "y": 906,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:13:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorRoyalty",
         "probability": 100,
         "maxCount": 1
       }
@@ -37105,30 +37112,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "eb099b73-ee67-4108-b102-8cf333ff564b",
-    "location": {
-      "x": 5482,
-      "y": 943,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "rat",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "89191a60-ec8f-421f-bd67-9bd29d9ad5fa",
     "location": {
       "x": 866,
@@ -37213,30 +37196,6 @@
       },
       {
         "name": "pig",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "f50dd102-175c-4875-a8ea-0e28a85fc6f2",
-    "location": {
-      "x": 5313,
-      "y": 963,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgelockmoorarcher",
         "probability": 100,
         "maxCount": 1
       }
@@ -38193,40 +38152,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "a194f60c-3326-41e6-99ec-f0f90ae43059",
-    "location": {
-      "x": 1830,
-      "y": 950,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 25,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "blackbear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "grizzlybear",
-        "probability": 100,
-        "maxCount": 2
-      },
-      {
-        "name": "timberwolf",
-        "probability": 100,
-        "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "0872ed1a-a9dd-4e36-986c-09ca351a5229",
     "location": {
       "x": 5869,
@@ -38520,30 +38445,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "c0a122d2-50d7-4dd9-b960-393c47e2cb0c",
-    "location": {
-      "x": 5277,
-      "y": 901,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorNoble",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "74fcb923-39ea-421f-a8cb-8743a571eb4a",
     "location": {
       "x": 1507,
@@ -38656,30 +38557,6 @@
     "entries": [
       {
         "name": "sanguindefender",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "ad4670ba-8cf0-497d-accb-b7937f1eb88e",
-    "location": {
-      "x": 5335,
-      "y": 949,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "alligator",
         "probability": 100,
         "maxCount": 1
       }
@@ -39043,30 +38920,6 @@
         "name": "giantspider",
         "probability": 100,
         "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "6e0b91ff-4d3f-4a61-98d3-f89884de97de",
-    "location": {
-      "x": 5444,
-      "y": 916,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 2,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
-        "probability": 100,
-        "maxCount": 2
       }
     ]
   },
@@ -39511,30 +39364,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "ba47bb18-402d-4370-a4ae-bcda3aefc653",
-    "location": {
-      "x": 5315,
-      "y": 905,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "lockmoorarcher",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "31880a2e-9bb7-4314-a85e-86c548dea0e2",
     "location": {
       "x": 5737,
@@ -39853,35 +39682,6 @@
         "name": "snake",
         "probability": 100,
         "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "f47eb76f-f663-4cf1-84ee-2cf16ab20a8c",
-    "location": {
-      "x": 5336,
-      "y": 874,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorGuard",
-        "probability": 100,
-        "maxCount": 1
-      },
-      {
-        "name": "LockmoorGuard",
-        "probability": 100,
-        "maxCount": 1
       }
     ]
   },
@@ -40998,30 +40798,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "4a12560a-3edb-4d87-b3d5-3ae1910f5dd7",
-    "location": {
-      "x": 5457,
-      "y": 966,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "infestedrat",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "8113dec3-7569-44d9-b946-cf94674d396b",
     "location": {
       "x": 1647,
@@ -41710,30 +41486,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "0631e5bd-ef5f-43ad-bc03-a6d5f4339752",
-    "location": {
-      "x": 1882,
-      "y": 928,
-      "z": 20
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 10,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orcishlord",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "56b206b0-0101-4d76-a080-5222b6a4aea4",
     "location": {
       "x": 5801,
@@ -41800,30 +41552,6 @@
         "name": "eagle",
         "probability": 100,
         "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "19f66148-177e-45c1-bcb5-5b9be331a8e4",
-    "location": {
-      "x": 5458,
-      "y": 966,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "vampireoutcast",
-        "probability": 100,
-        "maxCount": 1
       }
     ]
   },
@@ -42229,30 +41957,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "35e25e4b-0a30-44c1-8d15-9217c2d7bdec",
-    "location": {
-      "x": 5287,
-      "y": 949,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgemage",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "6ce4d277-d47d-4910-b0d3-4fad43955ad7",
     "location": {
       "x": 1059,
@@ -42644,30 +42348,6 @@
     "entries": [
       {
         "name": "gargoylerector",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "beb15f31-d8ed-4013-b559-e73f6b706a85",
-    "location": {
-      "x": 5292,
-      "y": 880,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorMage",
         "probability": 100,
         "maxCount": 1
       }
@@ -43110,30 +42790,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "cb47d7bf-4a2b-40fe-9e05-644948939535",
-    "location": {
-      "x": 5306,
-      "y": 930,
-      "z": 44
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 0,
-    "walkingRange": 0,
-    "entries": [
-      {
-        "name": "lockmoorarcher",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "026bb05c-d5e3-455a-aa6e-71c3e3e783fd",
     "location": {
       "x": 1066,
@@ -43458,30 +43114,6 @@
     "entries": [
       {
         "name": "ophidianwarrior",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "3eb7cf6f-325d-4cf1-8a6c-0ddd842b9d90",
-    "location": {
-      "x": 5341,
-      "y": 895,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:07:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorNoble",
         "probability": 100,
         "maxCount": 1
       }
@@ -44020,30 +43652,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "356b4c63-f8e1-496b-89c0-be170a8d4e7e",
-    "location": {
-      "x": 5273,
-      "y": 879,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorButcher",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "d5a30d82-bd1f-4326-89b4-016afbd2798d",
     "location": {
       "x": 717,
@@ -44194,30 +43802,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "b82fb3ea-e2bc-439e-9396-e7b99dd0f245",
-    "location": {
-      "x": 5298,
-      "y": 938,
-      "z": 5
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgelockmoorguard",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "00c62291-12c9-4e01-b9e9-d8edd7871ce7",
     "location": {
       "x": 1791,
@@ -44290,30 +43874,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "25c9ae3b-dd50-45b1-a2bb-8fffe2ea66de",
-    "location": {
-      "x": 5298,
-      "y": 965,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:01:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgemage",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "e5003e5b-5bad-4eb0-82bf-06731aca377b",
     "location": {
       "x": 1719,
@@ -44354,30 +43914,6 @@
     "entries": [
       {
         "name": "sanguinhealer",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "8d143657-91cc-4778-8769-7df12adb6aa7",
-    "location": {
-      "x": 5432,
-      "y": 964,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "infestedrat",
         "probability": 100,
         "maxCount": 1
       }
@@ -44638,30 +44174,6 @@
     "entries": [
       {
         "name": "elderwaterelemental",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "f857e7d4-56f1-4411-a886-6a5383a33bd6",
-    "location": {
-      "x": 5473,
-      "y": 951,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "orc",
         "probability": 100,
         "maxCount": 1
       }
@@ -45012,30 +44524,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "878308a9-0ac7-4dd4-bf21-b3cbb455d28c",
-    "location": {
-      "x": 5277,
-      "y": 872,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorButcher",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "b10200aa-7e7c-4496-812b-dc4c5f6671e1",
     "location": {
       "x": 1470,
@@ -45076,30 +44564,6 @@
     "entries": [
       {
         "name": "bountyhunter",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "3372c75c-04f3-47c9-8e9c-083ed7ca91a4",
-    "location": {
-      "x": 5317,
-      "y": 873,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorAlchemist",
         "probability": 100,
         "maxCount": 1
       }
@@ -46596,30 +46060,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "b4882950-fef3-43f9-8c6c-fb8d43d2f688",
-    "location": {
-      "x": 5296,
-      "y": 874,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorMage",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "ca3b196d-8270-441d-adee-b98c7b5b97be",
     "location": {
       "x": 1302,
@@ -46720,30 +46160,6 @@
         "name": "whitewolf",
         "probability": 100,
         "maxCount": 3
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "0c08b3d7-e23c-4a94-bfc4-4b0e5bf691aa",
-    "location": {
-      "x": 5487,
-      "y": 916,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:08:00",
-    "maxDelay": "00:14:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "executioner",
-        "probability": 100,
-        "maxCount": 1
       }
     ]
   },
@@ -47125,30 +46541,6 @@
         "name": "timberwolf",
         "probability": 100,
         "maxCount": 2
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "6e172b5a-da07-483d-928c-02edaee01d7a",
-    "location": {
-      "x": 5269,
-      "y": 887,
-      "z": 22
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "LockmoorGuard",
-        "probability": 100,
-        "maxCount": 1
       }
     ]
   },
@@ -47723,30 +47115,6 @@
   {
     "type": "Spawner",
     "name": "Spawner",
-    "guid": "4f901df0-a876-4a95-89da-732fb901d271",
-    "location": {
-      "x": 5431,
-      "y": 957,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "infestedrat",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
     "guid": "ee2e6dc3-0f33-475f-b140-7db401ead7d7",
     "location": {
       "x": 5341,
@@ -47893,30 +47261,6 @@
       },
       {
         "name": "bull",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "4f528c90-3098-4a85-8001-db9c0fc2d7a4",
-    "location": {
-      "x": 5318,
-      "y": 950,
-      "z": 0
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:02:00",
-    "maxDelay": "00:03:00",
-    "team": 0,
-    "homeRange": 4,
-    "walkingRange": -1,
-    "entries": [
-      {
-        "name": "bridgelockmoorguard",
         "probability": 100,
         "maxCount": 1
       }
@@ -48085,30 +47429,6 @@
     "entries": [
       {
         "name": "earthelemental",
-        "probability": 100,
-        "maxCount": 1
-      }
-    ]
-  },
-  {
-    "type": "Spawner",
-    "name": "Spawner",
-    "guid": "d76255d0-8530-4706-a127-fea23b34631c",
-    "location": {
-      "x": 5509,
-      "y": 951,
-      "z": 1
-    },
-    "map": "Felucca",
-    "count": 1,
-    "minDelay": "00:05:00",
-    "maxDelay": "00:10:00",
-    "team": 0,
-    "homeRange": 1,
-    "walkingRange": 1,
-    "entries": [
-      {
-        "name": "seekerofadventure",
         "probability": 100,
         "maxCount": 1
       }
@@ -48473,5 +47793,1133 @@
         "maxCount": 2
       }
     ]
+  },
+  {
+    "entries": [
+      {
+        "name": "Reaper",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 942,
+      "x": 1810
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 1",
+    "guid": "cd54d50a-b71b-4bb3-8340-aa3d196eb0ff",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Gazer",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 918,
+      "x": 1926
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 2",
+    "guid": "796c3b5e-e598-477c-8f5d-ffccd8b6f36c",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "BogThing",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 966,
+      "x": 1882
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 3",
+    "guid": "69783dfc-217d-4164-b500-a5951b44014d",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "EvilMage",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 898,
+      "x": 1858
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 4",
+    "guid": "612afb66-5fdc-4df4-ae3c-7aa363797fe7",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "AirElemental",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 974,
+      "x": 1834
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 5",
+    "guid": "7da1c051-8cb8-4e9f-aebc-7c80a43870ed",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "ElderGazer",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 946,
+      "x": 1854
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 6",
+    "guid": "5d355f48-5d51-423f-ad37-41389317bb3a",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Wisp",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 910,
+      "x": 1826
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 7",
+    "guid": "2d7ab5a9-5cfc-4eec-be88-a91fcc8132a9",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Gazer",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 914,
+      "x": 1886
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 8",
+    "guid": "cfcfede9-536c-4b80-a9d5-9e2cc1a1920e",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Reaper",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 930,
+      "x": 1890
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 9",
+    "guid": "376fc4f9-81cb-40d9-9190-33e3be6199c1",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "EvilMage",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 930,
+      "x": 1790
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 10",
+    "guid": "30e4fd40-e6bf-49e2-8d63-70af2c1c23a7",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "BogThing",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 926,
+      "x": 1866
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 11",
+    "guid": "955437f2-ae71-44f6-b6f3-477c9c2605c5",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Reaper",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 934,
+      "x": 1834
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 12",
+    "guid": "59386863-7867-4188-9d1d-9b402ec14975",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Gazer",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 902,
+      "x": 1906
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 13",
+    "guid": "08b3c6b5-cf0d-43ef-a74b-2263b15b8ba3",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "BogThing",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 970,
+      "x": 1858
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 14",
+    "guid": "86999427-bdf9-401e-9ea0-68f0fc023d2c",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "EvilMage",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 958,
+      "x": 1822
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 15",
+    "guid": "08239f84-9541-4ce2-84ee-d5358dddd886",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "AirElemental",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 942,
+      "x": 1934
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 16",
+    "guid": "7ef901b7-1229-4302-90a2-e85d8c52d1c1",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "ElderGazer",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 930,
+      "x": 1906
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 17",
+    "guid": "752c1871-bfd3-4506-ba26-cd240e176d4b",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Wisp",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 946,
+      "x": 1890
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 18",
+    "guid": "043e822a-b20e-4b6f-986f-78cd124af914",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Gazer",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 970,
+      "x": 1906
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 19",
+    "guid": "b6d955eb-d31a-40ef-b4e3-8ab457f75350",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Reaper",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 918,
+      "x": 1846
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 20",
+    "guid": "2f97f114-85db-4ccf-adba-6bd1f9088e55",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "EvilMage",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 918,
+      "x": 1806
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 21",
+    "guid": "07e3d7da-b45a-40de-a6d3-8a04cd939f58",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "BogThing",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "y": 954,
+      "x": 1870
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:09:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Maze encounter 22",
+    "guid": "f9fdc216-bebe-4ece-bd79-91fcf17c9e2b",
+    "count": 3,
+    "homeRange": 2,
+    "minDelay": "00:06:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Daemon",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1910,
+      "y": 953
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:15:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Fort Gatekeepers",
+    "guid": "d839ef28-8c6a-4cfe-99e8-91b8be6cb7da",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:12:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "LichLord",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 20,
+      "x": 1917,
+      "y": 952
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:15:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Fort Adepts",
+    "guid": "cae8def4-bdd9-4cf2-a6cc-b442719c10fc",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:12:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "AncientLich",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 40,
+      "x": 1916,
+      "y": 953
+    },
+    "walkingRange": 0,
+    "maxDelay": "00:33:00",
+    "team": 0,
+    "name": "Arbor Labrynth - The Thorn Crown",
+    "guid": "0d4ddbca-3628-4ef8-a893-6ca62b64f04e",
+    "count": 1,
+    "homeRange": 0,
+    "minDelay": "00:30:00"
+  },
+  {
+    "entries": [
+      {
+        "name": "Daemon",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ],
+    "type": "Spawner",
+    "map": "Felucca",
+    "location": {
+      "z": 40,
+      "x": 1916,
+      "y": 955
+    },
+    "walkingRange": 2,
+    "maxDelay": "00:23:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Crown Guardians",
+    "guid": "af78a305-3b92-40f9-a717-2c1e61a4a5f3",
+    "count": 2,
+    "homeRange": 2,
+    "minDelay": "00:20:00"
+  },
+  {
+    "entries": [
+      {
+        "probability": 100,
+        "maxCount": 2,
+        "name": "Daemon"
+      }
+    ],
+    "name": "Arbor Labrynth - Watchtower Sentries",
+    "type": "Spawner",
+    "minDelay": "00:12:00",
+    "homeRange": 2,
+    "guid": "9833f8e7-f345-4722-9006-1b53677f427b",
+    "walkingRange": 2,
+    "location": {
+      "z": 20,
+      "x": 1903,
+      "y": 940
+    },
+    "count": 2,
+    "maxDelay": "00:15:00",
+    "map": "Felucca",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 1",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1846,
+      "y": 986
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Gazer",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "4bb525ca-c79b-42a2-b3c5-8c8f58e5404f",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 2",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1846,
+      "y": 958
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Reaper",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "039740fa-0e7c-41cf-8a01-3a73727fba41",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 3",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1822,
+      "y": 926
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "EvilMage",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "2f72359c-0590-4763-b9dc-7605f36041cf",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 4",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1874,
+      "y": 938
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "BogThing",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "892b05f1-378d-4efe-afdb-25ead19bed39",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 5",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1890,
+      "y": 898
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "AirElemental",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "6b3217b3-00d7-4f01-a9c8-923bef6c5d28",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 6",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1838,
+      "y": 902
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "ElderGazer",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "64bf680a-32ef-4060-8455-964b61484d02",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 7",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1854,
+      "y": 930
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Wisp",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "2d576cd7-73f7-43d1-bcc0-ba2dc077e3be",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 8",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1834,
+      "y": 954
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Gazer",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "806bc564-1de8-4968-99bd-58961e1ca736",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 9",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1850,
+      "y": 906
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Gazer",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "1ba39d67-18ea-4830-9efb-79f1841442f2",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 10",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1918,
+      "y": 910
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Reaper",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "50673e7f-fd71-49d6-a7ff-2b3f0d31ffc2",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 11",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1902,
+      "y": 914
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "EvilMage",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "ed8b224d-2c8f-4d30-8a39-419caf7b45ad",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 12",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1826,
+      "y": 946
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "BogThing",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "bfcdce49-4f78-4494-a67e-0b9fa77152c9",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 13",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1918,
+      "y": 926
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "AirElemental",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "8da63aae-3cc8-40b6-bfd3-f1105a8d2172",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 14",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1930,
+      "y": 930
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "ElderGazer",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "a5b5c0f9-7d43-4073-a887-f01ca7ee2319",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 15",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1858,
+      "y": 914
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Wisp",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "401269cf-d1ba-434d-bcc9-bcee98ce6ffc",
+    "team": 0
+  },
+  {
+    "type": "Spawner",
+    "name": "Arbor Labrynth - Roaming encounter 16",
+    "maxDelay": "00:09:00",
+    "minDelay": "00:06:00",
+    "map": "Felucca",
+    "location": {
+      "z": 0,
+      "x": 1798,
+      "y": 938
+    },
+    "homeRange": 1,
+    "entries": [
+      {
+        "probability": 100,
+        "name": "Gazer",
+        "maxCount": 1
+      }
+    ],
+    "count": 1,
+    "walkingRange": 2,
+    "guid": "cfc80aac-e573-4b5f-8a25-a146901ccc0c",
+    "team": 0
+  },
+  {
+    "homeRange": 1,
+    "map": "Felucca",
+    "entries": [
+      {
+        "maxCount": 1,
+        "probability": 100,
+        "name": "ElderGazer"
+      }
+    ],
+    "team": 0,
+    "minDelay": "00:06:00",
+    "maxDelay": "00:09:00",
+    "type": "Spawner",
+    "walkingRange": 2,
+    "name": "Arbor Labrynth - Whispering Shrine",
+    "guid": "3e0a4efa-cad5-4d97-b0ba-8dbee2044e5b",
+    "count": 1,
+    "location": {
+      "x": 1795,
+      "y": 930,
+      "z": 0
+    }
+  },
+  {
+    "homeRange": 1,
+    "map": "Felucca",
+    "entries": [
+      {
+        "maxCount": 1,
+        "probability": 100,
+        "name": "Daemon"
+      }
+    ],
+    "team": 0,
+    "minDelay": "00:06:00",
+    "maxDelay": "00:09:00",
+    "type": "Spawner",
+    "walkingRange": 2,
+    "name": "Arbor Labrynth - Eastern Fort Patrol",
+    "guid": "fbaa57eb-580d-4646-abd7-d4c140a637ce",
+    "count": 1,
+    "location": {
+      "x": 1921,
+      "y": 937,
+      "z": 0
+    }
+  },
+  {
+    "type": "Spawner",
+    "walkingRange": 2,
+    "homeRange": 1,
+    "count": 1,
+    "map": "Felucca",
+    "entries": [
+      {
+        "maxCount": 1,
+        "probability": 100,
+        "name": "Gazer"
+      }
+    ],
+    "maxDelay": "00:09:00",
+    "location": {
+      "z": 0,
+      "y": 961,
+      "x": 1831
+    },
+    "minDelay": "00:06:00",
+    "team": 0,
+    "name": "Arbor Labrynth - Southern Gazer Patrol",
+    "guid": "e0f0327f-6cdf-40e6-a5d3-8ca9f72bbe88"
+  },
+  {
+    "count": 1,
+    "homeRange": 0,
+    "name": "Labrynth - Tormented Minotaur Art Preview",
+    "maxDelay": "00:07:00",
+    "map": "Felucca",
+    "type": "Spawner",
+    "minDelay": "00:05:00",
+    "walkingRange": 0,
+    "guid": "320c20b2-661f-4f48-ba1c-202b35ea2ef4",
+    "entries": [
+      {
+        "maxCount": 1,
+        "probability": 100,
+        "name": "TormentedMinotaur"
+      }
+    ],
+    "location": {
+      "y": 715,
+      "x": 5276,
+      "z": 0
+    },
+    "team": 0
   }
 ]

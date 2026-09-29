@@ -1,0 +1,5 @@
+# Blue and yellow hero
+
+Built-in image-generation edit of watercolor-waterfall-flowers.png. Output: watercolor-blue-yellow-hero.png. Not installed in-game.
+
+Edit ONLY the clothing colors of the wizard hero in the right foreground of the attached painting. Replace the plum/purple robes with deep muted cobalt-blue robes and hood, with clearly visible golden-yellow ochre trim along the hood edge, shoulder mantle, cuffs and lower robe hem, and a restrained yellow fabric panel/lining on the flowing right edge. Both blue and yellow should be recognizable but subdued to fit this moody scene, not neon. Preserve the hero's exact pose, scale, silhouette, staff, and simple broad painted folds. Preserve ALL other parts of the image unchanged: flowers on the right, smaller central lake, distant waterfall, left village, winding road, mountains, sky, composition, lighting, 16:9 framing. Preserve the loose economical watercolor/gouache style, broad shapes, muted dark palette, paper texture and low detail. Do not add ornament, symbols, embroidery, text, logos, UI or new objects. This is a localized robe recolor only.

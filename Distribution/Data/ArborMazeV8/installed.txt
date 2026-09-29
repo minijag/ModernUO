@@ -1,0 +1,1 @@
+Three walls, new Gazer spawner, return gate moved to 5248,784,0. 47 movement targets passed. Arrival/return tested. World save confirmed September 28, 2026 at 15:25:54 local; installation marker retired.

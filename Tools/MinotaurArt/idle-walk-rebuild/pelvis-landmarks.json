@@ -1,0 +1,4 @@
+{
+  "description": "Manually reviewed pelvis center, just below the abdomen, in native PNG coordinates. Frame 0 is the exact idle reference. These register translations only, not scale or anatomy.",
+  "points": [[36,58],[64,73],[59,73],[52,72],[64,70],[59,69],[53,72],[64,69],[59,69],[54,69]]
+}

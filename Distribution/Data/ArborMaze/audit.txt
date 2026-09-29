@@ -1,0 +1,1 @@
+Audit passed: 16 wild NPCs inside; 8 old spawners; 0 decorative world items. No players, pets, houses or unknown items.

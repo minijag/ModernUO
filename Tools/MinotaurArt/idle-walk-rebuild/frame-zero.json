@@ -1,0 +1,57 @@
+[
+  {
+    "Row": 1,
+    "Frame": 0,
+    "Height": 98,
+    "X": 29,
+    "Direction": 0,
+    "File": "0-0-0.png",
+    "Action": 0,
+    "Y": -5,
+    "Width": 65
+  },
+  {
+    "Row": 1,
+    "Frame": 0,
+    "Height": 98,
+    "X": 42,
+    "Direction": 1,
+    "File": "0-1-0.png",
+    "Action": 0,
+    "Y": -5,
+    "Width": 61
+  },
+  {
+    "Row": 1,
+    "Frame": 0,
+    "Height": 98,
+    "X": 27,
+    "Direction": 2,
+    "File": "0-2-0.png",
+    "Action": 0,
+    "Y": -5,
+    "Width": 40
+  },
+  {
+    "Row": 1,
+    "Frame": 0,
+    "Height": 98,
+    "X": 19,
+    "Direction": 3,
+    "File": "0-3-0.png",
+    "Action": 0,
+    "Y": -5,
+    "Width": 60
+  },
+  {
+    "Row": 1,
+    "Frame": 0,
+    "Height": 98,
+    "X": 34,
+    "Direction": 4,
+    "File": "0-4-0.png",
+    "Action": 0,
+    "Y": -5,
+    "Width": 63
+  }
+]

@@ -56,6 +56,8 @@ public class ContainedMenu : QuestionMenu
 
 public sealed class HelpGumpCustom : DynamicGump
 {
+    // ClassicUO maps HTML size 4 to Unicode font 1 (the classic compact, heavy UI font).
+    private const int HelpFontSize = 4;
 
     public enum GumpFontColor
     {
@@ -105,9 +107,9 @@ public sealed class HelpGumpCustom : DynamicGump
         builder.AddPage(0);
         CustomGumpStyle.AddWalnutSteelPanel(ref builder, x, y, width, height);
 
-        builder.AddHtml(x + 22, y + 19, width - 44, 22, "HELP MENU", titleColor, 5, align: TextAlignment.Center);
+        builder.AddHtml(x + 22, y + 19, width - 44, 22, "HELP MENU", titleColor, HelpFontSize, align: TextAlignment.Center);
         builder.AddHtml(
-            x + 22, y + 40, width - 44, 14, "Choose the kind of help you need.", bodyColor, 1, align: TextAlignment.Center
+            x + 22, y + 40, width - 44, 22, "Choose the kind of help you need.", bodyColor, HelpFontSize, align: TextAlignment.Center
         );
 
         AddHelpOption(
@@ -124,7 +126,7 @@ public sealed class HelpGumpCustom : DynamicGump
         );
 
         builder.AddButton(x + width - 130, y + height - 50, 4005, 4007, 0, GumpButtonType.Reply, 0);
-        builder.AddHtml(x + width - 100, y + height - 50, 70, 20, "CLOSE", actionColor, 2);
+        builder.AddHtml(x + width - 100, y + height - 50, 70, 22, "CLOSE", actionColor, HelpFontSize);
     }
 
     private static void AddHelpOption(
@@ -132,9 +134,11 @@ public sealed class HelpGumpCustom : DynamicGump
         string titleColor, string bodyColor
     )
     {
-        builder.AddButton(x + 18, y + 24, 4005, 4007, buttonId, GumpButtonType.Reply, 0);
-        builder.AddHtml(x + 54, y + 11, width - 70, 22, title, titleColor, 3);
-        builder.AddHtml(x + 54, y + 36, width - 70, 22, description, bodyColor, 1);
+        // Dedicated blue shield artwork; each action has its own normal/pressed pair.
+        var shieldArt = buttonId switch { 2 => 64032, 7 => 64034, 3 => 64036, _ => throw new ArgumentOutOfRangeException(nameof(buttonId)) };
+        builder.AddButton(x + 10, y + 7, shieldArt, shieldArt + 1, buttonId, GumpButtonType.Reply, 0);
+        builder.AddHtml(x + 68, y + 11, width - 84, 22, title, titleColor, HelpFontSize);
+        builder.AddHtml(x + 68, y + 36, width - 84, 22, description, bodyColor, HelpFontSize);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

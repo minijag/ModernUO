@@ -1,0 +1,3362 @@
+[
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      55,
+      38,
+      142,
+      178
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      47,
+      208,
+      139,
+      352
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      49,
+      382,
+      131,
+      523
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      55,
+      556,
+      138,
+      696
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      48,
+      726,
+      142,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      219,
+      41,
+      302,
+      177
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      213,
+      213,
+      306,
+      354
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      217,
+      382,
+      300,
+      525
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      226,
+      557,
+      309,
+      696
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      222,
+      726,
+      312,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      397,
+      41,
+      485,
+      177
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      394,
+      212,
+      483,
+      348
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      396,
+      378,
+      485,
+      523
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      408,
+      558,
+      488,
+      696
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      398,
+      727,
+      491,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      577,
+      40,
+      660,
+      176
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      570,
+      216,
+      661,
+      354
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      578,
+      382,
+      660,
+      526
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      582,
+      562,
+      665,
+      701
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      575,
+      731,
+      665,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 4,
+    "sheetBounds": [
+      750,
+      38,
+      840,
+      178
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 4,
+    "sheetBounds": [
+      746,
+      211,
+      836,
+      355
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 4,
+    "sheetBounds": [
+      749,
+      381,
+      833,
+      526
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 4,
+    "sheetBounds": [
+      758,
+      562,
+      839,
+      702
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 4,
+    "sheetBounds": [
+      749,
+      727,
+      843,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 5,
+    "sheetBounds": [
+      933,
+      39,
+      1018,
+      178
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 5,
+    "sheetBounds": [
+      927,
+      210,
+      1014,
+      352
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 5,
+    "sheetBounds": [
+      931,
+      380,
+      1010,
+      523
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 5,
+    "sheetBounds": [
+      940,
+      557,
+      1022,
+      699
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 5,
+    "sheetBounds": [
+      929,
+      726,
+      1022,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 6,
+    "sheetBounds": [
+      1110,
+      40,
+      1195,
+      177
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 6,
+    "sheetBounds": [
+      1102,
+      212,
+      1192,
+      353
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 6,
+    "sheetBounds": [
+      1104,
+      380,
+      1190,
+      525
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 6,
+    "sheetBounds": [
+      1116,
+      557,
+      1198,
+      696
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 6,
+    "sheetBounds": [
+      1108,
+      727,
+      1197,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 7,
+    "sheetBounds": [
+      1288,
+      41,
+      1371,
+      176
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 7,
+    "sheetBounds": [
+      1278,
+      214,
+      1363,
+      353
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 7,
+    "sheetBounds": [
+      1282,
+      381,
+      1365,
+      526
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 7,
+    "sheetBounds": [
+      1289,
+      561,
+      1370,
+      703
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 7,
+    "sheetBounds": [
+      1285,
+      731,
+      1373,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 8,
+    "sheetBounds": [
+      1470,
+      40,
+      1549,
+      177
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 8,
+    "sheetBounds": [
+      1457,
+      210,
+      1542,
+      349
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 8,
+    "sheetBounds": [
+      1465,
+      381,
+      1545,
+      525
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 8,
+    "sheetBounds": [
+      1468,
+      558,
+      1548,
+      699
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 8,
+    "sheetBounds": [
+      1464,
+      729,
+      1550,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 0,
+    "frame": 9,
+    "sheetBounds": [
+      1635,
+      38,
+      1722,
+      177
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 1,
+    "frame": 9,
+    "sheetBounds": [
+      1630,
+      211,
+      1717,
+      354
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 2,
+    "frame": 9,
+    "sheetBounds": [
+      1635,
+      382,
+      1716,
+      525
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 3,
+    "frame": 9,
+    "sheetBounds": [
+      1642,
+      562,
+      1725,
+      697
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 0,
+    "direction": 4,
+    "frame": 9,
+    "sheetBounds": [
+      1632,
+      727,
+      1725,
+      872
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 1,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      39,
+      116,
+      394,
+      654
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 1,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      468,
+      116,
+      806,
+      660
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 1,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      921,
+      110,
+      1148,
+      662
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 1,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      1343,
+      114,
+      1674,
+      655
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 1,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      1783,
+      112,
+      2130,
+      650
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      64,
+      52,
+      200,
+      266
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      81,
+      321,
+      202,
+      535
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      80,
+      601,
+      215,
+      798
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      67,
+      876,
+      227,
+      1075
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      88,
+      1143,
+      223,
+      1357
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      352,
+      70,
+      509,
+      256
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      351,
+      338,
+      530,
+      526
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      366,
+      629,
+      525,
+      804
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      377,
+      901,
+      521,
+      1075
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      373,
+      1177,
+      505,
+      1333
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      625,
+      112,
+      813,
+      270
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      622,
+      403,
+      828,
+      539
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      631,
+      684,
+      839,
+      813
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      630,
+      968,
+      835,
+      1089
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      624,
+      1258,
+      823,
+      1359
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      898,
+      171,
+      1106,
+      267
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      885,
+      444,
+      1111,
+      530
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      896,
+      751,
+      1114,
+      819
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      894,
+      1020,
+      1113,
+      1094
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 2,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      906,
+      1270,
+      1103,
+      1362
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      37,
+      69,
+      237,
+      272
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      56,
+      355,
+      227,
+      559
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      86,
+      624,
+      223,
+      826
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      78,
+      884,
+      211,
+      1091
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      54,
+      1162,
+      231,
+      1353
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      321,
+      68,
+      508,
+      272
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      324,
+      336,
+      491,
+      547
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      353,
+      623,
+      491,
+      814
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      340,
+      881,
+      489,
+      1095
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      326,
+      1172,
+      509,
+      1356
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      602,
+      110,
+      813,
+      258
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      593,
+      389,
+      822,
+      526
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      610,
+      663,
+      831,
+      807
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      571,
+      927,
+      798,
+      1094
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      586,
+      1189,
+      792,
+      1358
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      863,
+      209,
+      1089,
+      295
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      863,
+      479,
+      1091,
+      566
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      871,
+      752,
+      1094,
+      844
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      868,
+      1022,
+      1089,
+      1109
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 3,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      876,
+      1268,
+      1088,
+      1360
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      69,
+      11,
+      215,
+      275
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      69,
+      280,
+      190,
+      549
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      65,
+      564,
+      188,
+      823
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      53,
+      875,
+      220,
+      1096
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      58,
+      1134,
+      200,
+      1375
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      311,
+      58,
+      518,
+      279
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      304,
+      326,
+      500,
+      549
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      342,
+      595,
+      486,
+      823
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      331,
+      856,
+      480,
+      1099
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      338,
+      1141,
+      520,
+      1373
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      640,
+      133,
+      804,
+      279
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      636,
+      399,
+      785,
+      565
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      616,
+      661,
+      797,
+      829
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      613,
+      939,
+      786,
+      1103
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      622,
+      1185,
+      780,
+      1372
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      923,
+      109,
+      1055,
+      275
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      896,
+      378,
+      1060,
+      548
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      906,
+      645,
+      1068,
+      828
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      902,
+      920,
+      1069,
+      1102
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 4,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      904,
+      1177,
+      1052,
+      1373
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      63,
+      101,
+      218,
+      299
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      63,
+      366,
+      217,
+      578
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      82,
+      636,
+      203,
+      854
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      70,
+      914,
+      219,
+      1118
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      64,
+      1172,
+      224,
+      1375
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      340,
+      119,
+      498,
+      301
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      355,
+      384,
+      509,
+      576
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      341,
+      661,
+      500,
+      853
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      331,
+      930,
+      493,
+      1118
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      355,
+      1183,
+      497,
+      1375
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      571,
+      21,
+      796,
+      299
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      616,
+      315,
+      788,
+      580
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      612,
+      607,
+      805,
+      854
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      587,
+      865,
+      829,
+      1118
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      599,
+      1128,
+      813,
+      1375
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      879,
+      88,
+      1102,
+      300
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      889,
+      368,
+      1089,
+      580
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      881,
+      639,
+      1095,
+      852
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      887,
+      903,
+      1106,
+      1119
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 5,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      908,
+      1177,
+      1103,
+      1376
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      93,
+      19,
+      190,
+      299
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      90,
+      318,
+      189,
+      582
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      84,
+      601,
+      192,
+      862
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      88,
+      883,
+      193,
+      1143
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      91,
+      1157,
+      192,
+      1372
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      376,
+      94,
+      474,
+      296
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      361,
+      360,
+      488,
+      584
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      313,
+      636,
+      478,
+      867
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      343,
+      913,
+      480,
+      1142
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      375,
+      1175,
+      474,
+      1372
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      645,
+      164,
+      770,
+      324
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      617,
+      442,
+      767,
+      591
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      593,
+      723,
+      773,
+      867
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      641,
+      991,
+      785,
+      1141
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      637,
+      1234,
+      767,
+      1371
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      900,
+      142,
+      1049,
+      298
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      908,
+      425,
+      1054,
+      587
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      928,
+      696,
+      1053,
+      868
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      931,
+      953,
+      1076,
+      1141
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 6,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      926,
+      1229,
+      1077,
+      1374
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      51,
+      105,
+      214,
+      293
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      47,
+      344,
+      205,
+      556
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      69,
+      598,
+      222,
+      826
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      74,
+      871,
+      242,
+      1085
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      65,
+      1139,
+      243,
+      1343
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      333,
+      124,
+      526,
+      296
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      334,
+      356,
+      520,
+      557
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      355,
+      607,
+      512,
+      826
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      364,
+      877,
+      534,
+      1095
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      337,
+      1154,
+      528,
+      1349
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      598,
+      108,
+      801,
+      296
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      601,
+      345,
+      790,
+      560
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      631,
+      588,
+      774,
+      826
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      632,
+      862,
+      803,
+      1095
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      622,
+      1137,
+      815,
+      1350
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      893,
+      80,
+      1064,
+      296
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      902,
+      327,
+      1062,
+      557
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      922,
+      577,
+      1052,
+      826
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      907,
+      846,
+      1088,
+      1089
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 10,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      913,
+      1112,
+      1095,
+      1350
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      71,
+      61,
+      206,
+      247
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      73,
+      288,
+      203,
+      490
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      86,
+      527,
+      202,
+      737
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      92,
+      762,
+      250,
+      977
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      87,
+      1010,
+      225,
+      1214
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      300,
+      56,
+      445,
+      245
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      310,
+      290,
+      442,
+      489
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      329,
+      521,
+      446,
+      741
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      322,
+      761,
+      487,
+      977
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      304,
+      1014,
+      472,
+      1218
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      530,
+      34,
+      725,
+      246
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      545,
+      275,
+      710,
+      489
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      561,
+      513,
+      691,
+      741
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      534,
+      757,
+      719,
+      975
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      542,
+      1002,
+      724,
+      1217
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      787,
+      65,
+      966,
+      246
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      793,
+      293,
+      969,
+      489
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      815,
+      532,
+      944,
+      741
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      789,
+      776,
+      977,
+      982
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      792,
+      1013,
+      978,
+      1214
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 0,
+    "frame": 4,
+    "sheetBounds": [
+      1049,
+      70,
+      1186,
+      246
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 1,
+    "frame": 4,
+    "sheetBounds": [
+      1061,
+      304,
+      1191,
+      489
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 2,
+    "frame": 4,
+    "sheetBounds": [
+      1067,
+      550,
+      1190,
+      741
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 3,
+    "frame": 4,
+    "sheetBounds": [
+      1069,
+      781,
+      1232,
+      977
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 11,
+    "direction": 4,
+    "frame": 4,
+    "sheetBounds": [
+      1080,
+      1030,
+      1226,
+      1217
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      76,
+      60,
+      258,
+      322
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      74,
+      360,
+      279,
+      629
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      74,
+      674,
+      272,
+      954
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      94,
+      992,
+      265,
+      1261
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      111,
+      1302,
+      277,
+      1563
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      382,
+      60,
+      572,
+      322
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      367,
+      360,
+      588,
+      629
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      376,
+      672,
+      579,
+      954
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      365,
+      992,
+      582,
+      1261
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      419,
+      1302,
+      600,
+      1563
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      695,
+      56,
+      878,
+      322
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      707,
+      360,
+      877,
+      629
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      727,
+      669,
+      858,
+      955
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      718,
+      993,
+      896,
+      1264
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 15,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      709,
+      1301,
+      902,
+      1567
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      95,
+      54,
+      266,
+      321
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      107,
+      363,
+      269,
+      650
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      107,
+      686,
+      238,
+      968
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      92,
+      986,
+      258,
+      1272
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      90,
+      1308,
+      267,
+      1582
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      406,
+      62,
+      582,
+      326
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      408,
+      370,
+      579,
+      650
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      410,
+      700,
+      553,
+      977
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      388,
+      1005,
+      567,
+      1274
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      387,
+      1317,
+      564,
+      1579
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      684,
+      54,
+      875,
+      321
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      689,
+      364,
+      881,
+      647
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      720,
+      687,
+      855,
+      969
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      715,
+      991,
+      905,
+      1278
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 16,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      707,
+      1307,
+      901,
+      1584
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      40,
+      11,
+      203,
+      240
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      43,
+      261,
+      205,
+      492
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      60,
+      505,
+      180,
+      749
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      61,
+      764,
+      229,
+      994
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      57,
+      1011,
+      229,
+      1244
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      281,
+      11,
+      425,
+      239
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      287,
+      261,
+      436,
+      492
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      306,
+      505,
+      431,
+      748
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      313,
+      764,
+      473,
+      994
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      316,
+      1011,
+      476,
+      1243
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      536,
+      11,
+      681,
+      240
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      538,
+      260,
+      684,
+      492
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      557,
+      506,
+      680,
+      747
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      559,
+      763,
+      719,
+      994
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      561,
+      1011,
+      728,
+      1244
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      763,
+      10,
+      959,
+      240
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      766,
+      261,
+      972,
+      492
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      790,
+      506,
+      958,
+      748
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      790,
+      763,
+      956,
+      994
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      793,
+      1011,
+      973,
+      1244
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 0,
+    "frame": 4,
+    "sheetBounds": [
+      1000,
+      11,
+      1219,
+      240
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 1,
+    "frame": 4,
+    "sheetBounds": [
+      1006,
+      261,
+      1231,
+      492
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 2,
+    "frame": 4,
+    "sheetBounds": [
+      1029,
+      506,
+      1232,
+      748
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 3,
+    "frame": 4,
+    "sheetBounds": [
+      1019,
+      763,
+      1221,
+      994
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 17,
+    "direction": 4,
+    "frame": 4,
+    "sheetBounds": [
+      1026,
+      1011,
+      1230,
+      1244
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 0,
+    "frame": 0,
+    "sheetBounds": [
+      55,
+      30,
+      204,
+      252
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 1,
+    "frame": 0,
+    "sheetBounds": [
+      54,
+      270,
+      203,
+      495
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 2,
+    "frame": 0,
+    "sheetBounds": [
+      83,
+      506,
+      213,
+      753
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 3,
+    "frame": 0,
+    "sheetBounds": [
+      70,
+      769,
+      222,
+      1001
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 4,
+    "frame": 0,
+    "sheetBounds": [
+      65,
+      1018,
+      218,
+      1237
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 0,
+    "frame": 1,
+    "sheetBounds": [
+      295,
+      28,
+      444,
+      252
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 1,
+    "frame": 1,
+    "sheetBounds": [
+      298,
+      268,
+      438,
+      493
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 2,
+    "frame": 1,
+    "sheetBounds": [
+      323,
+      506,
+      451,
+      754
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 3,
+    "frame": 1,
+    "sheetBounds": [
+      314,
+      771,
+      456,
+      1002
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 4,
+    "frame": 1,
+    "sheetBounds": [
+      310,
+      1018,
+      463,
+      1237
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 0,
+    "frame": 2,
+    "sheetBounds": [
+      542,
+      30,
+      690,
+      253
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 1,
+    "frame": 2,
+    "sheetBounds": [
+      543,
+      269,
+      694,
+      493
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 2,
+    "frame": 2,
+    "sheetBounds": [
+      569,
+      503,
+      695,
+      751
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 3,
+    "frame": 2,
+    "sheetBounds": [
+      560,
+      771,
+      704,
+      1001
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 4,
+    "frame": 2,
+    "sheetBounds": [
+      556,
+      1018,
+      713,
+      1237
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 0,
+    "frame": 3,
+    "sheetBounds": [
+      790,
+      33,
+      936,
+      253
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 1,
+    "frame": 3,
+    "sheetBounds": [
+      786,
+      282,
+      937,
+      493
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 2,
+    "frame": 3,
+    "sheetBounds": [
+      818,
+      507,
+      946,
+      754
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 3,
+    "frame": 3,
+    "sheetBounds": [
+      810,
+      781,
+      961,
+      1002
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 4,
+    "frame": 3,
+    "sheetBounds": [
+      807,
+      1019,
+      962,
+      1237
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 0,
+    "frame": 4,
+    "sheetBounds": [
+      1037,
+      30,
+      1185,
+      253
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 1,
+    "frame": 4,
+    "sheetBounds": [
+      1041,
+      269,
+      1188,
+      493
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 2,
+    "frame": 4,
+    "sheetBounds": [
+      1065,
+      506,
+      1192,
+      754
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 3,
+    "frame": 4,
+    "sheetBounds": [
+      1056,
+      771,
+      1201,
+      1002
+    ],
+    "touchesSheetEdge": false
+  },
+  {
+    "action": 18,
+    "direction": 4,
+    "frame": 4,
+    "sheetBounds": [
+      1052,
+      1019,
+      1211,
+      1237
+    ],
+    "touchesSheetEdge": false
+  }
+]

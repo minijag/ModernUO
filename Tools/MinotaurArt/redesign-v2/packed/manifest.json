@@ -1,0 +1,587 @@
+[
+  {
+    "Length": 39451,
+    "Frames": 10,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2310,
+    "Offset": 91412991,
+    "Action": 0
+  },
+  {
+    "Length": 38001,
+    "Frames": 10,
+    "Colors": 101,
+    "Direction": 1,
+    "Slot": 2311,
+    "Offset": 91452442,
+    "Action": 0
+  },
+  {
+    "Length": 35826,
+    "Frames": 10,
+    "Colors": 101,
+    "Direction": 2,
+    "Slot": 2312,
+    "Offset": 91490443,
+    "Action": 0
+  },
+  {
+    "Length": 39825,
+    "Frames": 10,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2313,
+    "Offset": 91526269,
+    "Action": 0
+  },
+  {
+    "Length": 39920,
+    "Frames": 10,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2314,
+    "Offset": 91566094,
+    "Action": 0
+  },
+  {
+    "Length": 4506,
+    "Frames": 1,
+    "Colors": 97,
+    "Direction": 0,
+    "Slot": 2315,
+    "Offset": 91606014,
+    "Action": 1
+  },
+  {
+    "Length": 4417,
+    "Frames": 1,
+    "Colors": 97,
+    "Direction": 1,
+    "Slot": 2316,
+    "Offset": 91610520,
+    "Action": 1
+  },
+  {
+    "Length": 3418,
+    "Frames": 1,
+    "Colors": 96,
+    "Direction": 2,
+    "Slot": 2317,
+    "Offset": 91614937,
+    "Action": 1
+  },
+  {
+    "Length": 4350,
+    "Frames": 1,
+    "Colors": 96,
+    "Direction": 3,
+    "Slot": 2318,
+    "Offset": 91618355,
+    "Action": 1
+  },
+  {
+    "Length": 4495,
+    "Frames": 1,
+    "Colors": 97,
+    "Direction": 4,
+    "Slot": 2319,
+    "Offset": 91622705,
+    "Action": 1
+  },
+  {
+    "Length": 15108,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2320,
+    "Offset": 91627200,
+    "Action": 2
+  },
+  {
+    "Length": 14592,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 1,
+    "Slot": 2321,
+    "Offset": 91642308,
+    "Action": 2
+  },
+  {
+    "Length": 16394,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 2,
+    "Slot": 2322,
+    "Offset": 91656900,
+    "Action": 2
+  },
+  {
+    "Length": 15974,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2323,
+    "Offset": 91673294,
+    "Action": 2
+  },
+  {
+    "Length": 13957,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2324,
+    "Offset": 91689268,
+    "Action": 2
+  },
+  {
+    "Length": 13745,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 0,
+    "Slot": 2325,
+    "Offset": 91703225,
+    "Action": 3
+  },
+  {
+    "Length": 13509,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 1,
+    "Slot": 2326,
+    "Offset": 91716970,
+    "Action": 3
+  },
+  {
+    "Length": 13280,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 2,
+    "Slot": 2327,
+    "Offset": 91730479,
+    "Action": 3
+  },
+  {
+    "Length": 12973,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 3,
+    "Slot": 2328,
+    "Offset": 91743759,
+    "Action": 3
+  },
+  {
+    "Length": 15824,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2329,
+    "Offset": 91756732,
+    "Action": 3
+  },
+  {
+    "Length": 15893,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2330,
+    "Offset": 91772556,
+    "Action": 4
+  },
+  {
+    "Length": 15850,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 1,
+    "Slot": 2331,
+    "Offset": 91788449,
+    "Action": 4
+  },
+  {
+    "Length": 17124,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 2,
+    "Slot": 2332,
+    "Offset": 91804299,
+    "Action": 4
+  },
+  {
+    "Length": 23863,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2333,
+    "Offset": 91821423,
+    "Action": 4
+  },
+  {
+    "Length": 20958,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2334,
+    "Offset": 91845286,
+    "Action": 4
+  },
+  {
+    "Length": 18926,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2335,
+    "Offset": 91866244,
+    "Action": 5
+  },
+  {
+    "Length": 20617,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 1,
+    "Slot": 2336,
+    "Offset": 91885170,
+    "Action": 5
+  },
+  {
+    "Length": 22133,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 2,
+    "Slot": 2337,
+    "Offset": 91905787,
+    "Action": 5
+  },
+  {
+    "Length": 22196,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2338,
+    "Offset": 91927920,
+    "Action": 5
+  },
+  {
+    "Length": 22983,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2339,
+    "Offset": 91950116,
+    "Action": 5
+  },
+  {
+    "Length": 13032,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 0,
+    "Slot": 2340,
+    "Offset": 91973099,
+    "Action": 6
+  },
+  {
+    "Length": 15070,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 1,
+    "Slot": 2341,
+    "Offset": 91986131,
+    "Action": 6
+  },
+  {
+    "Length": 15864,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 2,
+    "Slot": 2342,
+    "Offset": 92001201,
+    "Action": 6
+  },
+  {
+    "Length": 16008,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2343,
+    "Offset": 92017065,
+    "Action": 6
+  },
+  {
+    "Length": 18931,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2344,
+    "Offset": 92033073,
+    "Action": 6
+  },
+  {
+    "Length": 18159,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2360,
+    "Offset": 92052004,
+    "Action": 10
+  },
+  {
+    "Length": 17746,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 1,
+    "Slot": 2361,
+    "Offset": 92070163,
+    "Action": 10
+  },
+  {
+    "Length": 14071,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 2,
+    "Slot": 2362,
+    "Offset": 92087909,
+    "Action": 10
+  },
+  {
+    "Length": 16440,
+    "Frames": 4,
+    "Colors": 100,
+    "Direction": 3,
+    "Slot": 2363,
+    "Offset": 92101980,
+    "Action": 10
+  },
+  {
+    "Length": 16799,
+    "Frames": 4,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2364,
+    "Offset": 92118420,
+    "Action": 10
+  },
+  {
+    "Length": 21617,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2365,
+    "Offset": 92135219,
+    "Action": 11
+  },
+  {
+    "Length": 21132,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 1,
+    "Slot": 2366,
+    "Offset": 92156836,
+    "Action": 11
+  },
+  {
+    "Length": 18009,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 2,
+    "Slot": 2367,
+    "Offset": 92177968,
+    "Action": 11
+  },
+  {
+    "Length": 22318,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2368,
+    "Offset": 92195977,
+    "Action": 11
+  },
+  {
+    "Length": 22535,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2369,
+    "Offset": 92218295,
+    "Action": 11
+  },
+  {
+    "Length": 12601,
+    "Frames": 3,
+    "Colors": 100,
+    "Direction": 0,
+    "Slot": 2385,
+    "Offset": 92240830,
+    "Action": 15
+  },
+  {
+    "Length": 12796,
+    "Frames": 3,
+    "Colors": 100,
+    "Direction": 1,
+    "Slot": 2386,
+    "Offset": 92253431,
+    "Action": 15
+  },
+  {
+    "Length": 11190,
+    "Frames": 3,
+    "Colors": 100,
+    "Direction": 2,
+    "Slot": 2387,
+    "Offset": 92266227,
+    "Action": 15
+  },
+  {
+    "Length": 12266,
+    "Frames": 3,
+    "Colors": 100,
+    "Direction": 3,
+    "Slot": 2388,
+    "Offset": 92277417,
+    "Action": 15
+  },
+  {
+    "Length": 12416,
+    "Frames": 3,
+    "Colors": 100,
+    "Direction": 4,
+    "Slot": 2389,
+    "Offset": 92289683,
+    "Action": 15
+  },
+  {
+    "Length": 13763,
+    "Frames": 3,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2390,
+    "Offset": 92302099,
+    "Action": 16
+  },
+  {
+    "Length": 12705,
+    "Frames": 3,
+    "Colors": 100,
+    "Direction": 1,
+    "Slot": 2391,
+    "Offset": 92315862,
+    "Action": 16
+  },
+  {
+    "Length": 10951,
+    "Frames": 3,
+    "Colors": 97,
+    "Direction": 2,
+    "Slot": 2392,
+    "Offset": 92328567,
+    "Action": 16
+  },
+  {
+    "Length": 11994,
+    "Frames": 3,
+    "Colors": 100,
+    "Direction": 3,
+    "Slot": 2393,
+    "Offset": 92339518,
+    "Action": 16
+  },
+  {
+    "Length": 12857,
+    "Frames": 3,
+    "Colors": 99,
+    "Direction": 4,
+    "Slot": 2394,
+    "Offset": 92351512,
+    "Action": 16
+  },
+  {
+    "Length": 21072,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2395,
+    "Offset": 92364369,
+    "Action": 17
+  },
+  {
+    "Length": 21120,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 1,
+    "Slot": 2396,
+    "Offset": 92385441,
+    "Action": 17
+  },
+  {
+    "Length": 17723,
+    "Frames": 5,
+    "Colors": 100,
+    "Direction": 2,
+    "Slot": 2397,
+    "Offset": 92406561,
+    "Action": 17
+  },
+  {
+    "Length": 21726,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2398,
+    "Offset": 92424284,
+    "Action": 17
+  },
+  {
+    "Length": 21547,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2399,
+    "Offset": 92446010,
+    "Action": 17
+  },
+  {
+    "Length": 22003,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 0,
+    "Slot": 2400,
+    "Offset": 92467557,
+    "Action": 18
+  },
+  {
+    "Length": 21718,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 1,
+    "Slot": 2401,
+    "Offset": 92489560,
+    "Action": 18
+  },
+  {
+    "Length": 17289,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 2,
+    "Slot": 2402,
+    "Offset": 92511278,
+    "Action": 18
+  },
+  {
+    "Length": 21002,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 3,
+    "Slot": 2403,
+    "Offset": 92528567,
+    "Action": 18
+  },
+  {
+    "Length": 23064,
+    "Frames": 5,
+    "Colors": 101,
+    "Direction": 4,
+    "Slot": 2404,
+    "Offset": 92549569,
+    "Action": 18
+  }
+]

@@ -44,3 +44,9 @@
 
 /packages/*
 /Distribution/Configuration/server-access.json
+
+# Rebuildable client animation archives and Python caches
+/Tools/MinotaurArt/**/*.mul
+/Tools/MinotaurArt/**/*.idx
+__pycache__/
+*.pyc

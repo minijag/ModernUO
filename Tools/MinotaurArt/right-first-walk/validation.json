@@ -1,0 +1,45 @@
+{
+  "exactIdleFrame0": true,
+  "exactIdleFrame9": true,
+  "pelvisRelativeToRoot": [
+    0,
+    -35
+  ],
+  "frames": 10,
+  "direction": 0,
+  "scale": 0.19560878243512975,
+  "sourceCellPelvis": [
+    [
+      195,
+      303
+    ],
+    [
+      191,
+      303
+    ],
+    [
+      190,
+      303
+    ],
+    [
+      183,
+      303
+    ],
+    [
+      192,
+      307
+    ],
+    [
+      190,
+      307
+    ],
+    [
+      190,
+      307
+    ],
+    [
+      183,
+      307
+    ]
+  ]
+}
