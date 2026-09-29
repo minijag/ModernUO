@@ -348,7 +348,7 @@ public static partial class CharacterCreation
                     }
                 case "samurai":
                     {
-                        bool haotisAndTokunoAccessible =
+                        var haotisAndTokunoAccessible =
                             (flags & ClientFlags.Tokuno) == ClientFlags.Tokuno &&
                             (flags & ClientFlags.Malas) == ClientFlags.Malas &&
                             availableMaps.Includes(MapSelectionFlags.Malas | MapSelectionFlags.Tokuno);
@@ -370,7 +370,7 @@ public static partial class CharacterCreation
                     }
                 case "ninja":
                     {
-                        bool enimosAndTokunoAccessible =
+                        var enimosAndTokunoAccessible =
                             (flags & ClientFlags.Tokuno) == ClientFlags.Tokuno &&
                             (flags & ClientFlags.Malas) == ClientFlags.Malas &&
                             availableMaps.Includes(MapSelectionFlags.Malas | MapSelectionFlags.Tokuno);
@@ -552,7 +552,7 @@ public static partial class CharacterCreation
                     }
 
                     // animate dead, evil omen, pain spike, summon familiar, wraith form
-                    m.PackItem(new NecromancerSpellbook(0x8981ul) { LootType = LootType.Blessed });
+                    m.PackItem(new NecromancerSpellbook(0x8981ul));
                     return;
                 }
             case "paladin":
@@ -590,7 +590,7 @@ public static partial class CharacterCreation
                         EquipItem(m, new BodySash(0xCF));
                     }
 
-                    m.PackItem(new BookOfChivalry { LootType = LootType.Blessed });
+                    m.PackItem(new BookOfChivalry());
                     return;
                 }
             case "samurai":
@@ -721,7 +721,7 @@ public static partial class CharacterCreation
             return;
         }
 
-        if (!Core.AOS)
+        if (!Core.AOS && item.LootType == LootType.Regular)
         {
             item.LootType = LootType.Newbied;
         }
@@ -745,7 +745,7 @@ public static partial class CharacterCreation
 
     private static void PackItem(this Mobile m, Item item)
     {
-        if (!Core.AOS)
+        if (!Core.AOS && item.LootType == LootType.Regular)
         {
             item.LootType = LootType.Newbied;
         }
@@ -993,7 +993,7 @@ public static partial class CharacterCreation
                 }
             case SkillName.ArmsLore:
                 {
-                    Item item = Utility.Random(3) switch
+                    var item = Utility.Random(3) switch
                     {
                         0 => FencingWeapon(raceFlag),
                         1 => MacingWeapon(raceFlag),
@@ -1192,7 +1192,7 @@ public static partial class CharacterCreation
                     m.PackScroll(1);
                     m.PackScroll(2);
 
-                    EquipItem(m, new Spellbook(0x382A8C38ul) { LootType = LootType.Blessed });
+                    EquipItem(m, new Spellbook(0x382A8C38ul));
                     EquipItem(m, Robe(raceFlag, female, Utility.RandomBlueHue()));
 
                     if (elf)

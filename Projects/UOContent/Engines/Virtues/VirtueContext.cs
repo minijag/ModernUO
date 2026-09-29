@@ -5,102 +5,128 @@ using Server.Mobiles;
 namespace Server.Engines.Virtues;
 
 [PropertyObject]
-[SerializationGenerator(0)]
+[SerializationGenerator(1)]
 public partial class VirtueContext
 {
-    [DeltaDateTime]
+    [DirtyTrackingEntity]
+    private PlayerMobile _player;
+
+    public PlayerMobile Player => _player;
+
+    public VirtueContext(PlayerMobile player) => _player = player;
+
+    private void MigrateFrom(V0Content content)
+    {
+        // Save-flagged values arrive as nullables; unset flags fall back to the same
+        // defaults the old deserialize left in place.
+        _lastSacrificeGain = content.LastSacrificeGain ?? default;
+        _lastSacrificeLoss = content.LastSacrificeLoss ?? default;
+        _availableResurrects = content.AvailableResurrects ?? 0;
+        _lastJusticeLoss = content.LastJusticeLoss ?? default;
+        _lastCompassionLoss = content.LastCompassionLoss ?? default;
+        _nextCompassionDay = content.NextCompassionDay ?? default;
+        _compassionGains = content.CompassionGains ?? 0;
+        _lastValorLoss = content.LastValorLoss ?? default;
+        _lastHonorUse = content.LastHonorUse ?? default;
+        _honorActive = content.HonorActive;
+        _justiceProtection = content.JusticeProtection;
+        _justiceStatus = content.JusticeStatus ?? JusticeProtectorStatus.None;
+        _values = content.Values;
+    }
+
+    [AnchoredDateTime]
     [SerializableField(0)]
+    [SaveFlag(nameof(ShouldSerializeLastSacrificeGain))]
     [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
     private DateTime _lastSacrificeGain;
 
-    [SerializableFieldSaveFlag(0)]
     private bool ShouldSerializeLastSacrificeGain() => !SacrificeVirtue.CanGain(this);
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(1)]
+    [SaveFlag(nameof(ShouldSerializeLastSacrificeLoss))]
     [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
     private DateTime _lastSacrificeLoss;
 
-    [SerializableFieldSaveFlag(1)]
     private bool ShouldSerializeLastSacrificeLoss() => !SacrificeVirtue.CanAtrophy(this);
 
     [SerializableField(2)]
+    [SaveFlag(nameof(ShouldSerializeAvailableResurrects))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private int _availableResurrects;
 
-    [SerializableFieldSaveFlag(2)]
     private bool ShouldSerializeAvailableResurrects() => _availableResurrects > 0;
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(3)]
+    [SaveFlag(nameof(ShouldSerializeLastJusticeLoss))]
     [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
     private DateTime _lastJusticeLoss;
 
-    [SerializableFieldSaveFlag(3)]
     private bool ShouldSerializeLastJusticeLoss() => !JusticeVirtue.CanAtrophy(this);
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(4)]
+    [SaveFlag(nameof(ShouldSerializeLastCompassionLoss))]
     [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
     private DateTime _lastCompassionLoss;
 
-    [SerializableFieldSaveFlag(4)]
     private bool ShouldSerializeLastCompassionLoss() => !CompassionVirtue.CanAtrophy(this);
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(5)]
+    [SaveFlag(nameof(ShouldSerializeNextCompassionDay))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private DateTime _nextCompassionDay;
 
-    [SerializableFieldSaveFlag(5)]
     private bool ShouldSerializeNextCompassionDay() => _nextCompassionDay > Core.Now;
 
     [SerializableField(6)]
+    [SaveFlag(nameof(ShouldSerializeCompassionGains))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private int _compassionGains;
 
-    [SerializableFieldSaveFlag(6)]
     private bool ShouldSerializeCompassionGains() => _compassionGains > 0;
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(7)]
+    [SaveFlag(nameof(ShouldSerializeValorLoss))]
     [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
     private DateTime _lastValorLoss;
 
-    [SerializableFieldSaveFlag(7)]
     private bool ShouldSerializeValorLoss() => !ValorVirtue.CanAtrophy(this);
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(8)]
+    [SaveFlag(nameof(ShouldSerializeLastHonorUse))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private DateTime _lastHonorUse;
 
-    [SerializableFieldSaveFlag(8)]
     private bool ShouldSerializeLastHonorUse() => !HonorVirtue.CanUse(this);
 
     [SerializableField(9)]
+    [SaveFlag(nameof(ShouldSerializeHonorActive))]
     [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
     private bool _honorActive;
 
-    [SerializableFieldSaveFlag(9)]
     private bool ShouldSerializeHonorActive() => _honorActive;
 
     [SerializableField(10)]
+    [SaveFlag(nameof(ShouldSerializeJusticeProtection))]
     private PlayerMobile _justiceProtection;
 
-    [SerializableFieldSaveFlag(10)]
     private bool ShouldSerializeJusticeProtection() => _justiceProtection != null && _justiceStatus != JusticeProtectorStatus.None;
 
     [SerializableField(11)]
+    [SaveFlag(nameof(ShouldSerializeJusticeStatus))]
     private JusticeProtectorStatus _justiceStatus;
 
-    [SerializableFieldSaveFlag(11)]
     private bool ShouldSerializeJusticeStatus() => _justiceProtection != null && _justiceStatus != JusticeProtectorStatus.None;
 
     [SerializableField(12, setter: "private")]
+    [SaveFlag(nameof(ShouldSerializeValues))]
     private int[] _values;
 
-    [SerializableFieldSaveFlag(12)]
     private bool ShouldSerializeValues()
     {
         if (_values == null)

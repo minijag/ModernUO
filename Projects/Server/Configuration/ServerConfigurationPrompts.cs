@@ -7,81 +7,6 @@ namespace Server;
 
 public static class ServerConfigurationPrompts
 {
-    internal static bool GetIsClient7090()
-    {
-        if (UOClient.ServerClientVersion != null)
-        {
-            return UOClient.ServerClientVersion >= ClientVersion.Version7090;
-        }
-
-        Console.WriteLine("Will you be using a client version 7.0.9.0 or newer?");
-
-        do
-        {
-            Console.Write("[y] or n> ");
-            var input = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(input) || input.InsensitiveStartsWith("y"))
-            {
-                Utility.PushColor(ConsoleColor.Yellow);
-                Console.WriteLine("Client >= 7.0.9.0 chosen.");
-                Utility.PopColor();
-                return true;
-            }
-
-            if (input.InsensitiveStartsWith("n"))
-            {
-                Utility.PushColor(ConsoleColor.Yellow);
-                Console.WriteLine("Client < 7.0.9.0 chosen.");
-                Utility.PopColor();
-                return false;
-            }
-
-            Console.Write("Invalid option ");
-            Utility.PushColor(ConsoleColor.Red);
-            Console.Write(input);
-            Utility.PopColor();
-            Console.WriteLine(". Press y for yes or n for no.");
-        } while (true);
-    }
-
-
-    internal static bool GetIsClientPre6000()
-    {
-        if (UOClient.ServerClientVersion != null)
-        {
-            return UOClient.ServerClientVersion < ClientVersion.Version6000;
-        }
-
-        Console.WriteLine("Will you be using a client version older than 6.0.0.0?");
-
-        do
-        {
-            Console.Write("y or [n]> ");
-            var input = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(input) || input.InsensitiveStartsWith("n"))
-            {
-                Utility.PushColor(ConsoleColor.Yellow);
-                Console.WriteLine("Client >= 6.0.0.0 chosen.");
-                Utility.PopColor();
-                return false;
-            }
-
-            if (input.InsensitiveStartsWith("y"))
-            {
-                Utility.PushColor(ConsoleColor.Yellow);
-                Console.WriteLine("Client < 6.0.0.0 chosen.");
-                Utility.PopColor();
-                return true;
-            }
-
-            Console.Write("Invalid option ");
-            Utility.PushColor(ConsoleColor.Red);
-            Console.Write(input);
-            Utility.PopColor();
-            Console.WriteLine(". Press y for yes or n for no.");
-        } while (true);
-    }
-
     internal static List<string> GetDataDirectories()
     {
         Console.WriteLine("Please enter the absolute path to your ClassicUO or Ultima Online data:");
@@ -91,7 +16,7 @@ public static class ServerConfigurationPrompts
         do
         {
             Console.Write("{0}> ", directories.Count > 0 ? "[enter to finish]" : " ");
-            var directory = Console.ReadLine();
+            var directory = ConsoleInputHandler.ReadLine();
             if (string.IsNullOrWhiteSpace(directory))
             {
                 break;
@@ -130,7 +55,7 @@ public static class ServerConfigurationPrompts
         {
             // IP:Port?
             Console.Write("[{0}]> ", ips.Count > 0 ? "enter to finish" : "0.0.0.0:2593");
-            var ipStr = Console.ReadLine();
+            var ipStr = ConsoleInputHandler.ReadLine();
 
             IPEndPoint ip;
             if (string.IsNullOrWhiteSpace(ipStr))
@@ -167,5 +92,32 @@ public static class ServerConfigurationPrompts
             Console.WriteLine(".");
         } while (true);
         return ips;
+    }
+
+    internal static string GetServerName()
+    {
+        Console.WriteLine("Please enter the name of your shard:");
+
+        string serverName;
+        do
+        {
+            Console.Write("[ModernUO]> ");
+            serverName = ConsoleInputHandler.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(serverName))
+            {
+                serverName = "ModernUO";
+            }
+
+            break;
+        } while (true);
+
+        Console.Write("Server name set to ");
+        Utility.PushColor(ConsoleColor.Green);
+        Console.Write(serverName);
+        Utility.PopColor();
+        Console.WriteLine(".");
+
+        return serverName;
     }
 }

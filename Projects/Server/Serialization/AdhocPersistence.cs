@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: AdhocPersistence.cs                                             *
  *                                                                       *
@@ -14,7 +14,6 @@
  *************************************************************************/
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.MemoryMappedFiles;
@@ -27,9 +26,9 @@ public static class AdhocPersistence
     /**
      * Serializes to memory.
      */
-    public static IGenericWriter SerializeToBuffer(Action<IGenericWriter> serializer, ConcurrentQueue<Type> types = null)
+    public static IGenericWriter SerializeToBuffer(Action<IGenericWriter> serializer)
     {
-        var saveBuffer = new BufferWriter(true, types);
+        var saveBuffer = new BufferWriter(true);
         serializer(saveBuffer);
         return saveBuffer;
     }
@@ -55,22 +54,11 @@ public static class AdhocPersistence
     {
         var fullPath = PathUtility.GetFullPath(filePath, Core.BaseDirectory);
         PathUtility.EnsureDirectory(Path.GetDirectoryName(fullPath));
-        HashSet<Type> typesSet = [];
-        var writer = new MemoryMapFileWriter(new FileStream(filePath, FileMode.Create), sizeHint, typesSet);
+
+        var writer = new FileBufferWriter(fullPath, sizeHint);
         serializer(writer);
 
-        Task.Run(
-            () =>
-            {
-                var fs = writer.FileStream;
-
-                writer.Dispose();
-                fs.Dispose();
-
-                Persistence.WriteSerializedTypesSnapshot(Path.GetDirectoryName(fullPath), typesSet);
-            },
-            Core.ClosingTokenSource.Token
-        );
+        Task.Run(() => writer.Dispose(), Core.ClosingTokenSource.Token);
     }
 
     public static unsafe void Deserialize(string filePath, Action<IGenericReader> deserializer)
@@ -94,7 +82,7 @@ public static class AdhocPersistence
 
             byte* ptr = null;
             accessor.SafeMemoryMappedViewHandle.AcquirePointer(ref ptr);
-            UnmanagedDataReader dataReader = new UnmanagedDataReader(ptr, accessor.Length);
+            var dataReader = new UnmanagedDataReader(ptr, accessor.Length);
             deserializer(dataReader);
 
             error = dataReader.Position != fileLength

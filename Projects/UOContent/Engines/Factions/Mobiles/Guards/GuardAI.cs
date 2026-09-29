@@ -359,14 +359,14 @@ namespace Server.Factions
             {
               if (m_Mobile.InRange( m, 1 ))
                 RunFrom( m );
-              else if (!m_Mobile.InRange( m, m_Mobile.RangeFight > 2 ? m_Mobile.RangeFight : 2 ) && !MoveTo( m, true, 1 ))
+              else if (!m_Mobile.InRange( m, m_Mobile.RangeFight > 2 ? m_Mobile.RangeFight : 2 ) && !MoveTo(m, 1))
                 OnFailedMove();
             }
             else
             {*/
             if (!Mobile.InRange(m, Mobile.RangeFight))
             {
-                if (!MoveTo(m, true, 1))
+                if (!MoveTo(m, 1))
                 {
                     OnFailedMove();
                 }
@@ -778,7 +778,7 @@ namespace Server.Factions
 
                 if (spell != null && m_Guard.HitsMax - m_Guard.Hits + 10 > Utility.Random(100))
                 {
-                    Type type = spell switch
+                    var type = spell switch
                     {
                         GreaterHealSpell _ => typeof(BaseHealPotion),
                         CureSpell _        => typeof(BaseCurePotion),

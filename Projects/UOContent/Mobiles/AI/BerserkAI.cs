@@ -12,7 +12,7 @@ public class BerserkAI : BaseAI
 
         if (AcquireFocusMob(Mobile.RangePerception, FightMode.Closest, false, true, true))
         {
-            this.DebugSayFormatted($"I have detected {Mobile.FocusMob.Name} and I will attack");
+            this.DebugSayFormatted($"I have detected {Mobile.FocusMob.Name}, attacking");
 
             Mobile.Combatant = Mobile.FocusMob;
             Action = ActionType.Combat;
@@ -38,7 +38,7 @@ public class BerserkAI : BaseAI
             return true;
         }
 
-        if (!WalkMobileRange(combatant, 1, false, Mobile.RangeFight, Mobile.RangeFight))
+        if (!WalkMobileRange(combatant, 1, Mobile.RangeFight, Mobile.RangeFight))
         {
             this.DebugSayFormatted($"I am still not in range of {combatant.Name}");
 

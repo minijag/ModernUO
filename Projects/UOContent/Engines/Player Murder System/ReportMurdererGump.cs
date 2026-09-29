@@ -5,16 +5,11 @@ using Server.Gumps;
 using Server.Misc;
 using Server.Mobiles;
 using Server.Network;
-using Server.SkillHandlers;
 
 namespace Server.Engines.PlayerMurderSystem;
 
 public class ReportMurdererGump : StaticGump<ReportMurdererGump>
 {
-    // Recently reported
-    private static TimeSpan _recentlyReportedDelay;
-    private static readonly HashSet<(Mobile, Mobile)> _recentlyReported = new();
-
     private readonly List<Mobile> _killers;
     private int _idx;
 
@@ -24,11 +19,6 @@ public class ReportMurdererGump : StaticGump<ReportMurdererGump>
         _idx = idx;
     }
 
-    public static void Initialize()
-    {
-        _recentlyReportedDelay = ServerConfiguration.GetOrUpdateSetting("murderSystem.recentlyReportedDelay", TimeSpan.FromMinutes(10));
-    }
-
     [OnEvent(nameof(PlayerMobile.PlayerDeathEvent))]
     public static void OnPlayerDeathEvent(PlayerMobile m)
     {
@@ -36,23 +26,20 @@ public class ReportMurdererGump : StaticGump<ReportMurdererGump>
         HashSet<Mobile> toGive = null;
 
         // Guards won't take reports of the death of a thief!
-        bool notInThievesGuild = m.NpcGuild != NpcGuild.ThievesGuild;
+        var notInThievesGuild = m.NpcGuild != NpcGuild.ThievesGuild;
 
         foreach (var ai in m.Aggressors)
         {
-            if (ai.Attacker.Player && ai.CanReportMurder && !ai.Reported)
+            if (ai.Attacker.Player && ai.CanReportMurder && !ai.Reported && !PlayerMurderSystem.IsRecentlyReported(m, ai.Attacker))
             {
-                if (!Core.SE || !_recentlyReported.Contains((m, ai.Attacker)))
+                if (notInThievesGuild)
                 {
-                    if (notInThievesGuild)
-                    {
-                        killers ??= new List<Mobile>();
-                        killers.Add(ai.Attacker);
-                    }
-
-                    ai.Reported = true;
-                    ai.CanReportMurder = false;
+                    killers ??= new List<Mobile>();
+                    killers.Add(ai.Attacker);
                 }
+
+                ai.Reported = true;
+                ai.CanReportMurder = false;
             }
 
             if (ai.Attacker.Player && Core.Now - ai.LastCombatTime < TimeSpan.FromSeconds(30.0))
@@ -73,28 +60,11 @@ public class ReportMurdererGump : StaticGump<ReportMurdererGump>
 
         if (toGive?.Count > 0)
         {
+            var (fameAward, _) = Titles.ComputeKillAwards(m, m.Map);
+
             foreach (var g in toGive)
             {
-                var n = Notoriety.Compute(g, m);
-
-                var ourKarma = g.Karma;
-                var innocent = n == Notoriety.Innocent;
-                var criminal = n is Notoriety.Criminal or Notoriety.Murderer;
-
-                var fameAward = m.Fame / 200;
-                var karmaAward = 0;
-
-                if (innocent)
-                {
-                    karmaAward = ourKarma > -2500 ? -850 : -110 - m.Karma / 100;
-                }
-                else if (criminal)
-                {
-                    karmaAward = 50;
-                }
-
                 Titles.AwardFame(g, fameAward, false);
-                Titles.AwardKarma(g, karmaAward, true);
             }
         }
 
@@ -147,40 +117,7 @@ public class ReportMurdererGump : StaticGump<ReportMurdererGump>
         {
             case 1:
                 {
-                    var killer = _killers[_idx];
-                    if (killer?.Deleted == false)
-                    {
-                        if (Core.SE)
-                        {
-                            if (_recentlyReported.Add((from, killer)))
-                            {
-                                Timer.DelayCall(
-                                    _recentlyReportedDelay,
-                                    static (f, k) => _recentlyReported.Remove((f, k)),
-                                    from,
-                                    killer
-                                );
-                            }
-                        }
-
-                        if (killer is PlayerMobile pk)
-                        {
-                            // Increment their short term murders, their kills, and reset the murder decay time
-                            PlayerMurderSystem.OnPlayerMurder(pk);
-
-                            pk.SendLocalizedMessage(1049067); // You have been reported for murder!
-
-                            if (pk.Kills == 5)
-                            {
-                                pk.SendLocalizedMessage(502134); // You are now known as a murderer!
-                            }
-                            else if (Stealing.SuspendOnMurder && pk.Kills == 1 && pk.NpcGuild == NpcGuild.ThievesGuild)
-                            {
-                                pk.SendLocalizedMessage(501562); // You have been suspended by the Thieves Guild.
-                            }
-                        }
-                    }
-
+                    PlayerMurderSystem.ReportMurder(from, _killers[_idx]);
                     break;
                 }
             case 2:
@@ -209,7 +146,14 @@ public class ReportMurdererGump : StaticGump<ReportMurdererGump>
 
         protected override void OnTick()
         {
-            _victim.SendGump(new ReportMurdererGump(_killers));
+            if (PlayerMurderSystem.BountiesEnabled && _victim is PlayerMobile pm)
+            {
+                pm.SendGump(new BountyReportMurdererGump(pm, _killers));
+            }
+            else
+            {
+                _victim.SendGump(new ReportMurdererGump(_killers));
+            }
         }
     }
 }

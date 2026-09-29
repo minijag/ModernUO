@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2025 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: TransferItem.cs                                                 *
  *                                                                       *
@@ -15,10 +15,12 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using ModernUO.Serialization;
 
 namespace Server.Mobiles;
 
-internal sealed class TransferItem : Item
+[SerializationGenerator(0, false)]
+internal sealed partial class TransferItem : Item
 {
     private readonly BaseCreature _creature;
 
@@ -32,24 +34,9 @@ internal sealed class TransferItem : Item
         Hue = creature.Hue & 0x0FFF;
     }
 
-    public TransferItem(Serial serial) : base(serial)
-    {
-    }
+    public override bool SkipSerialization => true;
 
     public static bool IsInCombat(BaseCreature creature) => creature?.Aggressors.Count > 0 || creature?.Aggressed.Count > 0;
-
-    public override void Serialize(IGenericWriter writer)
-    {
-        base.Serialize(writer);
-        writer.Write(0); // version
-    }
-
-    public override void Deserialize(IGenericReader reader)
-    {
-        base.Deserialize(reader);
-        reader.ReadInt(); // version
-        Delete();
-    }
 
     public override void GetProperties(IPropertyList list)
     {
@@ -169,17 +156,11 @@ internal sealed class TransferItem : Item
 
     private void TransferPetOwnership(Mobile from, Mobile to)
     {
-        if (_creature.Summoned)
-        {
-            _creature.SummonMaster = to;
-        }
-
-        _creature.ControlTarget = to;
-        _creature.ControlOrder = OrderType.Follow;
+        _creature.ClearPetFriends();
+        _creature.IssueOrder(OrderType.Follow, null, to);
         _creature.BondingBegin = DateTime.MinValue;
         _creature.OwnerAbandonTime = DateTime.MinValue;
         _creature.IsBonded = false;
-        _creature.PlaySound(_creature.GetIdleSound());
 
         var args = $"{from.Name}\t{_creature.Name}\t{to.Name}";
         from.SendLocalizedMessage(1043253, args);

@@ -19,9 +19,24 @@ namespace Server.Multis
         Single
     }
 
-    [SerializationGenerator(4, false)]
+    [SerializationGenerator(5, false)]
     public abstract partial class BaseBoat : BaseMulti
     {
+        private void MigrateFrom(V4Content content)
+        {
+            _mapItem = content.MapItem;
+            _nextNavPoint = content.NextNavPoint;
+            _facing = content.Facing;
+            _timeOfDecay = content.TimeOfDecay;
+            _owner = content.Owner;
+            _pPlank = content.PPlank;
+            _sPlank = content.SPlank;
+            _tillerMan = content.TillerMan;
+            _hold = content.Hold;
+            _anchored = content.Anchored;
+            _shipName = content.ShipName;
+        }
+
         public enum DryDockResult
         {
             Valid,
@@ -136,31 +151,23 @@ namespace Server.Multis
             }
         }
 
-        [DeltaDateTime]
-        [SerializableProperty(3)]
-        [CommandProperty(AccessLevel.GameMaster)]
-        public DateTime TimeOfDecay
+        [SerializableField(3, fieldChanged: nameof(OnTimeOfDecayChanged))]
+        [AnchoredDateTime]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
+        private DateTime _timeOfDecay;
+
+        private void OnTimeOfDecayChanged(DateTime oldValue, DateTime newValue)
         {
-            get => _timeOfDecay;
-            set
-            {
-                _timeOfDecay = value;
-                TillerMan?.InvalidateProperties();
-                this.MarkDirty();
-            }
+            TillerMan?.InvalidateProperties();
         }
 
-        [SerializableProperty(10)]
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string ShipName
+        [SerializableField(10, fieldChanged: nameof(OnShipNameChanged))]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
+        private string _shipName;
+
+        private void OnShipNameChanged(string oldValue, string newValue)
         {
-            get => _shipName;
-            set
-            {
-                _shipName = value;
-                TillerMan?.InvalidateProperties();
-                this.MarkDirty();
-            }
+            TillerMan?.InvalidateProperties();
         }
 
         [CommandProperty(AccessLevel.GameMaster)]
@@ -371,52 +378,27 @@ namespace Server.Multis
 
         public override void OnLocationChange(Point3D old)
         {
-            if (TillerMan != null)
-            {
-                TillerMan.Location = new Point3D(
-                    X + (TillerMan.X - old.X),
-                    Y + (TillerMan.Y - old.Y),
-                    Z + (TillerMan.Z - old.Z)
-                );
-            }
+            base.OnLocationChange(old);
 
-            if (Hold != null)
-            {
-                Hold.Location = new Point3D(X + (Hold.X - old.X), Y + (Hold.Y - old.Y), Z + (Hold.Z - old.Z));
-            }
+            TillerMan?.Location = new Point3D(
+                X + (TillerMan.X - old.X),
+                Y + (TillerMan.Y - old.Y),
+                Z + (TillerMan.Z - old.Z)
+            );
 
-            if (PPlank != null)
-            {
-                PPlank.Location = new Point3D(X + (PPlank.X - old.X), Y + (PPlank.Y - old.Y), Z + (PPlank.Z - old.Z));
-            }
-
-            if (SPlank != null)
-            {
-                SPlank.Location = new Point3D(X + (SPlank.X - old.X), Y + (SPlank.Y - old.Y), Z + (SPlank.Z - old.Z));
-            }
+            Hold?.Location = new Point3D(X + (Hold.X - old.X), Y + (Hold.Y - old.Y), Z + (Hold.Z - old.Z));
+            PPlank?.Location = new Point3D(X + (PPlank.X - old.X), Y + (PPlank.Y - old.Y), Z + (PPlank.Z - old.Z));
+            SPlank?.Location = new Point3D(X + (SPlank.X - old.X), Y + (SPlank.Y - old.Y), Z + (SPlank.Z - old.Z));
         }
 
         public override void OnMapChange()
         {
-            if (TillerMan != null)
-            {
-                TillerMan.Map = Map;
-            }
+            base.OnMapChange();
 
-            if (Hold != null)
-            {
-                Hold.Map = Map;
-            }
-
-            if (PPlank != null)
-            {
-                PPlank.Map = Map;
-            }
-
-            if (SPlank != null)
-            {
-                SPlank.Map = Map;
-            }
+            TillerMan?.Map = Map;
+            Hold?.Map = Map;
+            PPlank?.Map = Map;
+            SPlank?.Map = Map;
         }
 
         public bool CanCommand(Mobile m) => true;
@@ -1372,7 +1354,7 @@ namespace Server.Multis
                 }
 
                 // Changing the interval or flipping between commands: "Forward" and "Forward One"
-                TimeSpan delay = TimeSpan.Zero;
+                var delay = TimeSpan.Zero;
                 if (interval.TotalMilliseconds > Math.Abs(moverTimerNext))
                 {
                     var addedDelay = (int)(interval.TotalMilliseconds - Math.Abs(moverTimerNext));
@@ -1789,7 +1771,7 @@ namespace Server.Multis
                     list.Add(e);
                 }
 
-                Span<byte> moveBoatPacket = stackalloc byte[BoatPackets.GetMoveBoatHSPacketLength(list.Count)]
+                var moveBoatPacket = stackalloc byte[BoatPackets.GetMoveBoatHSPacketLength(list.Count)]
                     .InitializePacket();
 
                 // Packet must be sent before actual locations are changed

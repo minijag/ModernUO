@@ -59,6 +59,9 @@ namespace Server.Mobiles
 
         public override bool InitialInnocent => true;
 
+        // FightMode.Evil would otherwise target our own enraged creatures for their negative karma.
+        public override bool IsEnemy(Mobile m) => (m as BaseEnraged)?.Master != this && base.IsEnemy(m);
+
         public override void GenerateLoot()
         {
             AddLoot(LootPack.FilthyRich);
@@ -85,7 +88,7 @@ namespace Server.Mobiles
 
                     if (combatant is BaseCreature bc)
                     {
-                        if (bc.Controlled && bc.ControlMaster?.Deleted == false && bc.ControlMaster.Alive)
+                        if (bc.ControlMaster is { Deleted: false, Alive: true })
                         {
                             if (bc.ControlMaster.Map == Map && bc.ControlMaster.InRange(this, 12) &&
                                 !UnderEffect(bc.ControlMaster))
@@ -154,7 +157,7 @@ namespace Server.Mobiles
         public static bool UnderEffect(Mobile m) => m_Table.ContainsKey(m);
 
         [OnEvent(nameof(PlayerMobile.PlayerDeathEvent))]
-        [OnEvent(nameof(CreatureDeathEvent))]
+        [OnEvent(nameof(CreatureEvents.CreatureDeathEvent))]
         public static void StopEffect(Mobile m, bool message = false)
         {
             if (m_Table.Remove(m, out var timer))

@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using Server.Commands.Generic;
+using Server.Text;
 using Server.Engines.Help;
 using Server.Gumps;
 using Server.Items;
@@ -89,7 +88,7 @@ namespace Server.Commands
 
                 if (!reg.IsDefault)
                 {
-                    var builder = new StringBuilder();
+                    using var builder = ValueStringBuilder.Create(256);
 
                     builder.Append(reg);
                     reg = reg.Parent;
@@ -100,7 +99,7 @@ namespace Server.Commands
                         reg = reg.Parent;
                     }
 
-                    from.SendMessage($"Your region is {builder}.");
+                    from.SendMessage($"Your region is {builder.AsSpan()}.");
                 }
             }
         }
@@ -214,7 +213,7 @@ namespace Server.Commands
                 {
                     if (m is BaseCreature bc)
                     {
-                        if (bc.Controlled && bc.ControlMaster == master || bc.Summoned && bc.SummonMaster == master)
+                        if (bc.GetMaster() == master)
                         {
                             pets.Add(bc);
                         }
@@ -300,7 +299,7 @@ namespace Server.Commands
                 $"{m.AccessLevel} {CommandLogging.Format(m)} playing sound {index} (toAll={toAll})"
             );
 
-            Span<byte> buffer = stackalloc byte[OutgoingEffectPackets.SoundPacketLength].InitializePacket();
+            var buffer = stackalloc byte[OutgoingEffectPackets.SoundPacketLength].InitializePacket();
 
             foreach (var state in m.GetClientsInRange(12))
             {
@@ -595,7 +594,7 @@ namespace Server.Commands
 
             list.Sort();
 
-            var sb = new StringBuilder();
+            using var sb = ValueStringBuilder.Create(256);
 
             if (list.Count > 0)
             {
@@ -609,7 +608,7 @@ namespace Server.Commands
                 if (sb.Length + 1 + v.Length >= 256)
                 {
                     m.SendAsciiMessage(0x482, sb.ToString());
-                    sb = new StringBuilder();
+                    sb.Reset();
                     sb.Append(v);
                 }
                 else
@@ -666,11 +665,11 @@ namespace Server.Commands
 
             if (m.AutoPageNotify)
             {
-                m.SendMessage($"Your auto-page-notify has been turned on.");
+                m.SendMessage("Your auto-page-notify has been turned on.");
             }
             else
             {
-                m.SendMessage($"Your auto-page-notify has been turned off.");
+                m.SendMessage("Your auto-page-notify has been turned off.");
             }
         }
 

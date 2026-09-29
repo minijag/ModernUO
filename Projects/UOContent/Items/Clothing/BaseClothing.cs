@@ -22,90 +22,78 @@ namespace Server.Items
         int MaxArcaneCharges { get; set; }
     }
 
-    [SerializationGenerator(7, false)]
+    [SerializationGenerator(8, false)]
     public abstract partial class BaseClothing
         : Item, IDyable, IScissorable, IFactionItem, ICraftable, IWearableDurability, IAosItem
     {
-        [SerializableFieldSaveFlag(0)]
         private bool ShouldSerializeResource() => _resource != DefaultResource;
 
         [SerializedIgnoreDupe]
         [SerializableField(1, setter: "private")]
+        [SaveFlag(nameof(ShouldSerializeAttributes), nameof(AttributesDefaultValue))]
         [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
         private AosAttributes _attributes;
 
-        [SerializableFieldSaveFlag(1)]
         private bool ShouldSerializeAttributes() => !_attributes.IsEmpty;
 
-        [SerializableFieldDefault(1)]
         private AosAttributes AttributesDefaultValue() => new(this);
 
         [SerializedIgnoreDupe]
         [SerializableField(2, setter: "private")]
+        [SaveFlag(nameof(ShouldSerializeClothingAttributes), nameof(ClothingAttributesDefaultValue))]
         [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
         private AosArmorAttributes _clothingAttributes;
 
-        [SerializableFieldSaveFlag(2)]
         private bool ShouldSerializeClothingAttributes() => !_clothingAttributes.IsEmpty;
 
-        [SerializableFieldDefault(2)]
         private AosArmorAttributes ClothingAttributesDefaultValue() => new(this);
 
         [SerializedIgnoreDupe]
         [SerializableField(3, setter: "private")]
+        [SaveFlag(nameof(ShouldSerializeSkillBonuses), nameof(SkillBonusesDefaultValue))]
         [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
         private AosSkillBonuses _skillBonuses;
 
-        [SerializableFieldSaveFlag(3)]
         private bool ShouldSerializeSkillBonuses() => !_skillBonuses.IsEmpty;
 
-        [SerializableFieldDefault(3)]
         private AosSkillBonuses SkillBonusesDefaultValue() => new(this);
 
         [SerializedIgnoreDupe]
         [SerializableField(4, setter: "private")]
+        [SaveFlag(nameof(ShouldSerializeResistances), nameof(ResistancesDefaultValue))]
         [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
         private AosElementAttributes _resistances;
 
-        [SerializableFieldSaveFlag(4)]
         private bool ShouldSerializeResistances() => !_resistances.IsEmpty;
 
-        [SerializableFieldDefault(4)]
         private AosElementAttributes ResistancesDefaultValue() => new(this);
 
         [EncodedInt]
         [InvalidateProperties]
         [SerializableField(5)]
+        [SaveFlag(nameof(ShouldSerializeMaxHitPoints))]
         [SerializedCommandProperty(AccessLevel.GameMaster)]
         private int _maxHitPoints;
 
-        [SerializableFieldSaveFlag(5)]
         private bool ShouldSerializeMaxHitPoints() => _maxHitPoints != 0;
 
-        [SerializableField(7)]
-        [SerializedCommandProperty(AccessLevel.GameMaster)]
-        private bool _playerConstructed;
-
-        [SerializableFieldSaveFlag(7)]
-        private bool ShouldSerializePlayerConstructed() => _playerConstructed;
-
         [InvalidateProperties]
-        [SerializableField(8)]
+        [SerializableField(7)]
+        [SaveFlag(nameof(ShouldSerializeCrafter))]
         [SerializedCommandProperty(AccessLevel.GameMaster)]
         private string _crafter;
 
-        [SerializableFieldSaveFlag(8)]
         private bool ShouldSerializeCrafter() => !string.IsNullOrEmpty(_crafter);
 
         [InvalidateProperties]
-        [SerializableField(9)]
+        [SerializableField(8)]
+        [SaveFlag(nameof(ShouldSerializeQuality))]
         [SerializedCommandProperty(AccessLevel.GameMaster)]
         private ClothingQuality _quality = ClothingQuality.Regular;
 
-        [SerializableFieldSaveFlag(9)]
         private bool ShouldSerializeQuality() => _quality != ClothingQuality.Regular;
 
-        // Field 10
+        // Field 9
         private int _strReq = -1;
 
         private FactionItem _factionState;
@@ -125,21 +113,19 @@ namespace Server.Items
             Resistances = new AosElementAttributes(this);
         }
 
-        [SerializableProperty(0)]
-        [CommandProperty(AccessLevel.GameMaster)]
-        public CraftResource Resource
+        [SerializableField(0, fieldChanged: nameof(OnResourceChanged))]
+        [SaveFlag(nameof(ShouldSerializeResource))]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
+        [InvalidateProperties]
+        private CraftResource _resource;
+
+        private void OnResourceChanged(CraftResource oldValue, CraftResource newValue)
         {
-            get => _resource;
-            set
-            {
-                _resource = value;
-                Hue = CraftResources.GetHue(_resource);
-                InvalidateProperties();
-                this.MarkDirty();
-            }
+            Hue = CraftResources.GetHue(_resource);
         }
 
-        [SerializableProperty(10, useField: nameof(_strReq))]
+        [SerializableProperty(9, useField: nameof(_strReq))]
+        [SaveFlag(nameof(ShouldSerializeStrReq))]
         [CommandProperty(AccessLevel.GameMaster)]
         public int StrRequirement
         {
@@ -152,7 +138,6 @@ namespace Server.Items
             }
         }
 
-        [SerializableFieldSaveFlag(10)]
         private bool ShouldSerializeStrReq() => _strReq != -1;
 
         public virtual CraftResource DefaultResource => CraftResource.None;
@@ -206,8 +191,6 @@ namespace Server.Items
             {
                 Hue = resHue;
             }
-
-            PlayerConstructed = true;
 
             var context = craftSystem.GetContext(from);
 
@@ -308,6 +291,7 @@ namespace Server.Items
 
         [EncodedInt]
         [SerializableProperty(6)]
+        [SaveFlag(nameof(ShouldSerializeHitPoints))]
         [CommandProperty(AccessLevel.GameMaster)]
         public int HitPoints
         {
@@ -333,7 +317,6 @@ namespace Server.Items
             }
         }
 
-        [SerializableFieldSaveFlag(6)]
         private bool ShouldSerializeHitPoints() => _hitPoints != 0;
 
         public virtual int InitMinHits => 0;
@@ -754,146 +737,21 @@ namespace Server.Items
                 list.Add(1061078, prop); // artifact rarity ~1_val~
             }
 
-            if ((prop = Attributes.WeaponDamage) != 0)
-            {
-                list.Add(1060401, prop); // damage increase ~1_val~%
-            }
+            ClothingAttributes.GetProperties(list);
 
-            if ((prop = Attributes.DefendChance) != 0)
-            {
-                list.Add(1060408, prop); // defense chance increase ~1_val~%
-            }
-
-            if ((prop = Attributes.BonusDex) != 0)
-            {
-                list.Add(1060409, prop); // dexterity bonus ~1_val~
-            }
-
-            if ((prop = Attributes.EnhancePotions) != 0)
-            {
-                list.Add(1060411, prop); // enhance potions ~1_val~%
-            }
-
-            if ((prop = Attributes.CastRecovery) != 0)
-            {
-                list.Add(1060412, prop); // faster cast recovery ~1_val~
-            }
-
-            if ((prop = Attributes.CastSpeed) != 0)
-            {
-                list.Add(1060413, prop); // faster casting ~1_val~
-            }
-
-            if ((prop = Attributes.AttackChance) != 0)
-            {
-                list.Add(1060415, prop); // hit chance increase ~1_val~%
-            }
-
-            if ((prop = Attributes.BonusHits) != 0)
-            {
-                list.Add(1060431, prop); // hit point increase ~1_val~
-            }
-
-            if ((prop = Attributes.BonusInt) != 0)
-            {
-                list.Add(1060432, prop); // intelligence bonus ~1_val~
-            }
-
-            if ((prop = Attributes.LowerManaCost) != 0)
-            {
-                list.Add(1060433, prop); // lower mana cost ~1_val~%
-            }
-
-            if ((prop = Attributes.LowerRegCost) != 0)
-            {
-                list.Add(1060434, prop); // lower reagent cost ~1_val~%
-            }
-
-            if ((prop = ClothingAttributes.LowerStatReq) != 0)
-            {
-                list.Add(1060435, prop); // lower requirements ~1_val~%
-            }
-
-            if ((prop = Attributes.Luck) != 0)
-            {
-                list.Add(1060436, prop); // luck ~1_val~
-            }
-
-            if (ClothingAttributes.MageArmor != 0)
-            {
-                list.Add(1060437); // mage armor
-            }
-
-            if ((prop = Attributes.BonusMana) != 0)
-            {
-                list.Add(1060439, prop); // mana increase ~1_val~
-            }
-
-            if ((prop = Attributes.RegenMana) != 0)
-            {
-                list.Add(1060440, prop); // mana regeneration ~1_val~
-            }
-
-            if (Attributes.NightSight != 0)
-            {
-                list.Add(1060441); // night sight
-            }
-
-            if ((prop = Attributes.ReflectPhysical) != 0)
-            {
-                list.Add(1060442, prop); // reflect physical damage ~1_val~%
-            }
-
-            if ((prop = Attributes.RegenStam) != 0)
-            {
-                list.Add(1060443, prop); // stamina regeneration ~1_val~
-            }
-
-            if ((prop = Attributes.RegenHits) != 0)
-            {
-                list.Add(1060444, prop); // hit point regeneration ~1_val~
-            }
-
-            if ((prop = ClothingAttributes.SelfRepair) != 0)
-            {
-                list.Add(1060450, prop); // self repair ~1_val~
-            }
-
-            if (Attributes.SpellChanneling != 0)
-            {
-                list.Add(1060482); // spell channeling
-            }
-
-            if ((prop = Attributes.SpellDamage) != 0)
-            {
-                list.Add(1060483, prop); // spell damage increase ~1_val~%
-            }
-
-            if ((prop = Attributes.BonusStam) != 0)
-            {
-                list.Add(1060484, prop); // stamina increase ~1_val~
-            }
-
-            if ((prop = Attributes.BonusStr) != 0)
-            {
-                list.Add(1060485, prop); // strength bonus ~1_val~
-            }
-
-            if ((prop = Attributes.WeaponSpeed) != 0)
-            {
-                list.Add(1060486, prop); // swing speed increase ~1_val~%
-            }
-
-            if (Core.ML && (prop = Attributes.IncreasedKarmaLoss) != 0)
-            {
-                list.Add(1075210, prop); // Increased Karma Loss ~1val~%
-            }
+            Attributes.GetProperties(list);
 
             AddResistanceProperties(list);
 
             if ((prop = ClothingAttributes.DurabilityBonus) > 0)
             {
                 list.Add(1060410, prop); // durability ~1_val~%
+            }
+
+            var lowerStatReq = ClothingAttributes.LowerStatReq;
+            if (lowerStatReq != 0)
+            {
+                list.Add(1060435, lowerStatReq); // lower requirements ~1_val~%
             }
 
             if ((prop = ComputeStatReq(StatType.Str)) > 0)
@@ -1014,8 +872,6 @@ namespace Server.Items
             InvalidateProperties();
         }
 
-        private static bool GetSaveFlag(OldSaveFlag flags, OldSaveFlag toGet) => (flags & toGet) != 0;
-
         [AfterDeserialization]
         private void AfterDeserialization()
         {
@@ -1036,21 +892,5 @@ namespace Server.Items
             }
         }
 
-        [Flags]
-        private enum OldSaveFlag
-        {
-            None = 0x00000000,
-            Resource = 0x00000001,
-            Attributes = 0x00000002,
-            ClothingAttributes = 0x00000004,
-            SkillBonuses = 0x00000008,
-            Resistances = 0x00000010,
-            MaxHitPoints = 0x00000020,
-            HitPoints = 0x00000040,
-            PlayerConstructed = 0x00000080,
-            Crafter = 0x00000100,
-            Quality = 0x00000200,
-            StrReq = 0x00000400
-        }
     }
 }

@@ -5,6 +5,7 @@ using Server.ContextMenus;
 using Server.Engines.Quests;
 using Server.Regions;
 using Server.Spells;
+using Server.Mobiles;
 using Server.Targeting;
 
 namespace Server.Items;
@@ -35,50 +36,41 @@ public partial class BagOfSending : Item, TranslocationItem
 
     public override int LabelNumber => 1054104; // a bag of sending
 
-    [SerializableProperty(0)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public BagOfSendingHue BagOfSendingHue
-    {
-        get => _bagOfSendingHue;
-        set
-        {
-            _bagOfSendingHue = value;
+    [SerializableField(0, fieldChanged: nameof(OnBagOfSendingHueChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private BagOfSendingHue _bagOfSendingHue;
 
-            Hue = value switch
-            {
-                BagOfSendingHue.Yellow => 0x8A5,
-                BagOfSendingHue.Blue   => 0x8AD,
-                BagOfSendingHue.Red    => 0x89B,
-                _                      => Hue
-            };
-            this.MarkDirty();
-        }
+    private void OnBagOfSendingHueChanged(BagOfSendingHue oldValue, BagOfSendingHue newValue)
+    {
+        Hue = newValue switch
+        {
+            BagOfSendingHue.Yellow => 0x8A5,
+            BagOfSendingHue.Blue   => 0x8AD,
+            BagOfSendingHue.Red    => 0x89B,
+            _                      => Hue
+        };
     }
 
-    [SerializableProperty(1)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public int Charges
+    [SerializableField(1, allowFieldChange: nameof(AllowChargesChange))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    [InvalidateProperties]
+    private int _charges;
+
+    private bool AllowChargesChange(ref int value)
     {
-        get => _charges;
-        set
-        {
-            _charges = Math.Clamp(value, 0, MaxCharges);
-            InvalidateProperties();
-            this.MarkDirty();
-        }
+        value = Math.Clamp(value, 0, MaxCharges);
+        return true;
     }
 
-    [SerializableProperty(2)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public int Recharges
+    [SerializableField(2, allowFieldChange: nameof(AllowRechargesChange))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    [InvalidateProperties]
+    private int _recharges;
+
+    private bool AllowRechargesChange(ref int value)
     {
-        get => _recharges;
-        set
-        {
-            _recharges = Math.Clamp(value, 0, MaxRecharges);
-            InvalidateProperties();
-            this.MarkDirty();
-        }
+        value = Math.Clamp(value, 0, MaxRecharges);
+        return true;
     }
 
     [CommandProperty(AccessLevel.GameMaster)]
@@ -233,16 +225,35 @@ public partial class BagOfSending : Item, TranslocationItem
             {
                 from.SendLocalizedMessage(1079932); // You don't have enough charges to send that much weight
             }
-            else if (!from.BankBox.TryDropItem(from, item, false))
-            {
-                _bag.SendLocalizedMessageTo(from, 1054110, 0x59); // Your bank box is full.
-            }
             else
             {
-                _bag.Charges -= Core.ML ? reqCharges : 1;
+                bool sent;
 
-                // The item was placed in your bank box.
-                _bag.SendLocalizedMessageTo(from, 1054150, 0x59);
+                if (item is Gold or BankCheck)
+                {
+                    var amount = (item as Gold)?.Amount ?? ((BankCheck)item).Worth;
+                    sent = Banker.Deposit(from, amount);
+                    if (sent)
+                    {
+                        item.Delete();
+                    }
+                }
+                else
+                {
+                    sent = from.BankBox.TryDropItem(from, item, false);
+                }
+
+                if (sent)
+                {
+                    _bag.Charges -= Core.ML ? reqCharges : 1;
+
+                    // The item was placed in your bank box.
+                    _bag.SendLocalizedMessageTo(from, 1054150, 0x59);
+                }
+                else
+                {
+                    _bag.SendLocalizedMessageTo(from, 1054110, 0x59); // Your bank box is full.
+                }
             }
         }
     }

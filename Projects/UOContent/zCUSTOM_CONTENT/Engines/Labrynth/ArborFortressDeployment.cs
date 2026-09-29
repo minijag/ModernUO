@@ -49,9 +49,9 @@ public static class ArborFortressDeployment
         var portals=World.Items.Values.Where(i=>i.Map==Map.Felucca&&i.Parent==null&&Obsolete(i)&&(i is Teleporter||i is Static&&!i.Movable)).ToArray();if(portals.Count(i=>i is Teleporter)!=2||portals.Count(i=>i is Static)!=2)throw new Exception("Old deck portal inventory mismatch");
         string audit=$"Audit passed: 26 existing spawners, 2 obsolete deck portal pairs, {mobs.Length} wild occupants; no players, pets, houses or unknown items.";File.WriteAllText(Path.Combine(Data,"audit.txt"),audit);Console.WriteLine("[ArborMazeV4] "+audit);
         if(!File.Exists(Path.Combine(Data,"install.pending")))return;if(File.Exists(Path.Combine(Data,"installed.txt")))throw new Exception("Already installed");
-        var options=JsonConfig.GetOptions();var selected=JsonConfig.Deserialize<List<DynamicJson>>(Path.Combine(Core.BaseDirectory,"zodiac.json")).Where(j=>j.GetProperty("guid",options,out Guid id)&&m.AllSpawnerGuids.Contains(id)).ToArray();
+        var options=SpawnerJsonSerializer.Options;var selected=JsonConfig.Deserialize<List<SpawnerDto>>(Path.Combine(Core.BaseDirectory,"zodiac.json"), options).Where(j=>(j.Guid is var id)&&m.AllSpawnerGuids.Contains(id)).ToArray();
         if(selected.Length!=27)throw new Exception("Spawner definition mismatch");
-        var targets=selected.Select(j=>{j.GetProperty("location",options,out Point3D p);return p;}).ToArray();
+        var targets=selected.Select(j=>{Point3D p = j.Location;return p;}).ToArray();
         var tele=JsonConfig.Deserialize<List<TeleporterDefinition>>(Path.Combine(Core.BaseDirectory,"Data","teleporters.json")).Where(t=>t.Source.Map==Map.Felucca&&m.AllPortals.Any(p=>p.X==t.Source.X&&p.Y==t.Source.Y&&p.Z==t.Source.Z)).ToArray();if(tele.Length!=9)throw new Exception("Teleporter definition mismatch");
         var bad=new List<string>();foreach(var p in targets)if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))bad.Add($"spawn {p}");
         foreach(var t in tele)foreach(var p in new[]{new Point3D(t.Source.X,t.Source.Y,t.Source.Z),new Point3D(t.Destination.X,t.Destination.Y,t.Destination.Z)})if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))bad.Add($"portal {p}");
@@ -73,7 +73,7 @@ public static class ArborFortressDeployment
         if(bad.Count>0)throw new Exception("Movement checks: "+string.Join("; ",bad.Take(40)));
         Console.WriteLine($"[ArborMazeV4] Real movement passed: {reached.Count} reachable positions, all {platforms.Length} standable elevated floor tiles, bridge, both stairs and all 27 spawn points.");
         foreach(var summon in World.Mobiles.Values.Where(BossSummon).ToArray())summon.Delete();foreach(var i in portals)i.Delete();
-        foreach(var j in selected){j.GetProperty("guid",options,out Guid id);j.GetProperty("location",options,out Point3D p);j.GetProperty("count",options,out int count);var s=old.SingleOrDefault(s=>s.Guid==id);if(s==null)s=new Spawner(j,options);else{s.Count=count;foreach(var entry in s.Entries)entry.SpawnedMaxCount=count;}s.MoveToWorld(p,Map.Felucca);s.Respawn();}
+        foreach(var j in selected){Guid id = j.Guid;Point3D p = j.Location;int count = j.Count;var s=old.SingleOrDefault(s=>s.Guid==id);if(s==null)s=(Spawner)j.ToSpawner();else{s.Count=count;foreach(var entry in s.Entries)entry.SpawnedMaxCount=count;}s.MoveToWorld(p,Map.Felucca);s.Respawn();}
         int rescued=0;foreach(var mob in mobs)if(!mob.Deleted&&!Map.Felucca.CanFit(mob.X,mob.Y,mob.Z,16,false,false)){var p=targets.Where(p=>p.Z==0).OrderBy(p=>Math.Abs(p.X-mob.X)+Math.Abs(p.Y-mob.Y)).First();mob.MoveToWorld(p,Map.Felucca);rescued++;}
         File.WriteAllText(Path.Combine(Data,"installed.txt"),$"27 spawners, target population 69. Physical stairs replace 2 deck portal pairs. Rescued {rescued} stranded creatures. Pending save.");Console.WriteLine("[ArborMazeV4] Installed. Saving in ten seconds.");Timer.DelayCall(TimeSpan.FromSeconds(10),World.Save);
     }

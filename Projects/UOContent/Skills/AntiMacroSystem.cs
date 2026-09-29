@@ -5,7 +5,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 using ModernUO.CodeGeneratedEvents;
-using Server.Collections;
 using Server.Json;
 using Server.Mobiles;
 
@@ -120,22 +119,16 @@ public static class AntiMacroSystem
 
         var now = Core.Now;
 
-        using var toRemove = PooledRefQueue<Mobile>.Create();
         foreach (var (m, antiMacro) in _antiMacroTable)
         {
             if (antiMacro._lastExpiration <= now)
             {
-                toRemove.Enqueue(m);
+                _antiMacroTable.Remove(m);
             }
             else
             {
                 antiMacro.CleanExpired();
             }
-        }
-
-        while (toRemove.Count > 0)
-        {
-            _antiMacroTable.Remove(toRemove.Dequeue());
         }
     }
 
@@ -203,7 +196,7 @@ public static class AntiMacroSystem
         _antiMacroTable ??= new Dictionary<Mobile, PlayerAntiMacro>();
 
         // Hot path so use optimized code
-        ref PlayerAntiMacro antiMacro = ref CollectionsMarshal.GetValueRefOrAddDefault(_antiMacroTable, pm, out var exists);
+        ref var antiMacro = ref CollectionsMarshal.GetValueRefOrAddDefault(_antiMacroTable, pm, out var exists);
         if (!exists)
         {
             antiMacro = new PlayerAntiMacro();
@@ -241,8 +234,8 @@ public static class AntiMacroSystem
             var now = Core.Now;
 
             // Potential hot path, so use optimized code
-            ref CountAndTimeStamp _countTimeStamp =
-                ref CollectionsMarshal.GetValueRefOrAddDefault(_antiMacroTracking, (skill, obj), out bool exists);
+            ref var _countTimeStamp =
+                ref CollectionsMarshal.GetValueRefOrAddDefault(_antiMacroTracking, (skill, obj), out var exists);
 
             _countTimeStamp._count++;
 
@@ -259,19 +252,12 @@ public static class AntiMacroSystem
         {
             var now = Core.Now;
 
-            using var toRemove = PooledRefQueue<(Skill, object)>.Create();
-
             foreach (var (key, countAndTimeStamp) in _antiMacroTracking)
             {
                 if (countAndTimeStamp._count <= 0 || countAndTimeStamp._expiration <= now)
                 {
-                    toRemove.Enqueue(key);
+                    _antiMacroTracking.Remove(key);
                 }
-            }
-
-            while (toRemove.Count > 0)
-            {
-                _antiMacroTracking.Remove(toRemove.Dequeue());
             }
         }
     }

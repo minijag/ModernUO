@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: UnmanagedDataReader.cs                                          *
  *                                                                       *
@@ -42,6 +42,8 @@ public unsafe class UnmanagedDataReader : IGenericReader
     /// How many bits deep into the file is the reader at currently.
     /// </summary>
     public long Position { get; private set; }
+
+    public TimeSpan AnchoredTimeShift { get; set; }
 
     /// <summary>
     /// Read bits of data raw from a serialized file using Little-endian.

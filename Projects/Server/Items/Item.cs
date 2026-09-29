@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2025 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: Item.cs                                                         *
  *                                                                       *
@@ -14,6 +14,7 @@
  *************************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -131,7 +132,7 @@ public class BounceInfo
             var loc = reader.ReadPoint3D();
             var worldLoc = reader.ReadPoint3D();
 
-            IEntity parent = reader.ReadEntity<IEntity>();
+            var parent = reader.ReadEntity<IEntity>();
 
             return new BounceInfo(map, loc, worldLoc, parent);
         }
@@ -208,6 +209,10 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
     private ItemDelta m_DeltaFlags;
     private Direction m_Direction;
     private ImplFlag m_Flags;
+
+    // Where DecayScheduler tracks this item. Not serialized; PostDeserialize re-registers.
+    internal sbyte DecaySlot = DecayScheduler.SlotNone;
+
     private int m_Hue;
     private int m_ItemID;
     private Layer m_Layer;
@@ -225,12 +230,12 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         m_ItemID = itemID;
         Serial = World.NewItem;
 
-        Visible = true;
-        Movable = true;
+        // Assigned directly: the Visible/Movable setters and SetLastMoved() would register the item
+        // for decay while m_Map is still null, then unregister it once it is Map.Internal.
+        m_Flags = ImplFlag.Visible | ImplFlag.Movable;
         Amount = 1;
         m_Map = Map.Internal;
-
-        SetLastMoved();
+        LastMoved = Core.Now;
 
         World.AddEntity(this);
     }
@@ -330,7 +335,25 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
     [CommandProperty(AccessLevel.GameMaster)]
     public virtual bool Decays => Movable && Visible && Spawner == null;
 
-    public DateTime LastMoved { get; set; }
+    private DateTime _lastMoved;
+
+    public DateTime LastMoved
+    {
+        get => _lastMoved;
+        set
+        {
+            _lastMoved = value;
+
+            // A move at or past the reset stamp supersedes it; drop it so the CompactInfo can collapse.
+            var info = LookupCompactInfo();
+
+            if (info != null && info.m_DecayReset != default && info.m_DecayReset <= value)
+            {
+                info.m_DecayReset = default;
+                VerifyCompactInfo();
+            }
+        }
+    }
 
     [CommandProperty(AccessLevel.GameMaster)]
     public bool Stackable
@@ -353,7 +376,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 {
                     var worldLoc = GetWorldLocation();
 
-                    Span<byte> removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
+                    var removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
 
                     foreach (var state in m_Map.GetClientsInRange(worldLoc, GetMaxUpdateRange()))
                     {
@@ -368,6 +391,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 }
 
                 Delta(ItemDelta.Update);
+                RestartDecay();
             }
         }
     }
@@ -383,6 +407,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 SetFlag(ImplFlag.Movable, value);
 
                 Delta(ItemDelta.Update);
+                RestartDecay();
             }
         }
     }
@@ -401,8 +426,14 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         get => GetTempFlag(LockedDownFlag);
         set
         {
+            if (GetTempFlag(LockedDownFlag) == value)
+            {
+                return;
+            }
+
             SetTempFlag(LockedDownFlag, value);
             InvalidateProperties();
+            OnSecurityChanged();
         }
     }
 
@@ -412,8 +443,26 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         get => GetTempFlag(SecureFlag);
         set
         {
+            if (GetTempFlag(SecureFlag) == value)
+            {
+                return;
+            }
+
             SetTempFlag(SecureFlag, value);
             InvalidateProperties();
+            OnSecurityChanged();
+        }
+    }
+
+    // Lockdown and secure status decide whether this item and, for a container, its direct
+    // contents are decay-eligible (see CanDecay); re-evaluate both.
+    private void OnSecurityChanged()
+    {
+        UpdateDecayRegistration();
+
+        if (this is Container container)
+        {
+            container.UpdateContentsDecayRegistration();
         }
     }
 
@@ -474,25 +523,27 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         }
         set
         {
-            if (Weight != value)
+            var defaultWeight = DefaultWeight;
+            var info = LookupCompactInfo();
+            var oldWeight = info is { m_Weight: >= 0 } ? info.m_Weight : defaultWeight;
+
+            if (oldWeight == value)
             {
-                var info = AcquireCompactInfo();
-
-                var oldPileWeight = PileWeight;
-
-                info.m_Weight = value;
-
-                if (info.m_Weight < 0)
-                {
-                    VerifyCompactInfo();
-                }
-
-                var newPileWeight = PileWeight;
-
-                UpdateTotal(this, TotalType.Weight, newPileWeight - oldPileWeight);
-
-                InvalidateProperties();
+                return;
             }
+
+            if (value < 0 || defaultWeight == value)
+            {
+                info?.m_Weight = -1;
+                VerifyCompactInfo();
+            }
+            else
+            {
+                (info ?? AcquireCompactInfo()).m_Weight = value;
+            }
+
+            UpdateTotal(this, TotalType.Weight, PileWeight - (int)Math.Ceiling(oldWeight * Amount));
+            InvalidateProperties();
         }
     }
 
@@ -531,6 +582,14 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             }
         }
     }
+
+    // SendMobileIncoming (0x78) sends only the first item per layer (it dedupes via the
+    // `layers` span). Equipment Layer comes from tiledata, so e.g. a two-handed weapon and a
+    // shield both resolve to Layer.TwoHanded; a later same-layer item sent on its own via
+    // EquipUpdate (0x2E) or its OPL would leave the client holding two items on one equipment
+    // slot (a use-after-free on the legacy 2D client when that slot is later torn down).
+    // Returns true if this equipped item is such a later duplicate and must not be sent alone.
+    public bool IsDupedEquipLayer() => m_Parent is Mobile m && m.FindItemOnLayer(m_Layer) != this;
 
     public List<Item> Items => LookupItems() ?? EmptyItems;
 
@@ -595,19 +654,19 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         get => LookupCompactInfo()?.m_Name ?? DefaultName;
         set
         {
-            if (value == null || value != DefaultName)
+            var info = LookupCompactInfo();
+
+            if (value == null || value == DefaultName)
             {
-                var info = AcquireCompactInfo();
-
-                info.m_Name = value;
-
-                if (info.m_Name == null)
-                {
-                    VerifyCompactInfo();
-                }
-
-                InvalidateProperties();
+                info?.m_Name = null;
+                VerifyCompactInfo();
             }
+            else
+            {
+                (info ?? AcquireCompactInfo()).m_Name = value;
+            }
+
+            InvalidateProperties();
         }
     }
 
@@ -732,6 +791,12 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
     public static bool ScissorCopyLootType { get; set; }
 
+    /// <summary>
+    ///     True when the item was produced by the crafting system rather than bought or looted.
+    /// </summary>
+    [CommandProperty(AccessLevel.GameMaster)]
+    public bool PlayerConstructed { get; set; }
+
     [CommandProperty(AccessLevel.GameMaster)]
     public bool QuestItem
     {
@@ -782,7 +847,22 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
     public virtual int HuedItemID => m_ItemID;
 
-    public ObjectPropertyList PropertyList => m_PropertyList ??= InitializePropertyList(new ObjectPropertyList(this));
+    public ObjectPropertyList PropertyList
+    {
+        get
+        {
+            if (m_PropertyList == null)
+            {
+                // Publish the list before building it so a nested InvalidateProperties can see the
+                // build in progress and defer instead of recursing into a second throwaway list.
+                var list = new ObjectPropertyList(this);
+                m_PropertyList = list;
+                InitializePropertyList(list);
+            }
+
+            return m_PropertyList;
+        }
+    }
 
     /// <summary>
     ///     Overridable. Fills an <see cref="ObjectPropertyList" /> with everything applicable. By default, this invokes
@@ -805,13 +885,9 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
     [CommandProperty(AccessLevel.Counselor)]
     public Serial Serial { get; }
 
-    public byte SerializedThread { get; set; }
-    public int SerializedPosition { get; set; }
-    public int SerializedLength { get; set; }
-
     public virtual void Serialize(IGenericWriter writer)
     {
-        writer.Write(9); // version
+        writer.Write(11); // version
 
         var flags = SaveFlag.None;
 
@@ -921,6 +997,11 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             {
                 flags |= SaveFlag.SavedFlags;
             }
+
+            if (info.m_DecayReset > LastMoved)
+            {
+                flags |= SaveFlag.DecayReset;
+            }
         }
 
         if (info == null || info.m_Weight < 0)
@@ -951,16 +1032,21 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             flags |= SaveFlag.ImplFlags;
         }
 
+        if (PlayerConstructed)
+        {
+            flags |= SaveFlag.PlayerConstructed;
+        }
+
         writer.Write((int)flags);
 
-        /* begin last moved time optimization */
-        var ticks = LastMoved.Ticks;
-        var now = Core.Now.Ticks;
+        // Anchored: shifted by downtime at load, so time-since-moved is preserved and the
+        // bytes are stable across saves while the item does not move.
+        writer.WriteAnchoredTime(LastMoved);
 
-        var minutes = new TimeSpan(now - ticks).TotalMinutes;
-
-        writer.WriteEncodedInt((int)Math.Clamp(minutes, int.MinValue, int.MaxValue));
-        /* end */
+        if (GetSaveFlag(flags, SaveFlag.DecayReset))
+        {
+            writer.WriteAnchoredTime(info.m_DecayReset);
+        }
 
         if (GetSaveFlag(flags, SaveFlag.Direction))
         {
@@ -1095,7 +1181,9 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         var oldLocation = GetWorldLocation();
         var oldRealLocation = m_Location;
 
-        SetLastMoved();
+        // Register at the end instead: CanDecay() reads parent, map and location, none of which
+        // are final yet.
+        LastMoved = Core.Now;
 
         if (Parent is Mobile mobile)
         {
@@ -1137,9 +1225,9 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
             if (m_Map != null)
             {
-                Span<byte> oldWorldItem = stackalloc byte[OutgoingEntityPackets.MaxWorldEntityPacketLength].InitializePacket();
-                Span<byte> saWorldItem = stackalloc byte[OutgoingEntityPackets.MaxWorldEntityPacketLength].InitializePacket();
-                Span<byte> hsWorldItem = stackalloc byte[OutgoingEntityPackets.MaxWorldEntityPacketLength].InitializePacket();
+                var oldWorldItem = stackalloc byte[OutgoingEntityPackets.MaxWorldEntityPacketLength].InitializePacket();
+                var saWorldItem = stackalloc byte[OutgoingEntityPackets.MaxWorldEntityPacketLength].InitializePacket();
+                var hsWorldItem = stackalloc byte[OutgoingEntityPackets.MaxWorldEntityPacketLength].InitializePacket();
 
                 foreach (var state in m_Map.GetClientsInRange(m_Location, GetMaxUpdateRange()))
                 {
@@ -1192,7 +1280,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         {
             if (oldLocation.m_X != 0)
             {
-                Span<byte> removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
+                var removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
 
                 foreach (var state in m_Map.GetClientsInRange(oldLocation, GetMaxUpdateRange()))
                 {
@@ -1230,6 +1318,8 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             Map = map;
             Location = location;
         }
+
+        UpdateDecayRegistration();
     }
 
     /// <summary>
@@ -1274,6 +1364,12 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 Delta(ItemDelta.Update);
 
                 OnMapChange();
+
+                if (m_Parent == null)
+                {
+                    // A map change is a move; nothing else updates decay registration for a raw Map change.
+                    SetLastMoved();
+                }
 
                 if (old == null || old == Map.Internal)
                 {
@@ -1383,6 +1479,14 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             return;
         }
 
+        // A second item sharing an equipment layer is omitted by SendMobileIncoming (0x78);
+        // sending it on its own via EquipUpdate/OPL would leave the client with two items on
+        // one slot. Skip the per-client sends entirely for the dupe.
+        if (IsDupedEquipLayer())
+        {
+            return;
+        }
+
         foreach (var state in map.GetClientsInRange(worldLoc, GetMaxUpdateRange()))
         {
             var m = state.Mobile;
@@ -1434,6 +1538,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         }
 
         OnDelete();
+        DecayScheduler.Unregister(this);
 
         var items = LookupItems();
 
@@ -1476,6 +1581,8 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         ClearProperties();
     }
 
+    public virtual bool SkipSerialization => false;
+
     [IgnoreDupe]
     public ISpawner Spawner
     {
@@ -1483,12 +1590,18 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         set
         {
             var info = AcquireCompactInfo();
+            var oldValue = info.m_Spawner;
 
             info.m_Spawner = value;
 
             if (info.m_Spawner == null)
             {
                 VerifyCompactInfo();
+            }
+
+            if (oldValue != value)
+            {
+                RestartDecay();
             }
         }
     }
@@ -1520,7 +1633,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 {
                     if (m_Location.m_X != 0)
                     {
-                        Span<byte> removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
+                        var removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
 
                         foreach (var state in m_Map.GetClientsInRange(oldLocation, GetMaxUpdateRange()))
                         {
@@ -1682,6 +1795,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                       || info.m_HeldBy != null
                       || info.m_BlessedFor != null
                       || info.m_Spawner != null
+                      || info.m_DecayReset != default
                       || info.m_TempFlags != 0
                       || info.m_SavedFlags != 0
                       || info.m_Weight >= 0;
@@ -1692,13 +1806,13 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         }
     }
 
-    public List<Item> LookupItems() => (this is Container container ? container.m_Items : LookupCompactInfo()?.m_Items) ?? EmptyItems;
+    public List<Item> LookupItems() => (this is Container container ? container._items : LookupCompactInfo()?.m_Items) ?? EmptyItems;
 
     public List<Item> AcquireItems()
     {
         if (this is Container cont)
         {
-            return cont.m_Items ??= new List<Item>();
+            return cont._items ??= new List<Item>();
         }
 
         var info = AcquireCompactInfo();
@@ -1851,7 +1965,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         {
             list.Add(1049643); // cursed
         }
-        else if (Insured)
+        else if (ServerFeatureFlags.InsuranceEnabled && Insured)
         {
             list.Add(1061682); // <b>insured</b>
         }
@@ -2179,7 +2293,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             return DeathMoveResult.MoveToBackpack;
         }
 
-        if (CheckNewbied() && parent.Kills < 5)
+        if (CheckNewbied() && !parent.Murderer)
         {
             return DeathMoveResult.MoveToBackpack;
         }
@@ -2209,7 +2323,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             return DeathMoveResult.MoveToBackpack;
         }
 
-        if (CheckNewbied() && parent.Kills < 5)
+        if (CheckNewbied() && !parent.Murderer)
         {
             return DeathMoveResult.MoveToBackpack;
         }
@@ -2261,14 +2375,95 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
     public bool AtPoint(int x, int y) => m_Location.m_X == x && m_Location.m_Y == y;
 
-    public virtual bool CanDecay() => Decays && Parent == null && Map != Map.Internal;
+    // Ground items decay; so do the direct contents of a container whose ContentsDecay is true
+    // (a locked-down, non-secure house container), unless the content item is itself locked
+    // down or secured. Nested containers do not propagate: only direct children qualify.
+    public virtual bool CanDecay() =>
+        Decays && Map != Map.Internal &&
+        (Parent == null || Parent is Container { ContentsDecay: true } && !IsLockedDown && !IsSecure);
 
     public virtual bool OnDecay() =>
-        CanDecay() && Region.Find(Location, Map).OnDecay(this);
+        CanDecay() && Region.Find(GetWorldLocation(), Map).OnDecay(this);
+
+    public DateTime ScheduledDecayTime
+    {
+        get
+        {
+            var reset = DecayResetTime;
+            var lastMoved = LastMoved;
+
+            return (reset > lastMoved ? reset : lastMoved) + DecayTime;
+        }
+    }
+
+    /// <summary>
+    /// When decay eligibility was last restored without the item moving, e.g. a GM unfreezing it.
+    /// The decay countdown runs from the later of this and <see cref="LastMoved" />.
+    /// </summary>
+    public DateTime DecayResetTime
+    {
+        get => LookupCompactInfo()?.m_DecayReset ?? default;
+        private set
+        {
+            if (value == default)
+            {
+                var info = LookupCompactInfo();
+
+                if (info != null && info.m_DecayReset != default)
+                {
+                    info.m_DecayReset = default;
+                    VerifyCompactInfo();
+                }
+            }
+            else
+            {
+                AcquireCompactInfo().m_DecayReset = value;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Restarts the decay countdown without touching <see cref="LastMoved" />: call when decay
+    /// eligibility changes state (Movable/Visible/Spawner) or a region refuses a decay, where a
+    /// stale <see cref="LastMoved" /> would otherwise decay the item on the next tick.
+    /// Stamps <see cref="DecayResetTime" /> only when that extends the current deadline, then
+    /// updates the scheduler registration.
+    /// </summary>
+    public void RestartDecay()
+    {
+        if (CanDecay())
+        {
+            var now = Core.Now;
+
+            if (ScheduledDecayTime < now + DecayTime)
+            {
+                DecayResetTime = now;
+            }
+        }
+
+        UpdateDecayRegistration();
+    }
+
+    public void UpdateDecayRegistration()
+    {
+        DecayScheduler.Unregister(this);
+
+        if (CanDecay())
+        {
+            DecayScheduler.Register(this);
+        }
+        else
+        {
+            // No countdown to anchor while ineligible; drop the stamp so the CompactInfo
+            // can collapse. Re-eligibility always re-anchors.
+            DecayResetTime = default;
+        }
+    }
 
     public void SetLastMoved()
     {
         LastMoved = Core.Now;
+        UpdateDecayRegistration();
     }
 
     public virtual bool CanStackWith(Item dropped) =>
@@ -2295,6 +2490,11 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         }
 
         Amount += dropped.Amount;
+        if (PlayerConstructed != dropped.PlayerConstructed)
+        {
+            PlayerConstructed = false;
+        }
+
         dropped.Delete();
 
         if (playSound && from != null)
@@ -2383,9 +2583,19 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
     private ObjectPropertyList InitializePropertyList(ObjectPropertyList list)
     {
-        GetProperties(list);
-        AppendChildProperties(list);
-        list.Terminate();
+        list.IsBuilding = true;
+
+        try
+        {
+            GetProperties(list);
+            AppendChildProperties(list);
+            list.Terminate();
+        }
+        finally
+        {
+            list.IsBuilding = false;
+        }
+
         return list;
     }
 
@@ -2400,6 +2610,26 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         if (!ObjectPropertyList.Enabled)
         {
             return;
+        }
+
+        // Always a bug in the property getter, and there is no correct recovery: refuse rather than
+        // hide it. RELEASE keeps a possibly stale tooltip, DEBUG throws.
+        // See dev-docs/property-lists.md "Never Invalidate From Inside GetProperties".
+        if (m_PropertyList?.IsBuilding == true)
+        {
+            logger.Error(
+                "{Entity} called InvalidateProperties() while its property list was being built. Remove the side effect from the property getter, or defer it with Timer.DelayCall.\n{StackTrace}",
+                this,
+                new StackTrace()
+            );
+
+#if DEBUG
+            throw new InvalidOperationException(
+                $"{this} invalidated its property list from inside GetProperties. Remove the side effect from the property getter."
+            );
+#else
+            return;
+#endif
         }
 
         if (m_Map != null && m_Map != Map.Internal && !World.Loading)
@@ -2559,10 +2789,14 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
     {
         var version = reader.ReadInt();
 
-        SetLastMoved();
+        // Default for versions without a saved value. Stamp only: map and parent are still unread,
+        // and PostDeserialize registers every item once its state is final.
+        LastMoved = Core.Now;
 
         switch (version)
         {
+            case 11:
+            case 10:
             case 9:
             case 8:
             case 7:
@@ -2570,7 +2804,11 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 {
                     var flags = (SaveFlag)reader.ReadInt();
 
-                    if (version < 7)
+                    if (version >= 11)
+                    {
+                        LastMoved = reader.ReadAnchoredTime();
+                    }
+                    else if (version < 7)
                     {
                         LastMoved = reader.ReadDeltaTime();
                     }
@@ -2585,6 +2823,18 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                         catch
                         {
                             LastMoved = Core.Now;
+                        }
+                    }
+
+                    if (version >= 10 && GetSaveFlag(flags, SaveFlag.DecayReset))
+                    {
+                        var reset = version >= 11 ? reader.ReadAnchoredTime() : reader.ReadDeltaTime();
+
+                        // Pre-v11 LastMoved was stored at whole-minute precision; keep the
+                        // stamp only while it still extends the deadline.
+                        if (reset > LastMoved)
+                        {
+                            DecayResetTime = reset;
                         }
                     }
 
@@ -2661,7 +2911,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
                     if (GetSaveFlag(flags, SaveFlag.Parent))
                     {
-                        Serial parent = reader.ReadSerial();
+                        var parent = reader.ReadSerial();
 
                         if (parent.IsMobile)
                         {
@@ -2688,7 +2938,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
                         if (this is Container)
                         {
-                            (this as Container).m_Items = items;
+                            (this as Container)._items = items;
                         }
                         else
                         {
@@ -2760,6 +3010,8 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                         AcquireCompactInfo().m_SavedFlags = reader.ReadEncodedInt();
                     }
 
+                    PlayerConstructed = GetSaveFlag(flags, SaveFlag.PlayerConstructed);
+
                     if (m_Map != null && m_Parent == null)
                     {
                         m_Map.OnEnter(this);
@@ -2822,7 +3074,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
                     if (GetSaveFlag(flags, SaveFlag.Parent))
                     {
-                        Serial parent = reader.ReadSerial();
+                        var parent = reader.ReadSerial();
 
                         if (parent.IsMobile)
                         {
@@ -2849,7 +3101,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
                         if (this is Container cont)
                         {
-                            cont.m_Items = items;
+                            cont._items = items;
                         }
                         else
                         {
@@ -2940,7 +3192,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                         AcquireCompactInfo().m_Name = name;
                     }
 
-                    Serial parent = reader.ReadSerial();
+                    var parent = reader.ReadSerial();
 
                     if (parent.IsMobile)
                     {
@@ -2978,7 +3230,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
                         if (this is Container cont)
                         {
-                            cont.m_Items = items;
+                            cont._items = items;
                         }
                         else
                         {
@@ -3203,6 +3455,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         }
 
         item.Delta(ItemDelta.Update);
+        item.UpdateDecayRegistration();
 
         item.OnAdded(this);
         OnItemAdded(item);
@@ -3229,6 +3482,12 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
     {
         m_DeltaFlags &= ~flags;
     }
+
+    /// <summary>
+    /// True when deltas remain queued after a <see cref="ProcessDeltaQueue"/> pass, which is
+    /// bounded by the count it saw on entry. The event loop consults this before sleeping.
+    /// </summary>
+    public static bool HasQueuedDeltas => m_DeltaQueue.Count > 0;
 
     public static void ProcessDeltaQueue()
     {
@@ -3285,68 +3544,6 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         Delete();
     }
 
-    public void PublicOverheadMessage(MessageType type, int hue, bool ascii, string text)
-    {
-        if (m_Map == null)
-        {
-            return;
-        }
-
-        var worldLoc = GetWorldLocation();
-
-        Span<byte> buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLength(text)].InitializePacket();
-
-        foreach (var state in m_Map.GetClientsInRange(worldLoc, GetMaxUpdateRange()))
-        {
-            var m = state.Mobile;
-
-            if (m.CanSee(this) && m.InRange(worldLoc, GetUpdateRange(m)))
-            {
-                var length = OutgoingMessagePackets.CreateMessage(
-                    buffer, Serial, m_ItemID, type, hue, 3, ascii, "ENU", Name, text
-                );
-
-                if (length != buffer.Length)
-                {
-                    buffer = buffer[..length]; // Adjust to the actual size
-                }
-
-                state.Send(buffer);
-            }
-        }
-    }
-
-    public void PublicOverheadMessage(MessageType type, int hue, int number, string args = "")
-    {
-        if (m_Map == null)
-        {
-            return;
-        }
-
-        var worldLoc = GetWorldLocation();
-
-        Span<byte> buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLocalizedLength(args)].InitializePacket();
-
-        foreach (var state in m_Map.GetClientsInRange(worldLoc, GetMaxUpdateRange()))
-        {
-            var m = state.Mobile;
-
-            if (m.CanSee(this) && m.InRange(worldLoc, GetUpdateRange(m)))
-            {
-                var length = OutgoingMessagePackets.CreateMessageLocalized(
-                    buffer, Serial, m_ItemID, type, hue, 3, number, Name, args
-                );
-
-                if (length != buffer.Length)
-                {
-                    buffer = buffer[..length]; // Adjust to the actual size
-                }
-
-                state.Send(buffer);
-            }
-        }
-    }
-
     public virtual void OnAfterDelete()
     {
     }
@@ -3372,6 +3569,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             }
 
             item.Parent = null;
+            item.UpdateDecayRegistration();
 
             item.OnRemoved(this);
             OnItemRemoved(item);
@@ -3397,7 +3595,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         for (var i = 0; i < props.Length; i++)
         {
             var p = props[i];
-            if (p.GetCustomAttribute(typeof(IgnoreDupeAttribute), true) != null || !p.CanRead || !p.CanWrite)
+            if (p.GetCustomAttribute<IgnoreDupeAttribute>(true) != null || !p.CanRead || !p.CanWrite)
             {
                 continue;
             }
@@ -3818,7 +4016,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             return;
         }
 
-        Span<byte> removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
+        var removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
 
         foreach (var state in m_Map.GetClientsInRange(worldLoc, GetMaxUpdateRange()))
         {
@@ -3867,37 +4065,6 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
             m_Location.m_X,
             m_Location.m_Y,
             m_Location.m_Z + ItemData.CalcHeight
-        );
-    }
-
-    public void SendLocalizedMessageTo(Mobile to, int number, string args = "")
-    {
-        if (Deleted || !to.CanSee(this))
-        {
-            return;
-        }
-
-        to.NetState.SendMessageLocalized(Serial, ItemID, MessageType.Regular, 0x3B2, 3, number, "", args);
-    }
-
-    public void SendLocalizedMessageTo(Mobile to, int number, AffixType affixType, string affix, string args)
-    {
-        if (Deleted || !to.CanSee(this))
-        {
-            return;
-        }
-
-        to.NetState.SendMessageLocalizedAffix(
-            Serial,
-            ItemID,
-            MessageType.Regular,
-            0x3B2,
-            3,
-            number,
-            "",
-            affixType,
-            affix,
-            args
         );
     }
 
@@ -4171,6 +4338,20 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 );
             }
         }
+        else if (m_Amount > 1)
+        {
+            ns.SendMessage(
+                Serial,
+                m_ItemID,
+                MessageType.Label,
+                0x3B2,
+                3,
+                false,
+                "ENU",
+                "",
+                $"{Name} : {m_Amount}"
+            );
+        }
         else
         {
             ns.SendMessage(
@@ -4182,7 +4363,7 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
                 false,
                 "ENU",
                 "",
-                $"{Name}{(m_Amount > 1 ? $" : {m_Amount}" : "")}"
+                $"{Name}"
             );
         }
     }
@@ -4245,12 +4426,12 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
     }
 
     public virtual bool CheckBlessed(Mobile m) =>
-        m_LootType == LootType.Blessed || Mobile.InsuranceEnabled && Insured || m != null && m == BlessedFor;
+        m_LootType == LootType.Blessed || ServerFeatureFlags.InsuranceEnabled && Insured || m != null && m == BlessedFor;
 
     public virtual bool CheckNewbied() => m_LootType == LootType.Newbied;
 
     public virtual bool IsStandardLoot() =>
-        (!Mobile.InsuranceEnabled || !Insured) && BlessedFor == null && m_LootType == LootType.Regular;
+        (!ServerFeatureFlags.InsuranceEnabled || !Insured) && BlessedFor == null && m_LootType == LootType.Regular;
 
     public override string ToString() => $"{Serial} \"{GetType().Name}\"";
 
@@ -4320,6 +4501,8 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
 
         public ISpawner m_Spawner;
 
+        public DateTime m_DecayReset;
+
         public int m_TempFlags;
 
         public double m_Weight = -1;
@@ -4357,6 +4540,8 @@ public partial class Item : IHued, IComparable<Item>, ISpawnable, IObjectPropert
         HeldBy = 0x00800000,
         IntWeight = 0x01000000,
         SavedFlags = 0x02000000,
-        NullWeight = 0x04000000
+        NullWeight = 0x04000000,
+        PlayerConstructed = 0x08000000,
+        DecayReset = 0x10000000
     }
 }

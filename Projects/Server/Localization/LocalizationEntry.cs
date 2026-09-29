@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: LocalizationEntry.cs                                            *
  *                                                                       *
@@ -51,10 +51,10 @@ public class LocalizationEntry
 
     private static void ParseText(string text, out string[] textSlices, out string stringFormatter)
     {
-        var sb = ValueStringBuilder.Create(256);
+        using var sb = ValueStringBuilder.Create(256);
         using var queue = PooledRefQueue<string>.Create();
 
-        bool hasMatch = false;
+        var hasMatch = false;
         var prevIndex = 0;
         foreach (Match match in _textRegex.Matches(text))
         {
@@ -81,8 +81,6 @@ public class LocalizationEntry
 
         textSlices = queue.ToArray();
         stringFormatter = hasMatch ? sb.ToString() : null;
-
-        sb.Dispose();
     }
 
     /// <summary>

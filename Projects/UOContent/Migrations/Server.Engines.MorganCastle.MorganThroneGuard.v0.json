@@ -1,0 +1,14 @@
+{
+  "version": 0,
+  "type": "Server.Engines.MorganCastle.MorganThroneGuard",
+  "properties": [
+    {
+      "name": "FacesEast",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

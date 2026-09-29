@@ -26,16 +26,16 @@ public static class NPCSpeeds
     public static int MinIdleSeconds { get; private set; }
     public static int MaxIdleSeconds { get; private set; }
 
-    public static void GetSpeeds(BaseCreature bc, out double activeSpeed, out double passiveSpeed)
+    // Null when the table is unloaded (test fixtures). Immutable after Configure, so creatures cache it.
+    public static SpeedClassEntry FindEntry(BaseCreature bc)
     {
         if ((bc.SpeedClass == SpeedLevel.None || !_speedsByLevel.TryGetValue(bc.SpeedClass, out var sp)) &&
             !_speedsByType.TryGetValue(bc.GetType(), out sp))
         {
-            sp = _speedsByLevel[SpeedLevel.Medium];
+            _speedsByLevel.TryGetValue(SpeedLevel.Medium, out sp);
         }
 
-        activeSpeed = sp.ActiveSpeed;
-        passiveSpeed = sp.PassiveSpeed;
+        return sp;
     }
 
     public static void RegisterSpeed(SpeedClassEntry entry)
@@ -77,6 +77,13 @@ public static class NPCSpeeds
 
         [JsonPropertyName("passive")]
         public double PassiveSpeed { get; init; }
+
+        // Movement clock (seconds per step); absent/0 = inherit the matching think value.
+        [JsonPropertyName("activeMove")]
+        public double ActiveMoveSpeed { get; init; }
+
+        [JsonPropertyName("passiveMove")]
+        public double PassiveMoveSpeed { get; init; }
 
         [JsonPropertyName("types")]
         public HashSet<Type> Types { get; init; }

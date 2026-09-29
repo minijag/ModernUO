@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ModernUO.Serialization;
 using Server.Collections;
 using Server.ContextMenus;
 using Server.Engines.BulkOrders;
@@ -11,6 +12,7 @@ using Server.Mobiles;
 using Server.Network;
 using Server.Regions;
 using Server.Logging;
+using Server.Systems.FeatureFlags;
 
 namespace Server.Mobiles
 {
@@ -23,7 +25,8 @@ namespace Server.Mobiles
         ThighBoots
     }
 
-    public abstract class BaseVendor : BaseCreature, IVendor
+    [SerializationGenerator(2, false)]
+    public abstract partial class BaseVendor : BaseCreature, IVendor
     {
         private static readonly ILogger logger = LogFactory.GetLogger(typeof(BaseVendor));
         private const int MaxSell = 500;
@@ -44,7 +47,7 @@ namespace Server.Mobiles
             // See SBAnimalTrainer for an example
             _enableVendorBuyOPL = ServerConfiguration.GetSetting("opl.enableForVendorBuy", true);
 
-            _vendorInvulnerable = ServerConfiguration.GetSetting("vendor.isInvulnerable", false);
+            _vendorInvulnerable = ServerConfiguration.GetSetting("vendor.isInvulnerable", Core.LBR);
         }
 
         public static void Initialize()
@@ -96,7 +99,7 @@ namespace Server.Mobiles
 
         public virtual NpcGuild NpcGuild => NpcGuild.None;
 
-        public override bool IsInvulnerable => Core.LBR || _vendorInvulnerable;
+        public override bool IsInvulnerable => _vendorInvulnerable;
 
         public virtual DateTime NextTrickOrTreat { get; set; }
 
@@ -117,6 +120,8 @@ namespace Server.Mobiles
         }
 
         public virtual bool IsTokunoVendor => Map == Map.Tokuno;
+
+        public virtual bool IsTerMurVendor => Map == Map.TerMur;
 
         public virtual VendorShoeType ShoeType => VendorShoeType.Shoes;
 
@@ -546,7 +551,7 @@ namespace Server.Mobiles
 
                 seller.PlaySound(0x0037); // Gold dropping sound
 
-                if (SupportsBulkOrders(seller))
+                if (ContentFeatureFlags.BulkOrders && SupportsBulkOrders(seller))
                 {
                     var bulkOrder = CreateBulkOrder(seller, false);
 
@@ -841,13 +846,14 @@ namespace Server.Mobiles
 
         public virtual void VendorBuy(Mobile from)
         {
-            if (!IsActiveSeller)
+            if (!IsActiveSeller || !from.CheckAlive())
             {
                 return;
             }
 
-            if (!from.CheckAlive())
+            if (!ContentFeatureFlags.VendorPurchase)
             {
+                from.SendMessage(0x22, "Vendor purchases are temporarily disabled.");
                 return;
             }
 
@@ -1012,13 +1018,14 @@ namespace Server.Mobiles
 
         public virtual void VendorSell(Mobile from)
         {
-            if (!IsActiveBuyer)
+            if (!IsActiveBuyer || !from.CheckAlive())
             {
                 return;
             }
 
-            if (!from.CheckAlive())
+            if (!ContentFeatureFlags.VendorSell)
             {
+                from.SendMessage(0x22, "Vendor sales are temporarily disabled.");
                 return;
             }
 
@@ -1079,7 +1086,7 @@ namespace Server.Mobiles
             var smallBod = dropped as SmallBOD;
             var largeBod = dropped as LargeBOD;
 
-            if (!(smallBod != null || largeBod != null))
+            if (!ContentFeatureFlags.BulkOrders || !(smallBod != null || largeBod != null))
             {
                 return base.OnDragDrop(from, dropped);
             }
@@ -1191,7 +1198,7 @@ namespace Server.Mobiles
                 return false;
             }
 
-            long totalCostLong = (long)totalCost + bii.Price * amount;
+            var totalCostLong = (long)totalCost + bii.Price * amount;
 
             if (totalCostLong > int.MaxValue)
             {
@@ -1294,102 +1301,10 @@ namespace Server.Mobiles
             Region.GetRegion<GuardedRegion>()?.CheckVendorAccess(this, from) != false ||
             Region != from.Region && from.Region.GetRegion<GuardedRegion>()?.CheckVendorAccess(this, from) != false;
 
-        public override void Serialize(IGenericWriter writer)
+        [AfterDeserialization]
+        private void AfterDeserialization()
         {
-            base.Serialize(writer);
-
-            writer.Write(1); // version
-
-            var sbInfos = SBInfos;
-
-            for (var i = 0; i < sbInfos?.Count; ++i)
-            {
-                var sbInfo = sbInfos[i];
-                var buyInfo = sbInfo.BuyInfo;
-
-                for (var j = 0; j < buyInfo?.Count; ++j)
-                {
-                    var gbi = buyInfo[j];
-
-                    var maxAmount = gbi.MaxAmount;
-
-                    var doubled = maxAmount switch
-                    {
-                        40  => 1,
-                        80  => 2,
-                        160 => 3,
-                        320 => 4,
-                        640 => 5,
-                        999 => 6,
-                        _   => 0
-                    };
-
-                    if (doubled > 0)
-                    {
-                        writer.WriteEncodedInt(1 + j * sbInfos.Count + i);
-                        writer.WriteEncodedInt(doubled);
-                    }
-                }
-            }
-
-            writer.WriteEncodedInt(0);
-        }
-
-        public override void Deserialize(IGenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            var version = reader.ReadInt();
-
             LoadSBInfo();
-
-            var sbInfos = SBInfos;
-
-            switch (version)
-            {
-                case 1:
-                    {
-                        int index;
-
-                        while ((index = reader.ReadEncodedInt()) > 0)
-                        {
-                            var doubled = reader.ReadEncodedInt();
-
-                            if (sbInfos != null)
-                            {
-                                index -= 1;
-                                var sbInfoIndex = index % sbInfos.Count;
-                                var buyInfoIndex = index / sbInfos.Count;
-
-                                if (sbInfoIndex >= 0 && sbInfoIndex < sbInfos.Count)
-                                {
-                                    var sbInfo = sbInfos[sbInfoIndex];
-                                    var buyInfo = sbInfo.BuyInfo;
-
-                                    if (buyInfo != null && buyInfoIndex >= 0 && buyInfoIndex < buyInfo.Count)
-                                    {
-                                        var gbi = buyInfo[buyInfoIndex];
-
-                                        var amount = doubled switch
-                                        {
-                                            1 => 40,
-                                            2 => 80,
-                                            3 => 160,
-                                            4 => 320,
-                                            5 => 640,
-                                            6 => 999,
-                                            _ => 20
-                                        };
-
-                                        gbi.Amount = gbi.MaxAmount = amount;
-                                    }
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-            }
 
             if (IsParagon)
             {
@@ -1397,21 +1312,32 @@ namespace Server.Mobiles
             }
         }
 
+        // Version 1 persisted which buy entries had grown restock amounts, packed by index into
+        // the live SBInfos tables. Restock is transient now: it rebuilds from SBInfos on load, so
+        // the pairs are read and discarded.
+        private void Deserialize(IGenericReader reader, int version)
+        {
+            while (reader.ReadEncodedInt() > 0)
+            {
+                reader.ReadEncodedInt();
+            }
+        }
+
         public override void AddCustomContextEntries(Mobile from, ref PooledRefList<ContextMenuEntry> list)
         {
             if (from.Alive && IsActiveVendor)
             {
-                if (SupportsBulkOrders(from))
+                if (ContentFeatureFlags.BulkOrders && SupportsBulkOrders(from))
                 {
                     list.Add(new BulkOrderInfoEntry());
                 }
 
-                if (IsActiveSeller)
+                if (ContentFeatureFlags.VendorPurchase && IsActiveSeller)
                 {
                     list.Add(new VendorBuyEntry(CheckVendorAccess(from)));
                 }
 
-                if (IsActiveBuyer)
+                if (ContentFeatureFlags.VendorSell && IsActiveBuyer)
                 {
                     list.Add(new VendorSellEntry(CheckVendorAccess(from)));
                 }
@@ -1444,7 +1370,7 @@ namespace Server.Mobiles
 
             public override void OnClick(Mobile from, IEntity target)
             {
-                if (target is not BaseVendor vendor || !vendor.SupportsBulkOrders(from))
+                if (!ContentFeatureFlags.BulkOrders || target is not BaseVendor vendor || !vendor.SupportsBulkOrders(from))
                 {
                     return;
                 }
@@ -1485,7 +1411,7 @@ namespace Server.Mobiles
                     else
                     {
                         // An offer may be available in about ~1_hours~ hours.
-                        vendor.SayTo(vendor, 1049039, $"{Math.Ceiling(totalSeconds / 3600):F0}");
+                        vendor.SayTo(from, 1049039, $"{Math.Ceiling(totalSeconds / 3600):F0}");
                     }
 
                     vendor.SpeechHue = oldSpeechHue;

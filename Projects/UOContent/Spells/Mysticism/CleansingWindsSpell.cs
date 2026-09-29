@@ -53,7 +53,7 @@ public class CleansingWindsSpell : MysticSpell, ITargetingSpell<Mobile>
             var casterParty = Party.Get(Caster);
             if (casterParty != null)
             {
-                foreach (Mobile mob in Caster.Map.GetMobilesInRange(m.Location, 2))
+                foreach (var mob in Caster.Map.GetMobilesInRange(m.Location, 2))
                 {
                     if (mob != m && casterParty.Contains(mob) && Caster.CanBeBeneficial(mob, false))
                     {
@@ -99,7 +99,7 @@ public class CleansingWindsSpell : MysticSpell, ITargetingSpell<Mobile>
 
                 if (target.Poisoned)
                 {
-                    var poisonLevel = target.Poison.Level + 1;
+                    var poisonLevel = Poison.IncreaseLevel(target.Poison).Level;
                     var chanceToCure = cureChance - poisonLevel * 1750;
 
                     if (chanceToCure > 10000 || chanceToCure > Utility.Random(10000) && target.CurePoison(Caster))

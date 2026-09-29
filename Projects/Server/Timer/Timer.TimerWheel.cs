@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: Timer.TimerWheel.cs                                             *
  *                                                                       *
@@ -44,15 +44,22 @@ public partial class Timer
     {
         _lastTickTurned = tickCount;
 
-        for (int i = 0; i < _rings.Length; i++)
+        for (var i = 0; i < _rings.Length; i++)
         {
             _rings[i] = new Timer[_ringSize];
             _ringIndexes[i] = 0;
         }
     }
 
+    /// <summary>
+    /// Milliseconds of simulated time one wheel turn advances.
+    /// </summary>
+    public static int TickRate => _tickRate;
+
     public static void Slice(long tickCount)
     {
+        EventLoopProfiler.WheelSlice(tickCount - _lastTickTurned);
+
         var deltaSinceTurn = tickCount - _lastTickTurned;
         while (deltaSinceTurn >= _tickRate)
         {
@@ -61,6 +68,9 @@ public partial class Timer
             Turn();
         }
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long MillisecondsUntilNextTick(long tickCount) => Math.Max(0, _tickRate - (tickCount - _lastTickTurned));
 
     private static void Turn()
     {

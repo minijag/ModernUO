@@ -28,9 +28,9 @@ public static class ArborReturnDeployment
             if(World.Items.Values.Any(i=>i.Parent==null&&i.Map==Map.Felucca&&i.Location==p))throw new Exception($"Existing item at {p}");
             if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))throw new Exception($"Blocked tile {p}");
         }
-        var options=JsonConfig.GetOptions();var defs=JsonConfig.Deserialize<List<DynamicJson>>(Path.Combine(Core.BaseDirectory,"zodiac.json"));
-        var selected=defs.Where(j=>j.GetProperty("name",options,out string name)&&name=="Arbor Labrynth - Southern Gazer Patrol").ToArray();
-        if(selected.Length!=1||!selected[0].GetProperty("guid",options,out Guid id)||World.Items.Values.OfType<BaseSpawner>().Any(s=>s.Guid==id))throw new Exception("Spawner definition mismatch");
+        var options=SpawnerJsonSerializer.Options;var defs=JsonConfig.Deserialize<List<SpawnerDto>>(Path.Combine(Core.BaseDirectory,"zodiac.json"), options);
+        var selected=defs.Where(j=>(j.Name is var name)&&name=="Arbor Labrynth - Southern Gazer Patrol").ToArray();
+        if(selected.Length!=1||!(selected[0].Guid is var id)||World.Items.Values.OfType<BaseSpawner>().Any(s=>s.Guid==id))throw new Exception("Spawner definition mismatch");
         var created=new List<Item>();bool committed=false;
         try
         {
@@ -49,7 +49,7 @@ public static class ArborReturnDeployment
                 if(traveller.Location!=destination||traveller.Map!=Map.Felucca)throw new Exception("Return travel failed");
             }
             finally{traveller.Delete();}
-            var spawner=new Spawner(selected[0],options);created.Add(spawner);spawner.MoveToWorld(spawnPoint,Map.Felucca);spawner.Respawn();
+            var spawner=selected[0].ToSpawner();created.Add(spawner);spawner.MoveToWorld(spawnPoint,Map.Felucca);spawner.Respawn();
             committed=true;File.WriteAllText(Path.Combine(Data,"installed.txt"),$"Three walls, new Gazer spawner, return gate moved to 5248,784,0. {targets.Length} movement targets passed. Arrival/return tested. Pending save.");Console.WriteLine("[ArborMazeV8] Installed and validated. Saving in ten seconds.");Timer.DelayCall(TimeSpan.FromSeconds(10),World.Save);
         }
         finally{if(!committed){foreach(var item in created)item.Delete();old[0].MoveToWorld(oldPoint,Map.Felucca);}}

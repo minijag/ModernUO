@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2025 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: WalkRandomLogic.cs                                              *
  *                                                                       *
@@ -35,6 +35,17 @@ public abstract partial class BaseAI
             {
                 DoMove(GetRandomDirection(chanceToDir));
             }
+        }
+    }
+
+    // Idle wander for controlled pets. Routes through the same CheckMove/CanMoveNow/CheckIdle
+    // gate that non-controlled DoActionWander uses, so idling pets take the gentle 15-25s
+    // CheckIdle rest periods instead of shuffling every AI tick.
+    public void WalkRandomIdle()
+    {
+        if (CheckMove() && CanMoveNow(out _) && !Mobile.CheckIdle())
+        {
+            WalkRandomInHome(3, 2, 1);
         }
     }
 
@@ -86,9 +97,13 @@ public abstract partial class BaseAI
 
     private void WalkRandomWithHome(int chanceToNotMove, int chanceToDir, int steps)
     {
-        if (Mobile.RangeHome == 0 && Mobile.Location != Mobile.Home)
+        if (Mobile.RangeHome == 0)
         {
-            DoMove(Mobile.GetDirectionTo(Mobile.Home));
+            if (Mobile.Location != Mobile.Home)
+            {
+                DoMove(Mobile.GetDirectionTo(Mobile.Home));
+            }
+
             return;
         }
 

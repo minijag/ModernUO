@@ -41,7 +41,7 @@ public class EnergyFieldSpell : MagerySpell, ITargetingSpell<IPoint3D>
 
             Effects.PlaySound(loc, Caster.Map, 0x20B);
 
-            TimeSpan duration = Core.AOS
+            var duration = Core.AOS
                 ? TimeSpan.FromSeconds((15 + Caster.Skills.Magery.Value * 2) / 7.0)
                 : TimeSpan.FromSeconds(Caster.Skills.Magery.Value * 0.28 + 2.0);
 
@@ -77,13 +77,19 @@ public class EnergyFieldSpell : MagerySpell, ITargetingSpell<IPoint3D>
 }
 
 [DispellableField]
-[SerializationGenerator(1, false)]
+[SerializationGenerator(2, false)]
 public partial class EnergyField : Item
 {
+    private void MigrateFrom(V1Content content)
+    {
+        _caster = content.Caster;
+        _end = content.End;
+    }
+
     [SerializableField(0)]
     private Mobile _caster;
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(1)]
     private DateTime _end;
 

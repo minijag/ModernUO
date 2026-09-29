@@ -41,20 +41,20 @@ public static class ArborMazeDeployment
         var summary=$"Audit passed: {mobs.Length} wild NPCs inside; {oldSpawners.Length} old spawners; {items.Count(i=>i is Static)} decorative world items. No players, pets, houses or unknown items.";
         File.WriteAllText(Path.Combine(Data,"audit.txt"),summary);Console.WriteLine("[ArborMaze] "+summary);
         if(!File.Exists(Path.Combine(Data,"install.pending")))return;
-        var options=JsonConfig.GetOptions();
-        var spawnJson=JsonConfig.Deserialize<List<DynamicJson>>(Path.Combine(Core.BaseDirectory,"zodiac.json"));
-        var selected=spawnJson.Where(j=>j.GetProperty("guid",options,out Guid id)&&manifest.NewSpawnerGuids.Contains(id)).ToArray();
+        var options=SpawnerJsonSerializer.Options;
+        var spawnJson=JsonConfig.Deserialize<List<SpawnerDto>>(Path.Combine(Core.BaseDirectory,"zodiac.json"), options);
+        var selected=spawnJson.Where(j=>(j.Guid is var id)&&manifest.NewSpawnerGuids.Contains(id)).ToArray();
         if(selected.Length!=14)throw new Exception("Spawner manifest mismatch");
         var tele=JsonConfig.Deserialize<List<TeleporterDefinition>>(Path.Combine(Core.BaseDirectory,"Data","teleporters.json"))
             .Where(d=>d.Source.Map==Map.Felucca&&Inside(d.Source.X,d.Source.Y)).ToArray();
         if(tele.Length!=11)throw new Exception("Teleporter count mismatch");
         // Validate all spawn/portal endpoints against the newly installed map before deleting anything.
-        foreach(var j in selected){j.GetProperty("location",options,out Point3D p);if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))throw new Exception($"Blocked spawn at {p}");}
+        foreach(var j in selected){Point3D p = j.Location;if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))throw new Exception($"Blocked spawn at {p}");}
         foreach(var t in tele)foreach(var p in new[]{new Point3D(t.Source.X,t.Source.Y,t.Source.Z),new Point3D(t.Destination.X,t.Destination.Y,t.Destination.Z)})if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))throw new Exception($"Blocked portal at {p}");
         foreach(var s in oldSpawners)s.Delete();
         foreach(var m in mobs)if(!m.Deleted)m.Delete();
         foreach(var i in items)if(i is Static&&!i.Deleted)i.Delete();
-        foreach(var j in selected){j.GetProperty("location",options,out Point3D p);var s=new Spawner(j,options);s.MoveToWorld(p,Map.Felucca);s.Respawn();}
+        foreach(var j in selected){Point3D p = j.Location;var s=j.ToSpawner();s.MoveToWorld(p,Map.Felucca);s.Respawn();}
         foreach(var t in tele){var p=new Point3D(t.Source.X,t.Source.Y,t.Source.Z);var mark=manifest.Portals.Single(m=>m.X==p.X&&m.Y==p.Y&&m.Z==p.Z);new Teleporter(new Point3D(t.Destination.X,t.Destination.Y,t.Destination.Z),Map.Felucca){Name=mark.Name}.MoveToWorld(p,Map.Felucca);new Static(0xF6C){Name=mark.Name,Hue=mark.Hue}.MoveToWorld(p,Map.Felucca);}
         foreach(var b in manifest.Books){var book=new BaseBook(0xFF1,b.Name,"The Keeper of the Labrynth",1,false){Movable=false};book.Pages[0].Lines=b.Lines;book.MoveToWorld(new Point3D(b.X,b.Y,b.Z),Map.Felucca);}
         File.WriteAllText(Path.Combine(Data,"installed.txt"),"14 spawners, 11 teleporters, 3 lore books installed. Pending save.");

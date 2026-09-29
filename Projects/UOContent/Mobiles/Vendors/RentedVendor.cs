@@ -46,9 +46,20 @@ public class VendorRentalDuration
     }
 }
 
-[SerializationGenerator(0)]
+[SerializationGenerator(1)]
 public partial class RentedVendor : PlayerVendor
 {
+    private void MigrateFrom(V0Content content)
+    {
+        _rentalDurationId = content.RentalDurationId;
+        _rentalPrice = content.RentalPrice;
+        _landlordRenew = content.LandlordRenew;
+        _renterRenew = content.RenterRenew;
+        _renewalPrice = content.RenewalPrice;
+        _rentalGold = content.RentalGold;
+        _rentalExpireTime = content.RentalExpireTime;
+    }
+
     private Timer _rentalExpireTimer;
 
     public RentedVendor(
@@ -93,7 +104,7 @@ public partial class RentedVendor : PlayerVendor
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private int _rentalGold;
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(6)]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private DateTime _rentalExpireTime;
@@ -203,13 +214,13 @@ public partial class RentedVendor : PlayerVendor
 
             if (vendor.IsOwner(from))
             {
-                from.SendGump(new RenterVendorRentalGump(vendor), true);
+                RenterVendorRentalGump.DisplayTo(from, vendor);
 
                 vendor.SendRentalExpireMessage(from);
             }
             else if (vendor.IsLandlord(from))
             {
-                from.SendGump(new LandlordVendorRentalGump(vendor), true);
+                LandlordVendorRentalGump.DisplayTo(from, vendor);
 
                 vendor.SendRentalExpireMessage(from);
             }
@@ -311,7 +322,7 @@ public partial class RentedVendor : PlayerVendor
             {
                 from.SendLocalizedMessage(1062504); // Please wait while the renter considers your offer.
 
-                owner.SendGump(new VendorRentalRefundGump(m_Vendor, from, amount));
+                VendorRentalRefundGump.DisplayTo(owner, m_Vendor, from, amount);
             }
         }
     }

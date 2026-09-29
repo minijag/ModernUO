@@ -65,7 +65,7 @@ public static class StaffAccess
         }
 
         var accessLevelArgument = e.GetString(0)?.Trim().ToLower();
-        AccessLevel newAccessLevel = AccessLevel.Player;
+        var newAccessLevel = AccessLevel.Player;
         var validAccessLevel = !string.IsNullOrEmpty(accessLevelArgument) &&
                                _accessLevelByString.TryGetValue(accessLevelArgument, out newAccessLevel);
 
@@ -85,7 +85,7 @@ public static class StaffAccess
 
         if ((originalAccessLevel ?? m.AccessLevel) < newAccessLevel)
         {
-            m.SendMessage($"You cannot set your staff access to {newAccessLevel.ToString()}.");
+            m.SendMessage($"You cannot set your staff access to {newAccessLevel}.");
             return;
         }
 
@@ -96,6 +96,6 @@ public static class StaffAccess
         }
 
         m.AccessLevel = newAccessLevel;
-        m.SendMessage($"Staff access set to {newAccessLevel.ToString()}.");
+        m.SendMessage($"Staff access set to {newAccessLevel}.");
     }
 }

@@ -35,13 +35,13 @@ public static class ArborAdditionsDeployment
             if (World.Items.Values.Any(i => i.Parent == null && i.Map == Map.Felucca && i.Location == p)) throw new Exception($"Existing world item at {p}; nothing changed");
             if (!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false)) throw new Exception($"Blocked tile {p}");
         }
-        var options = JsonConfig.GetOptions();
-        var definitions = JsonConfig.Deserialize<List<DynamicJson>>(Path.Combine(Core.BaseDirectory,"zodiac.json"));
-        var selected = definitions.Where(j => j.GetProperty("name",options,out string name) && (name == "Arbor Labrynth - Whispering Shrine" || name == "Arbor Labrynth - Eastern Fort Patrol")).ToArray();
+        var options = SpawnerJsonSerializer.Options;
+        var definitions = JsonConfig.Deserialize<List<SpawnerDto>>(Path.Combine(Core.BaseDirectory,"zodiac.json"), options);
+        var selected = definitions.Where(j => (j.Name is var name) && (name == "Arbor Labrynth - Whispering Shrine" || name == "Arbor Labrynth - Eastern Fort Patrol")).ToArray();
         if (selected.Length != 2) throw new Exception("Expected two new spawner definitions");
         foreach (var j in selected)
         {
-            if (!j.GetProperty("guid",options,out Guid id) || World.Items.Values.OfType<BaseSpawner>().Any(s => s.Guid == id)) throw new Exception("Duplicate spawner");
+            if (!(j.Guid is var id) || World.Items.Values.OfType<BaseSpawner>().Any(s => s.Guid == id)) throw new Exception("Duplicate spawner");
         }
         var created = new List<Item>();
         bool committed = false;
@@ -76,7 +76,7 @@ public static class ArborAdditionsDeployment
             try { traveller.MoveToWorld(source,Map.Felucca); gate.OnMoveOver(traveller); if(traveller.Location!=destination || traveller.Map!=Map.Felucca) throw new Exception("Return teleport test failed"); }
             finally { traveller.Delete(); }
             foreach(var j in selected)
-            { j.GetProperty("location",options,out Point3D p); var spawner=new Spawner(j,options); Place(spawner,p); spawner.Respawn(); }
+            { Point3D p = j.Location; var spawner=j.ToSpawner(); Place(spawner,p); spawner.Respawn(); }
             committed=true;
             File.WriteAllText(Path.Combine(Data,"installed.txt"),$"Installed three hedge tiles, Whispering Shrine, two spawners and return teleporter. Movement passed ({reached.Count} positions, {targets.Length} targets); teleport tested. Pending save.");
             Console.WriteLine("[ArborMazeV6] Installed and validated. Saving in ten seconds.");

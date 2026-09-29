@@ -1,4 +1,3 @@
-using Server.Gumps;
 using Server.Targeting;
 
 namespace Server.Engines.Plants
@@ -22,7 +21,7 @@ namespace Server.Engines.Plants
             if (!m_Plant.Deleted && m_Plant.PlantStatus < PlantStatus.DecorativePlant &&
                 from.InRange(m_Plant.GetWorldLocation(), 3) && m_Plant.IsUsableBy(from))
             {
-                from.SendGump(new MainPlantGump(m_Plant), true);
+                MainPlantGump.DisplayTo(from, m_Plant);
             }
         }
     }

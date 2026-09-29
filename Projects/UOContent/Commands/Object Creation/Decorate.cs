@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using CommunityToolkit.HighPerformance;
 using Server.Collections;
+using Server.Engines.PlayerMurderSystem;
 using Server.Engines.Quests.Haven;
 using Server.Engines.Quests.Necro;
 using Server.Engines.Spawners;
@@ -39,6 +40,11 @@ namespace Server.Commands
             Generate("Data/Decoration/Ilshenar", Map.Ilshenar);
             Generate("Data/Decoration/Malas", Map.Malas);
             Generate("Data/Decoration/Tokuno", Map.Tokuno);
+
+            if (PlayerMurderSystem.BountiesEnabled)
+            {
+                Generate("Data/Decoration/BountyBoards", Map.Felucca);
+            }
 
             m_Mobile.SendMessage($"World generating complete. {m_Count} items were generated.");
         }
@@ -588,6 +594,15 @@ namespace Server.Commands
                             sp.HomeRange = Utility.ToInt32(m_Params[i].AsSpan()[++indexOf..]);
                         }
                     }
+                    else if (m_Params[i].StartsWithOrdinal("WalkingRange"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            sp.WalkingRange = Utility.ToInt32(m_Params[i].AsSpan()[++indexOf..]);
+                        }
+                    }
                     else if (m_Params[i].StartsWithOrdinal("Running"))
                     {
                         var indexOf = m_Params[i].IndexOfOrdinal('=');
@@ -868,6 +883,77 @@ namespace Server.Commands
                 if (m_ItemID > 0)
                 {
                     kt.ItemID = m_ItemID;
+                }
+            }
+            else if (item is InteractionTeleporter itp)
+            {
+                itp.ItemID = m_ItemID;
+                
+                for (var i = 0; i < m_Params.Length; ++i)
+                {
+                    if (m_Params[i].StartsWithOrdinal("PointDest"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            itp.PointDest = Point3D.Parse(m_Params[i][++indexOf..]);
+                        }
+                    }
+                    else if (m_Params[i].StartsWithOrdinal("MapDest"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            itp.MapDest = Map.Parse(m_Params[i][++indexOf..]);
+                        }
+                    }
+                    else if (m_Params[i].StartsWithOrdinal("SourceEffect"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            itp.SourceEffect = Utility.ToBoolean(m_Params[i][++indexOf..]);
+                        }
+                    }
+                    else if (m_Params[i].StartsWithOrdinal("DestEffect"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            itp.DestEffect = Utility.ToBoolean(m_Params[i][++indexOf..]);
+                        }
+                    }
+                    else if (m_Params[i].StartsWithOrdinal("SoundID"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            itp.SoundID = Utility.ToInt32(m_Params[i].AsSpan()[++indexOf..]);
+                        }
+                    }
+                    else if (m_Params[i].StartsWithOrdinal("Delay"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            itp.Delay = TimeSpan.Parse(m_Params[i][++indexOf..]);
+                        }
+                    }
+                    else if (m_Params[i].StartsWithOrdinal("Name"))
+                    {
+                        var indexOf = m_Params[i].IndexOfOrdinal('=');
+
+                        if (indexOf >= 0)
+                        {
+                            item.Name = m_Params[i][++indexOf..];
+                        }
+                    }
                 }
             }
             else if (item is Teleporter tp)

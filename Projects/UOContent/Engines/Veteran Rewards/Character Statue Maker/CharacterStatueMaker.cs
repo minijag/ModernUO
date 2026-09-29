@@ -25,17 +25,13 @@ public partial class CharacterStatueMaker : Item, IRewardItem
 
     public override int LabelNumber => 1076173; // Character Statue Maker
 
-    [SerializableProperty(1)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public StatueType StatueType
+    [SerializableField(1, fieldChanged: nameof(OnStatueTypeChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private StatueType _statueType;
+
+    private void OnStatueTypeChanged(StatueType oldValue, StatueType newValue)
     {
-        get => _statueType;
-        set
-        {
-            _statueType = value;
-            InvalidateHue();
-            this.MarkDirty();
-        }
+        InvalidateHue();
     }
 
     public override void OnDoubleClick(Mobile from)
@@ -85,80 +81,29 @@ public partial class CharacterStatueMaker : Item, IRewardItem
     }
 }
 
-public class MarbleStatueMaker : CharacterStatueMaker
+[SerializationGenerator(0)]
+public partial class MarbleStatueMaker : CharacterStatueMaker
 {
     [Constructible]
     public MarbleStatueMaker() : base(StatueType.Marble)
     {
     }
-
-    public MarbleStatueMaker(Serial serial) : base(serial)
-    {
-    }
-
-    public override void Serialize(IGenericWriter writer)
-    {
-        base.Serialize(writer);
-
-        writer.WriteEncodedInt(0); // version
-    }
-
-    public override void Deserialize(IGenericReader reader)
-    {
-        base.Deserialize(reader);
-
-        var version = reader.ReadEncodedInt();
-    }
 }
 
-public class JadeStatueMaker : CharacterStatueMaker
+[SerializationGenerator(0)]
+public partial class JadeStatueMaker : CharacterStatueMaker
 {
     [Constructible]
     public JadeStatueMaker() : base(StatueType.Jade)
     {
     }
-
-    public JadeStatueMaker(Serial serial) : base(serial)
-    {
-    }
-
-    public override void Serialize(IGenericWriter writer)
-    {
-        base.Serialize(writer);
-
-        writer.WriteEncodedInt(0); // version
-    }
-
-    public override void Deserialize(IGenericReader reader)
-    {
-        base.Deserialize(reader);
-
-        var version = reader.ReadEncodedInt();
-    }
 }
 
-public class BronzeStatueMaker : CharacterStatueMaker
+[SerializationGenerator(0)]
+public partial class BronzeStatueMaker : CharacterStatueMaker
 {
     [Constructible]
     public BronzeStatueMaker() : base(StatueType.Bronze)
     {
-    }
-
-    public BronzeStatueMaker(Serial serial) : base(serial)
-    {
-    }
-
-    public override void Serialize(IGenericWriter writer)
-    {
-        base.Serialize(writer);
-
-        writer.WriteEncodedInt(0); // version
-    }
-
-    public override void Deserialize(IGenericReader reader)
-    {
-        base.Deserialize(reader);
-
-        var version = reader.ReadEncodedInt();
     }
 }

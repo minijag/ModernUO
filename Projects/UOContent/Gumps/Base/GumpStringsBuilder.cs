@@ -1,6 +1,6 @@
 ﻿/*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: GumpStringsBuilder.cs                                           *
  *                                                                       *
@@ -51,11 +51,11 @@ public ref struct GumpStringsBuilder
         }
 
         var newSize = Math.Max(newLength, _stringsBuffer.Length * 2);
-        byte[] poolArray = STArrayPool<byte>.Shared.Rent(newSize);
+        var poolArray = STArrayPool<byte>.Shared.Rent(newSize);
 
         _stringsBuffer.AsSpan(0, _stringBytesWritten).CopyTo(poolArray);
 
-        byte[] toReturn = _stringsBuffer;
+        var toReturn = _stringsBuffer;
         _stringsBuffer = poolArray;
 
         if (toReturn != _staticStringsBuffer)

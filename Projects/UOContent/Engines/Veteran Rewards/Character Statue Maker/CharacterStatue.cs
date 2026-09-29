@@ -79,45 +79,33 @@ public partial class CharacterStatue : Mobile, IRewardItem
         InvalidateHues();
     }
 
-    [SerializableProperty(0)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public StatueType StatueType
+    [SerializableField(0, fieldChanged: nameof(OnStatueTypeChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private StatueType _statueType;
+
+    private void OnStatueTypeChanged(StatueType oldValue, StatueType newValue)
     {
-        get => _statueType;
-        set
-        {
-            _statueType = value;
-            InvalidateHues();
-            InvalidatePose();
-            this.MarkDirty();
-        }
+        InvalidateHues();
+        InvalidatePose();
     }
 
-    [SerializableProperty(1)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public StatuePose Pose
+    [SerializableField(1, fieldChanged: nameof(OnPoseChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private StatuePose _pose;
+
+    private void OnPoseChanged(StatuePose oldValue, StatuePose newValue)
     {
-        get => _pose;
-        set
-        {
-            _pose = value;
-            InvalidatePose();
-            this.MarkDirty();
-        }
+        InvalidatePose();
     }
 
-    [SerializableProperty(2)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public StatueMaterial Material
+    [SerializableField(2, fieldChanged: nameof(OnMaterialChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private StatueMaterial _material;
+
+    private void OnMaterialChanged(StatueMaterial oldValue, StatueMaterial newValue)
     {
-        get => _material;
-        set
-        {
-            _material = value;
-            InvalidateHues();
-            InvalidatePose();
-            this.MarkDirty();
-        }
+        InvalidateHues();
+        InvalidatePose();
     }
 
     public override void OnDoubleClick(Mobile from)
@@ -370,7 +358,7 @@ public partial class CharacterStatue : Mobile, IRewardItem
         }
 
         ProcessDelta();
-        Span<byte> animPacket = stackalloc byte[CharacterStatuePackets.StatueAnimationPacketLength].InitializePacket();
+        var animPacket = stackalloc byte[CharacterStatuePackets.StatueAnimationPacketLength].InitializePacket();
 
         foreach (var state in Map.GetClientsInRange(Location))
         {
@@ -592,7 +580,7 @@ public class CharacterStatueTarget : Target
             _maker.Delete();
             statue.Sculpt(from);
 
-            from.SendGump(new CharacterStatueGump(_maker, statue, from), true);
+            CharacterStatueGump.DisplayTo(from, _maker, statue);
             return;
         }
 

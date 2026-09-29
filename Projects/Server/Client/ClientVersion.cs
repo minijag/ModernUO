@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: ClientVersion.cs                                                *
  *                                                                       *
@@ -23,8 +23,6 @@ namespace Server;
 
 public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion>, IEquatable<ClientVersion>
 {
-    public static readonly ClientVersion Version400a = new("4.0.0a");
-    public static readonly ClientVersion Version407a = new("4.0.7a");
     public static readonly ClientVersion Version500a = new("5.0.0a");
     public static readonly ClientVersion Version502b = new("5.0.2b");
     public static readonly ClientVersion Version6000 = new("6.0.0.0");
@@ -212,7 +210,7 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
 
     private string ToStringImpl()
     {
-        using var builder = ValueStringBuilder.Create();
+        using var builder = new ValueStringBuilder(stackalloc char[32]);
 
         if (Type == ClientType.SA)
         {

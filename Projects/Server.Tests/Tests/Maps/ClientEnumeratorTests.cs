@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Sockets;
 using Server.Accounting;
 using Server.Network;
+using Server.Tests.Network;
 using Xunit;
 
-namespace Server.Tests.Tests.Maps;
+namespace Server.Tests.Maps;
 
 [Collection("Sequential Server Tests")]
 public class ClientEnumeratorTests
@@ -356,7 +356,7 @@ public class ClientEnumeratorTests
     {
         var map = Map.Felucca;
         var center = new Point3D(900, 900, 0);
-        var range = 5;
+        const int range = 5;
 
         var clients = new (NetState, Mobile)[3];
         try
@@ -416,48 +416,10 @@ public class ClientEnumeratorTests
         }
     }
 
-    private class MockAccount : IAccount
-    {
-        public int TotalGold { get; }
-        public int TotalPlat { get; }
-        public bool DepositGold(int amount) => throw new NotImplementedException();
-        public bool DepositPlat(int amount) => throw new NotImplementedException();
-        public bool WithdrawGold(int amount) => throw new NotImplementedException();
-        public bool WithdrawPlat(int amount) => throw new NotImplementedException();
-        public long GetTotalGold() => throw new NotImplementedException();
-        public int CompareTo(IAccount other) => throw new NotImplementedException();
-        public string Username { get; }
-        public string Email { get; set; }
-        public AccessLevel AccessLevel { get; set; }
-        public int Length { get; }
-        public int Limit { get; set; } = 6; // Default to 6 character slots
-        public int Count { get; }
-
-        private readonly Dictionary<int, Mobile> _mobiles = new();
-        public Mobile this[int index]
-        {
-            get => _mobiles.GetValueOrDefault(index);
-            set => _mobiles[index] = value;
-        }
-
-        public DateTime Created { get; set; }
-        public Serial Serial { get; }
-        public void Deserialize(IGenericReader reader) => throw new NotImplementedException();
-        public byte SerializedThread { get; set; }
-        public int SerializedPosition { get; set; }
-        public int SerializedLength { get; set; }
-        public void Serialize(IGenericWriter writer) => throw new NotImplementedException();
-        public bool Deleted { get; }
-        public void Delete() => throw new NotImplementedException();
-        public bool TrySetUsername(string username) => throw new NotImplementedException();
-        public void SetPassword(string password) => throw new NotImplementedException();
-        public bool CheckPassword(string password) => throw new NotImplementedException();
-    }
-
     private static (NetState, Mobile) CreateClientWithMobile(Map map, Point3D location)
     {
-        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var ns = new NetState(socket);
+        // Create test NetState with real socket and buffers
+        var ns = PacketTestUtilities.CreateTestNetState();
 
         // Assign a mock account to avoid null reference issues
         ns.Account = new MockAccount();
@@ -533,16 +495,16 @@ public class ClientEnumeratorTests
         }
     }
 
-    private static void DeleteAll((NetState, Mobile)[] clients)
+    private static void DeleteAll((NetState state, Mobile m)[] clients)
     {
         for (var i = 0; i < clients.Length; i++)
         {
-            if (clients[i].Item1 != null)
+            if (clients[i].state != null)
             {
-                clients[i].Item1.Mobile = null;
-                clients[i].Item1.Disconnect("Test cleanup");
+                clients[i].state.Mobile = null;
+                clients[i].state.Dispose();
             }
-            clients[i].Item2?.Delete();
+            clients[i].m?.Delete();
         }
     }
 }

@@ -1,4 +1,3 @@
-using Server.Gumps;
 using Server.Targeting;
 
 namespace Server.Engines.Plants
@@ -84,7 +83,7 @@ namespace Server.Engines.Plants
                 m_Plant.PlantStatus != PlantStatus.BowlOfDirt && from.InRange(m_Plant.GetWorldLocation(), 3) &&
                 m_Plant.IsUsableBy(from))
             {
-                from.SendGump(new ReproductionGump(m_Plant));
+                ReproductionGump.DisplayTo(from, m_Plant);
             }
         }
     }

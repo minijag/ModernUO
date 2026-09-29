@@ -151,7 +151,7 @@ public ref struct ValueStringBuilder
             Grow(count);
         }
 
-        int remaining = _length - index;
+        var remaining = _length - index;
         _chars.Slice(index, remaining).CopyTo(_chars[(index + count)..]);
         _chars.Slice(index, count).Fill(value);
         _length += count;
@@ -165,14 +165,14 @@ public ref struct ValueStringBuilder
             return;
         }
 
-        int count = s.Length;
+        var count = s.Length;
 
         if (_length > _chars.Length - count)
         {
             Grow(count);
         }
 
-        int remaining = _length - index;
+        var remaining = _length - index;
         _chars.Slice(index, remaining).CopyTo(_chars[(index + count)..]);
         s.AsSpan().CopyTo(_chars[index..]);
         _length += count;
@@ -184,7 +184,7 @@ public ref struct ValueStringBuilder
         {
             if (value is ISpanFormattable)
             {
-                Span<char> destination = _chars[_length..];
+                var destination = _chars[_length..];
                 int charsWritten;
                 while (!((ISpanFormattable)value).TryFormat(destination, out charsWritten, format, default))
                 {
@@ -210,15 +210,6 @@ public ref struct ValueStringBuilder
         }
     }
 
-    // Compiler generated
-    public void Append(ref RawInterpolatedStringHandler handler) => Append(handler.Text);
-
-    // Compiler generated
-    public void Append(
-        IFormatProvider? formatProvider,
-        [InterpolatedStringHandlerArgument("formatProvider")]
-        ref RawInterpolatedStringHandler handler
-    ) => Append(handler.Text);
 
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -229,7 +220,7 @@ public ref struct ValueStringBuilder
             return;
         }
 
-        int pos = _length;
+        var pos = _length;
         if (s.Length == 1 && (uint)pos < (uint)_chars.Length) // very common case, e.g. appending strings from NumberFormatInfo like separators, percent symbols, etc.
         {
             _chars[pos] = s[0];
@@ -265,7 +256,7 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void AppendSlow(string? s)
     {
-        int pos = _length;
+        var pos = _length;
         if (pos > _chars.Length - s.Length)
         {
             Grow(s.Length);
@@ -283,8 +274,8 @@ public ref struct ValueStringBuilder
             Grow(count);
         }
 
-        Span<char> dst = _chars.Slice(_length, count);
-        for (int i = 0; i < dst.Length; i++)
+        var dst = _chars.Slice(_length, count);
+        for (var i = 0; i < dst.Length; i++)
         {
             dst[i] = c;
         }
@@ -294,14 +285,14 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public unsafe void Append(char* value, int length)
     {
-        int pos = _length;
+        var pos = _length;
         if (pos > _chars.Length - length)
         {
             Grow(length);
         }
 
-        Span<char> dst = _chars.Slice(_length, length);
-        for (int i = 0; i < dst.Length; i++)
+        var dst = _chars.Slice(_length, length);
+        for (var i = 0; i < dst.Length; i++)
         {
             dst[i] = *value++;
         }
@@ -311,7 +302,7 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Append(scoped ReadOnlySpan<char> value)
     {
-        int pos = _length;
+        var pos = _length;
         if (pos > _chars.Length - value.Length)
         {
             Grow(value.Length);
@@ -324,7 +315,7 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<char> AppendSpan(int length)
     {
-        int origPos = _length;
+        var origPos = _length;
         if (origPos > _chars.Length - length)
         {
             Grow(length);
@@ -345,11 +336,11 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void Grow(int additionalCapacityBeyondPos)
     {
-        char[] poolArray = ArrayPool.Rent(Math.Max(_length + additionalCapacityBeyondPos, _chars.Length * 2));
+        var poolArray = ArrayPool.Rent(Math.Max(_length + additionalCapacityBeyondPos, _chars.Length * 2));
 
         _chars[.._length].CopyTo(poolArray);
 
-        char[] toReturn = _arrayToReturnToPool;
+        var toReturn = _arrayToReturnToPool;
         _chars = _arrayToReturnToPool = poolArray;
         if (toReturn != null)
         {
@@ -372,7 +363,7 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void ReplaceAny(ReadOnlySpan<char> oldChars, ReadOnlySpan<char> newChars, int startIndex, int count)
     {
-        int currentLength = _length;
+        var currentLength = _length;
         if ((uint)startIndex > (uint)currentLength)
         {
             throw new ArgumentOutOfRangeException(nameof(startIndex));
@@ -403,7 +394,7 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Replace(char oldChar, char newChar, int startIndex, int count)
     {
-        int currentLength = _length;
+        var currentLength = _length;
         if ((uint)startIndex > (uint)currentLength)
         {
             throw new ArgumentOutOfRangeException(nameof(startIndex));
@@ -462,5 +453,129 @@ public ref struct ValueStringBuilder
         }
 
         _length -= length;
+    }
+
+    // Copy-and-reconcile interpolation handler.
+    // The handler receives a VALUE COPY of the builder (C# limitation: [InterpolatedStringHandlerArgument("")]
+    // passes struct receivers by value). The copy shares the same underlying char buffer (Span points to
+    // the same stackalloc/pooled memory), so writes go to the original buffer. If Grow() happens, the copy
+    // gets a new buffer. Append() reconciles by copying the handler's state back to the original.
+    // Safe because the game loop is single-threaded — no concurrent access between handler construction
+    // and reconciliation.
+
+    public void Append(
+        [InterpolatedStringHandlerArgument("")]
+        scoped ref InterpolationHandler handler)
+    {
+        // Reconcile: the handler's copy has the updated _length (and possibly new buffer from Grow).
+        this = handler._builder;
+    }
+
+    [InterpolatedStringHandler]
+    public ref struct InterpolationHandler
+    {
+        internal ValueStringBuilder _builder;
+
+        public InterpolationHandler(int literalLength, int formattedCount, ValueStringBuilder builder)
+        {
+            _builder = builder;
+            _builder.EnsureCapacity(_builder._length + literalLength + formattedCount * 11);
+        }
+
+        public void AppendLiteral(string value) => _builder.Append(value);
+
+        public void AppendFormatted<T>(T value) => _builder.Append(value);
+
+        public void AppendFormatted<T>(T value, string? format) => _builder.Append(value, format);
+
+        public void AppendFormatted<T>(T value, int alignment)
+        {
+            var startingPos = _builder._length;
+            _builder.Append(value);
+            if (alignment != 0)
+            {
+                AppendOrInsertAlignmentIfNeeded(startingPos, alignment);
+            }
+        }
+
+        public void AppendFormatted<T>(T value, int alignment, string? format)
+        {
+            var startingPos = _builder._length;
+            _builder.Append(value, format);
+            if (alignment != 0)
+            {
+                AppendOrInsertAlignmentIfNeeded(startingPos, alignment);
+            }
+        }
+
+        public void AppendFormatted(scoped ReadOnlySpan<char> value) => _builder.Append(value);
+
+        public void AppendFormatted(scoped ReadOnlySpan<char> value, int alignment = 0, string? format = null)
+        {
+            var leftAlign = false;
+            if (alignment < 0)
+            {
+                leftAlign = true;
+                alignment = -alignment;
+            }
+
+            var paddingRequired = alignment - value.Length;
+            if (paddingRequired <= 0)
+            {
+                _builder.Append(value);
+                return;
+            }
+
+            _builder.EnsureCapacity(_builder._length + value.Length + paddingRequired);
+            if (leftAlign)
+            {
+                _builder.Append(value);
+                _builder.AppendSpan(paddingRequired).Fill(' ');
+            }
+            else
+            {
+                _builder.AppendSpan(paddingRequired).Fill(' ');
+                _builder.Append(value);
+            }
+        }
+
+        public void AppendFormatted(string? value) => _builder.Append(value);
+
+        public void AppendFormatted(string? value, int alignment = 0, string? format = null) =>
+            AppendFormatted<string?>(value, alignment, format);
+
+        public void AppendFormatted(object? value, int alignment = 0, string? format = null) =>
+            AppendFormatted<object?>(value, alignment, format);
+
+        private void AppendOrInsertAlignmentIfNeeded(int startingPos, int alignment)
+        {
+            var charsWritten = _builder._length - startingPos;
+
+            var leftAlign = false;
+            if (alignment < 0)
+            {
+                leftAlign = true;
+                alignment = -alignment;
+            }
+
+            var paddingNeeded = alignment - charsWritten;
+            if (paddingNeeded <= 0)
+            {
+                return;
+            }
+
+            if (leftAlign)
+            {
+                _builder.AppendSpan(paddingNeeded).Fill(' ');
+            }
+            else
+            {
+                // Shift content right, fill padding on left
+                _builder.AppendSpan(paddingNeeded);
+                _builder._chars.Slice(startingPos, charsWritten)
+                    .CopyTo(_builder._chars[(startingPos + paddingNeeded)..]);
+                _builder._chars.Slice(startingPos, paddingNeeded).Fill(' ');
+            }
+        }
     }
 }

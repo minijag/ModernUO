@@ -9,10 +9,11 @@ using Server.Network;
 
 namespace Server.Items;
 
-[SerializationGenerator(2, false)]
+[SerializationGenerator(4, false)]
 public partial class TreasureMapChest : LockableContainer
 {
     [Tidy]
+    [CanBeNull]
     [SerializableField(0, setter: "private")]
     private List<Mobile> _guardians;
 
@@ -28,12 +29,11 @@ public partial class TreasureMapChest : LockableContainer
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private int _level;
 
-    [TimerDrift]
     [SerializableField(4)]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
+    [DeserializeTimer(nameof(DeserializeExpireTimer))]
     private Timer _expireTimer;
 
-    [DeserializeTimerField(4)]
     private void DeserializeExpireTimer(TimeSpan delay)
     {
         if (!_temporary)
@@ -42,10 +42,28 @@ public partial class TreasureMapChest : LockableContainer
         }
     }
 
+    private void MigrateFrom(V3Content content)
+    {
+        _guardians = content.Guardians;
+        _temporary = content.Temporary;
+        _owner = content.Owner;
+        _level = content.Level;
+        _lifted = content.Lifted;
+
+        if (content.ExpireTimerDelay != TimeSpan.MinValue)
+        {
+            DeserializeExpireTimer(content.ExpireTimerDelay);
+        }
+    }
+
     [Tidy]
+    [CanBeNull]
     [SerializableField(5, setter: "private")]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private HashSet<Item> _lifted;
+
+    // False only while the constructor fills the chest; deserialized chests are always filled.
+    private bool _filled;
 
     [Constructible]
     public TreasureMapChest(int level) : this(null, level)
@@ -58,10 +76,10 @@ public partial class TreasureMapChest : LockableContainer
         _level = level;
 
         _temporary = temporary;
-        _guardians = [];
 
         _expireTimer = Timer.DelayCall(TimeSpan.FromHours(3.0), Delete);
         Fill(this, level);
+        _filled = true;
     }
 
     public override int LabelNumber => 3000541;
@@ -182,7 +200,6 @@ public partial class TreasureMapChest : LockableContainer
                 2 => 76,
                 3 => 84,
                 4 => 92,
-                5 => 100,
                 _ => 100
             };
 
@@ -300,14 +317,17 @@ public partial class TreasureMapChest : LockableContainer
 
         if (_level == 0 && from.AccessLevel < AccessLevel.GameMaster)
         {
-            for (var i = 0; i < _guardians.Count; i++)
+            if (_guardians != null)
             {
-                var m = _guardians[i];
-                if (m.Alive)
+                for (var i = 0; i < _guardians.Count; i++)
                 {
-                    // You must first kill the guardians before you may open this chest.
-                    from.SendLocalizedMessage(1046448);
-                    return true;
+                    var m = _guardians[i];
+                    if (m.Alive)
+                    {
+                        // You must first kill the guardians before you may open this chest.
+                        from.SendLocalizedMessage(1046448);
+                        return true;
+                    }
                 }
             }
 
@@ -361,12 +381,21 @@ public partial class TreasureMapChest : LockableContainer
     public override bool CheckLift(Mobile from, Item item, ref LRReason reject) =>
         CheckLoot(from, true) && base.CheckLift(from, item, ref reject);
 
+    public override void OnItemAdded(Item item)
+    {
+        base.OnItemAdded(item);
+
+        if (_filled)
+        {
+            _lifted ??= [];
+            _lifted.Add(item);
+        }
+    }
+
     public override void OnItemLifted(Mobile from, Item item)
     {
-        var notYetLifted = _lifted?.Contains(item) != true;
         from.RevealingAction();
-
-        if (notYetLifted)
+        if (_lifted?.Contains(item) != true)
         {
             _lifted ??= [];
             _lifted.Add(item);
@@ -393,8 +422,6 @@ public partial class TreasureMapChest : LockableContainer
 
     private void Deserialize(IGenericReader reader, int version)
     {
-        _guardians = [];
-
         _owner = reader.ReadEntity<Mobile>();
         _level = reader.ReadInt();
         var expireTimerNext = reader.ReadDeltaTime();
@@ -402,12 +429,34 @@ public partial class TreasureMapChest : LockableContainer
         _lifted = reader.ReadEntitySet<Item>();
     }
 
-    [AfterDeserialization(false)]
+    private void MigrateFrom(V2Content content)
+    {
+        _guardians = content.Guardians;
+        if (_guardians.Count == 0)
+        {
+            _guardians = null;
+        }
+        _temporary = content.Temporary;
+        _owner = content.Owner;
+        _level = content.Level;
+        _lifted = content.Lifted;
+        if (_lifted.Count == 0)
+        {
+            _lifted = null;
+        }
+
+        var expireTimerDelay = content.ExpireTimerDelay;
+        DeserializeExpireTimer(expireTimerDelay);
+    }
+
+    [AfterDeserialization]
     private void AfterDeserialization()
     {
+        _filled = true;
+
         if (_expireTimer == null)
         {
-            Delete();
+            Timer.DelayCall(Delete);
         }
     }
 
@@ -430,12 +479,7 @@ public partial class TreasureMapChest : LockableContainer
 
     public void BeginRemove(Mobile from)
     {
-        if (!from.Alive)
-        {
-            return;
-        }
-
-        from.SendGump(new RemoveGump(from, this));
+        RemoveGump.DisplayTo(from, this);
     }
 
     public void EndRemove(Mobile from)
@@ -449,42 +493,50 @@ public partial class TreasureMapChest : LockableContainer
         Delete();
     }
 
-    private class RemoveGump : Gump
+    private class RemoveGump : StaticGump<RemoveGump>
     {
         private readonly TreasureMapChest _chest;
-        private readonly Mobile _from;
 
         public override bool Singleton => true;
 
-        public RemoveGump(Mobile from, TreasureMapChest chest) : base(15, 15)
+        private RemoveGump(TreasureMapChest chest) : base(15, 15) => _chest = chest;
+
+        public static void DisplayTo(Mobile from, TreasureMapChest chest)
         {
-            _from = from;
-            _chest = chest;
+            if (from?.NetState == null || !from.Alive || chest == null || chest.Deleted)
+            {
+                return;
+            }
 
-            Closable = false;
-            Disposable = false;
+            from.SendGump(new RemoveGump(chest));
+        }
 
-            AddPage(0);
+        protected override void BuildLayout(ref StaticGumpBuilder builder)
+        {
+            builder.AddPage();
 
-            AddBackground(30, 0, 240, 240, 2620);
+            builder.SetNoClose();
+            builder.SetNoDispose();
+
+            builder.AddBackground(30, 0, 240, 240, 2620);
 
             // When this treasure chest is removed, any items still inside of it will be lost.
-            AddHtmlLocalized(45, 15, 200, 80, 1048125, 0x7FFF);
+            builder.AddHtmlLocalized(45, 15, 200, 80, 1048125, 0x7FFF);
             // Are you certain you're ready to remove this chest?
-            AddHtmlLocalized(45, 95, 200, 60, 1048126, 0x7FFF);
+            builder.AddHtmlLocalized(45, 95, 200, 60, 1048126, 0x7FFF);
 
-            AddButton(40, 153, 4005, 4007, 1);
-            AddHtmlLocalized(75, 155, 180, 40, 1048127, 0x7FFF); // Remove the Treasure Chest
+            builder.AddButton(40, 153, 4005, 4007, 1);
+            builder.AddHtmlLocalized(75, 155, 180, 40, 1048127, 0x7FFF); // Remove the Treasure Chest
 
-            AddButton(40, 195, 4005, 4007, 2);
-            AddHtmlLocalized(75, 197, 180, 35, 1006045, 0x7FFF); // Cancel
+            builder.AddButton(40, 195, 4005, 4007, 2);
+            builder.AddHtmlLocalized(75, 197, 180, 35, 1006045, 0x7FFF); // Cancel
         }
 
         public override void OnResponse(NetState sender, in RelayInfo info)
         {
             if (info.ButtonID == 1)
             {
-                _chest.EndRemove(_from);
+                _chest.EndRemove(sender.Mobile);
             }
         }
     }

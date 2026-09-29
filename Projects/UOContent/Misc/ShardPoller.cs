@@ -36,16 +36,14 @@ public partial class ShardPoller : Item
         Movable = false;
     }
 
-    [SerializableProperty(0)]
-    [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-    public string Title
+    [SerializableField(0, allowFieldChange: nameof(AllowTitleChange))]
+    [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+    private string _title;
+
+    private bool AllowTitleChange(ref string value)
     {
-        get => _title;
-        set
-        {
-            _title = ShardPollPrompt.UrlToHref(value);
-            this.MarkDirty();
-        }
+        value = ShardPollPrompt.UrlToHref(value);
+        return true;
     }
 
     [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
@@ -54,31 +52,20 @@ public partial class ShardPoller : Item
             ? TimeSpan.Zero
             : Utility.Max(StartTime + Duration - Core.Now, TimeSpan.Zero);
 
-    [SerializableProperty(3)]
-    [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-    public bool Active
+    [SerializableField(3, fieldChanged: nameof(OnActiveChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+    private bool _active;
+
+    private void OnActiveChanged(bool oldValue, bool newValue)
     {
-        get => _active;
-        set
+        if (_active)
         {
-            if (_active == value)
-            {
-                return;
-            }
-
-            _active = value;
-
-            if (_active)
-            {
-                StartTime = Core.Now;
-                _activePollers.Add(this);
-            }
-            else
-            {
-                _activePollers.Remove(this);
-            }
-
-            this.MarkDirty();
+            StartTime = Core.Now;
+            _activePollers.Add(this);
+        }
+        else
+        {
+            _activePollers.Remove(this);
         }
     }
 
@@ -167,8 +154,7 @@ public partial class ShardPoller : Item
 
                 if (spg == null)
                 {
-                    spg = new ShardPollGump(from, poller, false, null);
-                    from.SendGump(spg);
+                    spg = ShardPollGump.DisplayTo(from, poller, false, null);
                 }
                 else
                 {
@@ -186,7 +172,7 @@ public partial class ShardPoller : Item
     {
         if (from.AccessLevel >= AccessLevel.Administrator)
         {
-            from.SendGump(new ShardPollGump(from, this, true, null));
+            ShardPollGump.DisplayTo(from, this, true, null);
         }
     }
 
@@ -201,7 +187,7 @@ public partial class ShardPoller : Item
 
         for (var i = 0; i < _options.Length; ++i)
         {
-            var option = _options[i] = new ShardPollOption();
+            var option = _options[i] = new ShardPollOption(this);
             option.Deserialize(reader);
         }
     }
@@ -226,15 +212,23 @@ public partial class ShardPoller : Item
 [SerializationGenerator(1, false)]
 public partial class ShardPollOption
 {
+    [DirtyTrackingEntity]
+    private ShardPoller _poller;
+
     private int _lineBreaks = -1;
 
     [SerializableField(1)]
     private IPAddress[] _voters;
 
-    public ShardPollOption() => _voters = [];
-
-    public ShardPollOption(string title)
+    public ShardPollOption(ShardPoller poller)
     {
+        _poller = poller;
+        _voters = [];
+    }
+
+    public ShardPollOption(ShardPoller poller, string title)
+    {
+        _poller = poller;
         _title = title;
         _voters = [];
     }
@@ -251,15 +245,12 @@ public partial class ShardPollOption
         }
     }
 
-    [SerializableProperty(0)]
-    public string Title
+    [SerializableField(0, fieldChanged: nameof(OnTitleChanged))]
+    private string _title;
+
+    private void OnTitleChanged(string oldValue, string newValue)
     {
-        get => _title;
-        set
-        {
-            _title = value;
-            _lineBreaks = -1;
-        }
+        _lineBreaks = -1;
     }
 
     public int Votes => Voters.Length;
@@ -340,23 +331,51 @@ public partial class ShardPollOption
     }
 }
 
-public class ShardPollGump : Gump
+public class ShardPollGump : DynamicGump
 {
     private const int LabelColor32 = 0xFFFFFF;
     private readonly Mobile _from;
     private readonly ShardPoller _poller;
     private Queue<ShardPoller> _polls;
 
-    public ShardPollGump(Mobile from, ShardPoller poller, bool editing, Queue<ShardPoller> polls) : base(50, 50)
+    public override bool Singleton => true;
+
+    private ShardPollGump(Mobile from, ShardPoller poller, bool editing, Queue<ShardPoller> polls) : base(50, 50)
     {
         _from = from;
         _poller = poller;
         Editing = editing;
         _polls = polls;
+    }
 
-        Closable = false;
+    public static ShardPollGump DisplayTo(Mobile from, ShardPoller poller, bool editing, Queue<ShardPoller> polls)
+    {
+        if (from?.NetState == null || poller == null || poller.Deleted)
+        {
+            return null;
+        }
 
-        AddPage(0);
+        var gump = new ShardPollGump(from, poller, editing, polls);
+        from.SendGump(gump);
+        return gump;
+    }
+
+    public bool Editing { get; }
+
+    public void QueuePoll(ShardPoller poller)
+    {
+        _polls ??= new Queue<ShardPoller>(4);
+        _polls.Enqueue(poller);
+    }
+
+    protected override void BuildLayout(ref DynamicGumpBuilder builder)
+    {
+        var poller = _poller;
+        var editing = Editing;
+
+        builder.SetNoClose();
+
+        builder.AddPage();
 
         var totalVotes = 0;
         var totalOptionHeight = 0;
@@ -377,10 +396,10 @@ public class ShardPollGump : Gump
 
         var height = 115 + totalOptionHeight;
 
-        AddBackground(1, 1, 398, height - 2, 3600);
-        AddAlphaRegion(16, 15, 369, height - 31);
+        builder.AddBackground(1, 1, 398, height - 2, 3600);
+        builder.AddAlphaRegion(16, 15, 369, height - 31);
 
-        AddItem(308, 30, 0x1E5E);
+        builder.AddItem(308, 30, 0x1E5E);
 
         string title;
 
@@ -393,18 +412,18 @@ public class ShardPollGump : Gump
             title = "Shard Poll";
         }
 
-        AddHtml(22, 22, 294, 20, title.Center(LabelColor32));
+        builder.AddHtml(22, 22, 294, 20, title.Center(LabelColor32));
 
         if (editing)
         {
-            AddHtml(22, 22, 294, 20, Html.Color($"{totalVotes} total", LabelColor32));
-            AddButton(287, 23, 0x2622, 0x2623, 2);
+            builder.AddHtml(22, 22, 294, 20, Html.Color($"{totalVotes} total", LabelColor32));
+            builder.AddButton(287, 23, 0x2622, 0x2623, 2);
         }
 
-        AddHtml(22, 50, 294, 40, poller.Title.Color(0x99CC66));
+        builder.AddHtml(22, 50, 294, 40, poller.Title.Color(0x99CC66));
 
-        AddImageTiled(32, 88, 264, 1, 9107);
-        AddImageTiled(42, 90, 264, 1, 9157);
+        builder.AddImageTiled(32, 88, 264, 1, 9107);
+        builder.AddImageTiled(42, 90, 264, 1, 9157);
 
         var y = 100;
 
@@ -426,16 +445,16 @@ public class ShardPollGump : Gump
 
             if (isViewingResults)
             {
-                AddImage(24, y - 15, 0x25FE);
+                builder.AddImage(24, y - 15, 0x25FE);
             }
             else
             {
-                AddRadio(24, y - 15, 0x25F9, 0x25FC, false, 1 + i);
+                builder.AddRadio(24, y - 15, 0x25F9, 0x25FC, false, 1 + i);
             }
 
             var lineBreaks = option.GetBreaks();
 
-            AddHtml(60, y - 9 * lineBreaks, 250, 18 * lineBreaks, text.Color(LabelColor32));
+            builder.AddHtml(60, y - 9 * lineBreaks, 250, 18 * lineBreaks, text.Color(LabelColor32));
 
             y += optHeight / 2;
             y += 5;
@@ -443,20 +462,12 @@ public class ShardPollGump : Gump
 
         if (editing && !isViewingResults)
         {
-            AddRadio(24, y + 15 - 15, 0x25F9, 0x25FC, false, 1 + poller.Options.Length);
-            AddHtml(60, y + 15 - 9, 250, 18, "Create new option.".Color(0x99CC66));
+            builder.AddRadio(24, y + 15 - 15, 0x25F9, 0x25FC, false, 1 + poller.Options.Length);
+            builder.AddHtml(60, y + 15 - 9, 250, 18, "Create new option.".Color(0x99CC66));
         }
 
-        AddButton(314, height - 73, 247, 248, 1);
-        AddButton(314, height - 47, 242, 241, 0);
-    }
-
-    public bool Editing { get; }
-
-    public void QueuePoll(ShardPoller poller)
-    {
-        _polls ??= new Queue<ShardPoller>(4);
-        _polls.Enqueue(poller);
+        builder.AddButton(314, height - 73, 247, 248, 1);
+        builder.AddButton(314, height - 47, 242, 241, 0);
     }
 
     public override void OnResponse(NetState sender, in RelayInfo info)
@@ -467,9 +478,11 @@ public class ShardPollGump : Gump
 
             if (shardPoller != null)
             {
+                var from = _from;
+                var queuedPolls = _polls;
                 Timer.StartTimer(
                     TimeSpan.FromSeconds(1.0),
-                    () => _from.SendGump(new ShardPollGump(_from, shardPoller, false, _polls))
+                    () => DisplayTo(from, shardPoller, false, queuedPolls)
                 );
             }
         }
@@ -514,7 +527,7 @@ public class ShardPollGump : Gump
                 else
                 {
                     _from.SendMessage("You may not edit an active poll. Deactivate it first.");
-                    _from.SendGump(new ShardPollGump(_from, _poller, Editing, _polls));
+                    _from.SendGump(this);
                 }
             }
             else
@@ -535,7 +548,7 @@ public class ShardPollGump : Gump
         }
         else if (info.ButtonID == 2 && Editing)
         {
-            _from.SendGump(new ShardPollGump(_from, _poller, Editing, _polls));
+            _from.SendGump(this);
             _from.SendGump(new PropertiesGump(_from, _poller));
         }
     }
@@ -554,7 +567,7 @@ public partial class ShardPollPrompt : Prompt
 
     public override void OnCancel(Mobile from)
     {
-        from.SendGump(new ShardPollGump(from, _poller, true, null));
+        ShardPollGump.DisplayTo(from, _poller, true, null);
     }
 
     private static string UrlRegex_Match(Match m)
@@ -595,7 +608,7 @@ public partial class ShardPollPrompt : Prompt
 
             if (_option == null)
             {
-                _poller.AddOption(new ShardPollOption(text));
+                _poller.AddOption(new ShardPollOption(_poller, text));
             }
             else
             {
@@ -603,7 +616,7 @@ public partial class ShardPollPrompt : Prompt
             }
         }
 
-        from.SendGump(new ShardPollGump(from, _poller, true, null));
+        ShardPollGump.DisplayTo(from, _poller, true, null);
     }
 
     [GeneratedRegex(@"\[url(?:=(.*?))?\](.*?)\[/url\]", RegexOptions.IgnoreCase | RegexOptions.Compiled)]

@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: ObjectPropertyList.cs                                           *
  *                                                                       *
@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using Server.Buffers;
+using Server.Logging;
 using Server.Network;
 using Server.Text;
 
@@ -37,6 +38,21 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
         1114779 // ~1_val~
     };
 
+    private static readonly ILogger logger = LogFactory.GetLogger(typeof(ObjectPropertyList));
+
+    // Max characters for a SINGLE OPL property argument. The legacy 2D client copies each
+    // property's text into a fixed ~512-char (1024-byte) buffer; exceeding it corrupts the heap
+    // (smashes an adjacent world object's vtable -> client crash). 504 = multiple of 8, safely
+    // under the empirically confirmed ~510-char ceiling. For multi-line content use AddChunked().
+    public const int MaxArgumentLength = 504;
+
+    // 0xD6 header: packet id, length, unknown, serial, unknown, hash. Properties start after it.
+    private const int HeaderLength = 15;
+
+    // Terminate writes the bare hash into 0xD6, SendOPLInfo writes Hash with bit 30 set, and the
+    // client recovers one from the other by masking off 0x40000000. The hash must stay below it.
+    private const int HashMask = 0x3FFFFFF;
+
     private int _hash;
     private int _stringNumbersIndex;
     private byte[] _buffer;
@@ -45,6 +61,12 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
     // For string interpolation
     private int _pos;
     private char[]? _arrayToReturnToPool;
+
+    /// <summary>
+    /// True while GetProperties is populating this list. Set by the owning entity so a nested
+    /// InvalidateProperties can be refused instead of Reset()ing a build already in flight.
+    /// </summary>
+    internal bool IsBuilding { get; set; }
 
     public ObjectPropertyList(IEntity? e)
     {
@@ -74,7 +96,7 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void Reset()
     {
-        _bufferPos = 15;
+        _bufferPos = HeaderLength;
         _hash = 0;
         _stringNumbersIndex = 0;
         Header = 0;
@@ -99,11 +121,16 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void Terminate()
     {
-        int length = _bufferPos + 4;
+        var length = _bufferPos + 4;
         if (length != _buffer.Length)
         {
             Resize(length);
         }
+
+        // xxHash3 over the finished property block. Order and repetition sensitive, unlike the
+        // XOR fold it replaces, which collided whenever properties were reordered or shared an
+        // argument.
+        _hash = (int)(HashUtility.ComputeHash64(_buffer.AsSpan(HeaderLength, _bufferPos - HeaderLength)) & HashMask);
 
         var writer = new SpanWriter(_buffer);
         writer.Seek(_bufferPos, SeekOrigin.Begin);
@@ -112,12 +139,6 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
         writer.Seek(11, SeekOrigin.Begin);
         writer.Write(_hash);
         writer.WritePacketLength();
-    }
-
-    private void AddHash(int val)
-    {
-        _hash ^= val & 0x3FFFFFF;
-        _hash ^= (val >> 26) & 0x3F;
     }
 
     public void Add(int number)
@@ -133,9 +154,7 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
             HeaderArgs = "";
         }
 
-        AddHash(number);
-
-        int length = _bufferPos + 6;
+        var length = _bufferPos + 6;
         while (length > _buffer.Length)
         {
             Flush();
@@ -148,10 +167,102 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
     }
 
     public void Add(int number, string? arguments) => InternalAdd(number, $"{arguments}");
-    public void Add(string argument) => InternalAdd(GetStringNumber(), $"{argument}");
     public void Add(int number, int value) => InternalAdd(number, $"{value}");
     public void AddLocalized(int value) => InternalAdd(GetStringNumber(), $"{value:#}");
     public void AddLocalized(int number, int value) => InternalAdd(number, $"{value:#}");
+
+    public void Add(ReadOnlySpan<char> argument) => InternalAdd(GetStringNumber(), argument);
+    public void Add(int number, ReadOnlySpan<char> argument) => InternalAdd(number, argument);
+    public OplTextBlock TextBlock() => new(this);
+
+    // Emits newline-joined text across as many OPL properties as needed, breaking ONLY at '\n',
+    // so no single property exceeds MaxArgumentLength characters. Each chunk goes through the
+    // passthrough-cliloc rotation. Use for variable-length multi-line content instead of one
+    // Add(joined) call, which would overflow the legacy 2D-client per-property tooltip buffer.
+    public void AddChunked(ReadOnlySpan<char> text)
+    {
+        if (text.IsEmpty)
+        {
+            return;
+        }
+
+        var chunkStart = 0;
+        var searchFrom = 0;
+
+        while (true)
+        {
+            var nl = text[searchFrom..].IndexOf('\n');
+            var lineEnd = nl < 0 ? text.Length : searchFrom + nl;
+
+            // If appending this line would push the current chunk past the cap, flush the chunk
+            // up to the end of the previous line (excluding its '\n') first.
+            if (lineEnd - chunkStart > MaxArgumentLength && searchFrom > chunkStart)
+            {
+                Add(text[chunkStart..(searchFrom - 1)]);
+                chunkStart = searchFrom;
+                continue;
+            }
+
+            if (nl < 0)
+            {
+                Add(text[chunkStart..]); // remainder (a single over-cap line is clamped by Add)
+                return;
+            }
+
+            searchFrom = lineEnd + 1;
+        }
+    }
+
+    // Hard backstop: never let a single property exceed the legacy client's per-property buffer.
+    // Callers with multi-line content should use AddChunked(); this truncates anything that slips
+    // through and surfaces the offending entity/cliloc.
+    private ReadOnlySpan<char> ClampArgument(int number, ReadOnlySpan<char> chars)
+    {
+        if (chars.Length <= MaxArgumentLength)
+        {
+            return chars;
+        }
+
+        logger.Warning(
+            "OPL property on {Entity} (cliloc {Cliloc}) is {Length} chars; truncating to {Max} to avoid legacy 2D-client tooltip-buffer overflow. Use AddChunked for multi-line text.",
+            Entity,
+            number,
+            chars.Length,
+            MaxArgumentLength
+        );
+
+        return chars[..MaxArgumentLength];
+    }
+
+    private void InternalAdd(int number, ReadOnlySpan<char> chars)
+    {
+        if (number == 0)
+        {
+            return;
+        }
+
+        chars = ClampArgument(number, chars);
+
+        if (Header == 0)
+        {
+            Header = number;
+            HeaderArgs = chars.ToString();
+        }
+
+        var strLength = chars.Length * 2;
+        var length = _bufferPos + 6 + strLength;
+        while (length > _buffer.Length)
+        {
+            Flush();
+        }
+
+        var writer = new SpanWriter(_buffer.AsSpan(_bufferPos));
+        writer.Write(number);
+        writer.Write((ushort)strLength);
+        writer.Write(chars, TextEncoding.UnicodeLE);
+
+        _bufferPos += writer.BytesWritten;
+    }
 
     private int GetStringNumber() => _stringNumbers[_stringNumbersIndex++ % _stringNumbers.Length];
 
@@ -177,7 +288,7 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
             return;
         }
 
-        var chars = _arrayToReturnToPool.AsSpan(0, _pos);
+        var chars = ClampArgument(number, _arrayToReturnToPool.AsSpan(0, _pos));
 
         if (Header == 0)
         {
@@ -185,11 +296,8 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
             HeaderArgs = chars.ToString();
         }
 
-        AddHash(number);
-        AddHash(string.GetHashCode(chars, StringComparison.Ordinal));
-
-        int strLength = chars.Length * 2;
-        int length = _bufferPos + 6 + strLength;
+        var strLength = chars.Length * 2;
+        var length = _bufferPos + 6 + strLength;
         while (length > _buffer.Length)
         {
             Flush();
@@ -215,12 +323,27 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
     private static int GetDefaultLength(int literalLength, int formattedCount) =>
         Math.Max(256, literalLength + formattedCount * 11);
 
+    // Reset()/Dispose() return the scratch buffer to the pool. If either lands while a `$"..."`
+    // handler is still appending, re-rent rather than spanning a null array and throwing out of
+    // GetProperties. Mobile/Item hold the primary guard; this covers any other caller.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void EnsureInterpolationBuffer()
+    {
+        if (_arrayToReturnToPool == null)
+        {
+            _arrayToReturnToPool = STArrayPool<char>.Shared.Rent(256);
+            _pos = 0;
+        }
+    }
+
     public void AppendLiteral(string value)
     {
+        EnsureInterpolationBuffer();
+
         if (value.Length == 1)
         {
-            Span<char> chars = _arrayToReturnToPool.AsSpan();
-            int pos = _pos;
+            var chars = _arrayToReturnToPool.AsSpan();
+            var pos = _pos;
             if ((uint)pos < (uint)chars.Length)
             {
                 chars[pos] = value[0];
@@ -250,6 +373,8 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void AppendFormatted<T>(T value)
     {
+        EnsureInterpolationBuffer();
+
         string? s;
         if (value is IFormattable)
         {
@@ -280,9 +405,11 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void AppendFormatted<T>(T value, string? format)
     {
-        // We support localization '#' cliloc formatter for custom property lists
-        // This allows someone to build an IPropertyList that creates HTML using the same syntax as LocalizationInterpolationHandler
-        if (format == "#")
+        EnsureInterpolationBuffer();
+
+        // '#' marks an integer argument as a cliloc ("#<value>"). Integers only -- a float/double/decimal
+        // '#' is the standard numeric format, not a cliloc marker.
+        if (format == "#" && value is int or uint or long or ulong or short or ushort or byte or sbyte)
         {
             AppendLiteral("#");
             format = null;
@@ -318,7 +445,7 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void AppendFormatted<T>(T value, int alignment)
     {
-        int startingPos = _pos;
+        var startingPos = _pos;
         AppendFormatted(value);
         if (alignment != 0)
         {
@@ -328,7 +455,7 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        int startingPos = _pos;
+        var startingPos = _pos;
         AppendFormatted(value, format);
         if (alignment != 0)
         {
@@ -338,6 +465,8 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void AppendFormatted(ReadOnlySpan<char> value)
     {
+        EnsureInterpolationBuffer();
+
         if (value.TryCopyTo(_arrayToReturnToPool.AsSpan(_pos..)))
         {
             _pos += value.Length;
@@ -350,14 +479,16 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void AppendFormatted(ReadOnlySpan<char> value, int alignment = 0, string? format = null)
     {
-        bool leftAlign = false;
+        EnsureInterpolationBuffer();
+
+        var leftAlign = false;
         if (alignment < 0)
         {
             leftAlign = true;
             alignment = -alignment;
         }
 
-        int paddingRequired = alignment - value.Length;
+        var paddingRequired = alignment - value.Length;
         if (paddingRequired <= 0)
         {
             AppendFormatted(value);
@@ -384,6 +515,8 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
 
     public void AppendFormatted(string? value)
     {
+        EnsureInterpolationBuffer();
+
         if (value?.TryCopyTo(_arrayToReturnToPool.AsSpan(_pos..)) == true)
         {
             _pos += value.Length;
@@ -416,16 +549,16 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
         Debug.Assert(startingPos >= 0 && startingPos <= _pos);
         Debug.Assert(alignment != 0);
 
-        int charsWritten = _pos - startingPos;
+        var charsWritten = _pos - startingPos;
 
-        bool leftAlign = false;
+        var leftAlign = false;
         if (alignment < 0)
         {
             leftAlign = true;
             alignment = -alignment;
         }
 
-        int paddingNeeded = alignment - charsWritten;
+        var paddingNeeded = alignment - charsWritten;
         if (paddingNeeded > 0)
         {
             EnsureCapacityForAdditionalChars(paddingNeeded);
@@ -486,13 +619,13 @@ public sealed class ObjectPropertyList : IPropertyList, IDisposable
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void GrowCore(uint requiredMinCapacity)
     {
-        uint newCapacity = Math.Max(requiredMinCapacity, Math.Min((uint)_arrayToReturnToPool.Length * 2, 0x3FFFFFDF));
-        int arraySize = (int)Math.Clamp(newCapacity, 256, int.MaxValue);
+        var newCapacity = Math.Max(requiredMinCapacity, Math.Min((uint)_arrayToReturnToPool.Length * 2, 0x3FFFFFDF));
+        var arraySize = (int)Math.Clamp(newCapacity, 256, int.MaxValue);
 
-        char[] newArray = STArrayPool<char>.Shared.Rent(arraySize);
+        var newArray = STArrayPool<char>.Shared.Rent(arraySize);
         _arrayToReturnToPool.AsSpan(.._pos).CopyTo(newArray);
 
-        char[] toReturn = _arrayToReturnToPool;
+        var toReturn = _arrayToReturnToPool;
         _arrayToReturnToPool = newArray;
 
         STArrayPool<char>.Shared.Return(toReturn);

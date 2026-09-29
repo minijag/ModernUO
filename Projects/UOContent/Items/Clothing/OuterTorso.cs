@@ -37,21 +37,22 @@ namespace Server.Items
         public override double DefaultWeight => 3.0;
     }
 
-    [SerializationGenerator(3, false)]
+    [SerializationGenerator(4, false)]
     public partial class DeathRobe : Robe
     {
         private static readonly TimeSpan m_DefaultDecayTime = TimeSpan.FromMinutes(1.0);
 
-        [TimerDrift]
         [SerializableField(0)]
+        [DeserializeTimer(nameof(DeserializeDecayTimer))]
         private Timer _decayTimer;
 
-        [DeserializeTimerField(0)]
-        private void DeserializeDecayTimer(TimeSpan delay)
+        private void DeserializeDecayTimer(TimeSpan delay) => BeginDecay(delay);
+
+        private void MigrateFrom(V3Content content)
         {
-            if (delay != TimeSpan.MinValue)
+            if (content.DecayTimerDelay != TimeSpan.MinValue)
             {
-                BeginDecay(delay);
+                DeserializeDecayTimer(content.DecayTimerDelay);
             }
         }
 
@@ -324,34 +325,26 @@ namespace Server.Items
 
         public override double DefaultWeight => 3.0;
 
+        [SerializableField(0, fieldChanged: nameof(OnCurArcaneChargesChanged))]
         [EncodedInt]
-        [SerializableProperty(0)]
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int CurArcaneCharges
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
+        [InvalidateProperties]
+        private int _curArcaneCharges;
+
+        private void OnCurArcaneChargesChanged(int oldValue, int newValue)
         {
-            get => _curArcaneCharges;
-            set
-            {
-                _curArcaneCharges = value;
-                InvalidateProperties();
-                Update();
-                this.MarkDirty();
-            }
+            Update();
         }
 
+        [SerializableField(1, fieldChanged: nameof(OnMaxArcaneChargesChanged))]
         [EncodedInt]
-        [SerializableProperty(1)]
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int MaxArcaneCharges
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
+        [InvalidateProperties]
+        private int _maxArcaneCharges;
+
+        private void OnMaxArcaneChargesChanged(int oldValue, int newValue)
         {
-            get => _maxArcaneCharges;
-            set
-            {
-                _maxArcaneCharges = value;
-                InvalidateProperties();
-                Update();
-                this.MarkDirty();
-            }
+            Update();
         }
 
         [CommandProperty(AccessLevel.GameMaster)]

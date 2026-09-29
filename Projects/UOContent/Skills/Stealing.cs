@@ -5,6 +5,7 @@ using Server.Engines.ConPVP;
 using Server.Engines.Stealables;
 using Server.Factions;
 using Server.Items;
+using Server.Misc;
 using Server.Mobiles;
 using Server.Spells;
 using Server.Spells.Fifth;
@@ -43,6 +44,9 @@ public static class Stealing
 
     public static bool IsEmptyHanded(Mobile from) =>
         from.FindItemOnLayer(Layer.OneHanded) == null && from.FindItemOnLayer(Layer.TwoHanded) == null;
+
+    private static bool IsInLockedContainer(Item item) =>
+        item.Parent is Item parent && (parent is LockableContainer { Locked: true } || IsInLockedContainer(parent));
 
     public static TimeSpan OnUse(Mobile m)
     {
@@ -204,8 +208,9 @@ public static class Stealing
                     if (sig.LastMonolith?.Sigil != null)
                     {
                         sig.LastMonolith.Sigil = null;
-                        sig.LastStolen = Core.Now;
                     }
+
+                    sig.LastStolen = Core.Now;
 
                     return sig;
                 }
@@ -246,6 +251,10 @@ public static class Stealing
             else if (root is Corpse)
             {
                 _thief.SendLocalizedMessage(502710); // You can't steal that!
+            }
+            else if (_thief.AccessLevel < AccessLevel.GameMaster && IsInLockedContainer(toSteal))
+            {
+                _thief.SendLocalizedMessage(501747); // It appears to be locked.
             }
             else
             {
@@ -360,6 +369,8 @@ public static class Stealing
                 _thief.SendLocalizedMessage(502710); // You can't steal that!
             }
 
+            Titles.AwardKarma(from, -50, true);
+
             var mobRoot = root as Mobile;
 
             if (stolen != null)
@@ -414,8 +425,8 @@ public static class Stealing
             const int SkillCooldown = 10000;    // 10s
 
             // Calculate how much time has passed since the targeter was opened
-            int ticksSinceTargeter = (int)(Core.TickCount - (from.NextSkillTime - TargeterCooldown));
-            int remainingCooldown = Math.Max(0, SkillCooldown - ticksSinceTargeter);
+            var ticksSinceTargeter = (int)(Core.TickCount - (from.NextSkillTime - TargeterCooldown));
+            var remainingCooldown = Math.Max(0, SkillCooldown - ticksSinceTargeter);
             from.NextSkillTime = Core.TickCount + remainingCooldown;
         }
     }

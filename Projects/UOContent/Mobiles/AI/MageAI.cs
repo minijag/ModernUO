@@ -20,6 +20,9 @@ public class MageAI : BaseAI
     private const double DispelChance = 0.75;   // 75% chance to dispel at gm magery
     private const double InvisChance = 0.50; // 50% chance to invis at gm magery
 
+    public override double FleeHealthThreshold => 0.2; // 20% is default
+    public override double FleeChance => 0.1; // 10% is default
+
     private static readonly int[] Offsets =
     [
         -1, -1,
@@ -168,7 +171,7 @@ public class MageAI : BaseAI
     {
         if (!SmartAI)
         {
-            if (!MoveTo(m, false, Mobile.RangeFight))
+            if (!MoveTo(m, Mobile.RangeFight))
             {
                 OnFailedMove();
             }
@@ -182,14 +185,14 @@ public class MageAI : BaseAI
             {
                 RunFrom(m);
             }
-            else if (!Mobile.InRange(m, Math.Max(Mobile.RangeFight, 2)) && !MoveTo(m, false, 1))
+            else if (!Mobile.InRange(m, Math.Max(Mobile.RangeFight, 2)) && !MoveTo(m, 1))
             {
                 OnFailedMove();
             }
         }
         else if (!Mobile.InRange(m, Mobile.RangeFight))
         {
-            if (!MoveTo(m, false, 1))
+            if (!MoveTo(m, 1))
             {
                 OnFailedMove();
             }
@@ -676,7 +679,7 @@ public class MageAI : BaseAI
                 Mobile.Combatant = Mobile.FocusMob;
                 Mobile.FocusMob = null;
             }
-            else if (!Mobile.InRange(c, Mobile.RangePerception * 3))
+            else if (!Mobile.InRange(c, Mobile.ChaseLeashRange))
             {
                 Mobile.Combatant = null;
             }
@@ -692,19 +695,21 @@ public class MageAI : BaseAI
             }
         }
 
-        if (!Mobile.Controlled && !Mobile.Summoned && Mobile.CanFlee && Mobile.Hits < Mobile.HitsMax * 20 / 100)
+        // Geometry (not hiding — CanSee passed above) is blocking the shot: close in until
+        // line of sight returns. Poisoned mages still fall through to cure.
+        if (!Mobile.Poisoned && Mobile.Spell?.IsCasting != true && !Mobile.InLOS(c))
         {
-            // We are low on health, should we flee?
-            // (10 + diff)% chance to flee
-            var fleeChance = 10 + Math.Max(0, c.Hits - Mobile.Hits);
+            DebugSay("I cannot see my target, moving to regain line of sight");
 
-            if (Utility.Random(0, 100) > fleeChance)
+            if (!MoveTo(c, 1))
             {
-                this.DebugSayFormatted($"I am going to flee from {c.Name}");
-
-                Action = ActionType.Flee;
-                return true;
+                OnFailedMove();
             }
+
+            _lastTarget = c;
+            _lastTargetLoc = c.Location;
+
+            return true;
         }
 
         if (Mobile.TriggerAbility(MonsterAbilityTrigger.CombatAction, c))
@@ -838,37 +843,6 @@ public class MageAI : BaseAI
             }
 
             base.DoActionGuard();
-        }
-
-        return true;
-    }
-
-    public override bool DoActionFlee()
-    {
-        if ((Mobile.Mana > 20 || Mobile.Mana == Mobile.ManaMax) && Mobile.Hits > Mobile.HitsMax / 2)
-        {
-            DebugSay("I am stronger now, my guard is up");
-
-            Action = ActionType.Guard;
-        }
-        else if (AcquireFocusMob(Mobile.RangePerception, Mobile.FightMode, false, false, true))
-        {
-            this.DebugSayFormatted($"I am scared of {Mobile.FocusMob.Name}");
-
-            RunFrom(Mobile.FocusMob);
-            Mobile.FocusMob = null;
-
-            if (Mobile.Poisoned && Utility.Random(0, 5) == 0)
-            {
-                new CureSpell(Mobile).Cast();
-            }
-        }
-        else
-        {
-            DebugSay("Area seems clear, but my guard is up");
-
-            Action = ActionType.Guard;
-            Mobile.Warmode = true;
         }
 
         return true;
@@ -1061,7 +1035,16 @@ public class MageAI : BaseAI
 
             if (toTarget != null)
             {
-                RunTo(toTarget);
+                // Without line of sight the stand-off is pointless — close in so the held
+                // target can be invoked.
+                if (!Mobile.InLOS(toTarget))
+                {
+                    MoveTo(toTarget, 1);
+                }
+                else
+                {
+                    RunTo(toTarget);
+                }
             }
         }
 

@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: ChampionSkullBrazier.cs                                         *
  *                                                                       *
@@ -33,17 +33,13 @@ public partial class ChampionSkullBrazier : AddonComponent
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private ChampionSkullPlatform _platform;
 
-    [SerializableProperty(2)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public Item Skull
+    [SerializableField(2, fieldChanged: nameof(OnSkullChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private Item _skull;
+
+    private void OnSkullChanged(Item oldValue, Item newValue)
     {
-        get => _skull;
-        set
-        {
-            _skull = value;
-            this.MarkDirty();
-            _platform?.Validate();
-        }
+        _platform?.Validate();
     }
 
     public override int LabelNumber => 1049489 + (int)_type;

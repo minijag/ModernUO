@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: IGenericSerializable.cs                                         *
  *                                                                       *
@@ -17,9 +17,5 @@ namespace Server;
 
 public interface IGenericSerializable
 {
-    byte SerializedThread { get; set; }
-    int SerializedPosition { get; set; }
-    int SerializedLength { get; set; }
-
     void Serialize(IGenericWriter writer);
 }

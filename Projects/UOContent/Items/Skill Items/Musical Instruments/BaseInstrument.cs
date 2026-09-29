@@ -74,16 +74,13 @@ public abstract partial class BaseInstrument : Item, ICraftable, ISlayer
         }
     }
 
-    [SerializableProperty(1)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public DateTime LastReplenished
+    [SerializableField(1, fieldChanged: nameof(OnLastReplenishedChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private DateTime _lastReplenished;
+
+    private void OnLastReplenishedChanged(DateTime oldValue, DateTime newValue)
     {
-        get => _lastReplenished;
-        set
-        {
-            _lastReplenished = value;
-            CheckReplenishUses();
-        }
+        CheckReplenishUses();
     }
 
     [SerializableProperty(3)]
@@ -95,6 +92,7 @@ public abstract partial class BaseInstrument : Item, ICraftable, ISlayer
         {
             UnscaleUses();
             _quality = value;
+            this.MarkDirty();
             InvalidateProperties();
             ScaleUses();
         }
@@ -112,6 +110,7 @@ public abstract partial class BaseInstrument : Item, ICraftable, ISlayer
         set
         {
             _usesRemaining = value;
+            this.MarkDirty();
             InvalidateProperties();
         }
     }

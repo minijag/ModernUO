@@ -57,9 +57,9 @@ public static class ArborRefinementDeployment
         File.WriteAllText(Path.Combine(Data,"audit.txt"),audit);Console.WriteLine("[ArborMazeV3] "+audit);
         if(!File.Exists(Path.Combine(Data,"install.pending")))return;
         if(File.Exists(Path.Combine(Data,"installed.txt")))throw new Exception("Already installed");
-        var options=JsonConfig.GetOptions();
-        var configured=JsonConfig.Deserialize<List<DynamicJson>>(Path.Combine(Core.BaseDirectory,"zodiac.json")).Where(j=>j.GetProperty("guid",options,out Guid id)&&m.AllSpawnerGuids.Contains(id)).ToArray();
-        var targets=configured.Select(j=>{j.GetProperty("location",options,out Point3D p);return p;}).ToArray();
+        var options=SpawnerJsonSerializer.Options;
+        var configured=JsonConfig.Deserialize<List<SpawnerDto>>(Path.Combine(Core.BaseDirectory,"zodiac.json"), options).Where(j=>(j.Guid is var id)&&m.AllSpawnerGuids.Contains(id)).ToArray();
+        var targets=configured.Select(j=>{Point3D p = j.Location;return p;}).ToArray();
         var tele=JsonConfig.Deserialize<List<TeleporterDefinition>>(Path.Combine(Core.BaseDirectory,"Data","teleporters.json")).Where(t=>t.Source.Map==Map.Felucca&&m.AllPortals.Any(p=>p.X==t.Source.X&&p.Y==t.Source.Y&&p.Z==t.Source.Z)).ToArray();
         if(targets.Length!=26||tele.Length!=11)throw new Exception("Definition count mismatch");
         var bad=new List<string>();

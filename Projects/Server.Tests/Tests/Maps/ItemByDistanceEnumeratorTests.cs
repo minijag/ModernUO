@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Server.Tests.Tests.Maps;
+namespace Server.Tests.Maps;
 
 [Collection("Sequential Server Tests")]
 public class ItemByDistanceEnumeratorTests
@@ -215,8 +215,8 @@ public class ItemByDistanceEnumeratorTests
         var center = new Point3D(700, 700, 0);
         const int range = 5;
 
-        var testItem2 = new TestItem2((Serial)Utility.RandomMinMax(0x100u, 0xFFFu));
-        var testItem = new TestItem((Serial)Utility.RandomMinMax(0x100u, 0xFFFu));
+        var testItem2 = new TestItem2(World.NewItem);
+        var testItem = new TestItem(World.NewItem);
 
         try
         {
@@ -400,7 +400,7 @@ public class ItemByDistanceEnumeratorTests
                 for (var side = 0; side < 4; side++)
                 {
                     var offset = ringOffset * Map.SectorSize;
-                    Point3D pos = side switch
+                    var pos = side switch
                     {
                         0 => new Point3D(center.X + offset, center.Y, 0),
                         1 => new Point3D(center.X, center.Y + offset, 0),
@@ -438,7 +438,7 @@ public class ItemByDistanceEnumeratorTests
 
     private static TestItem CreateItem(Map map, Point3D location)
     {
-        var Item = new TestItem((Serial)Utility.RandomMinMax(0x100u, 0xFFFu));
+        var Item = new TestItem(World.NewItem);
         Item.MoveToWorld(location, map);
         return Item;
     }

@@ -27,7 +27,7 @@ public abstract class SummonUndeadCounter : MonsterAbility
         var amount = AmountToSummon - source.Followers;
         var distance = SummonRange;
 
-        int willTransform = !source.Paralyzed && ChanceToPolymorph > 0 && ChanceToPolymorph > Utility.RandomDouble()
+        var willTransform = !source.Paralyzed && ChanceToPolymorph > 0 && ChanceToPolymorph > Utility.RandomDouble()
             ? Utility.Random(amount)
             : -1;
 
@@ -48,7 +48,7 @@ public abstract class SummonUndeadCounter : MonsterAbility
                 summon = CreateSummon(source);
                 summon.Team = source.Team;
                 summon.Summoned = true;
-                summon.SummonMaster = source;
+                summon.Master = source;
                 summon.FightMode = FightMode.Closest;
                 summon.Combatant = target;
                 summon.Home = source.Home;

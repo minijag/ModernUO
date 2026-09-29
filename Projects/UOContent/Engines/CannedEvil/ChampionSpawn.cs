@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: ChampionSpawn.cs                                                *
  *                                                                       *
@@ -18,6 +18,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ModernUO.Serialization;
+using Server.Collections;
 using Server.Engines.Virtues;
 using Server.Gumps;
 using Server.Items;
@@ -27,16 +28,44 @@ using Server.Logging;
 
 namespace Server.Engines.CannedEvil;
 
-[SerializationGenerator(10, false)]
+[SerializationGenerator(11, false)]
 public partial class ChampionSpawn : Item
 {
+    private void MigrateFrom(V10Content content)
+    {
+        _level = content.Level;
+        _activatedByProximity = content.ActivatedByProximity;
+        _nextProximityTime = content.NextProximityTime;
+        _maxLevel = content.MaxLevel;
+        _activatedByValor = content.ActivatedByValor;
+        _damageEntries = content.DamageEntries;
+        _confinedRoaming = content.ConfinedRoaming;
+        _idol = content.Idol;
+        _hasBeenAdvanced = content.HasBeenAdvanced;
+        _spawnArea = content.SpawnArea;
+        _randomizeType = content.RandomizeType;
+        _kills = content.Kills;
+        _active = content.Active;
+        _type = content.Type;
+        _creatures = content.Creatures;
+        _redSkulls = content.RedSkulls;
+        _whiteSkulls = content.WhiteSkulls;
+        _platform = content.Platform;
+        _altar = content.Altar;
+        _expireDelay = content.ExpireDelay;
+        _expireTime = content.ExpireTime;
+        _champion = content.Champion;
+        _restartDelay = content.RestartDelay;
+        _restartTime = content.RestartTime;
+    }
+
     private static readonly ILogger logger = LogFactory.GetLogger(typeof(ChampionSpawn));
 
     [SerializableField(1)]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private bool _activatedByProximity;
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(2)]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private DateTime _nextProximityTime;
@@ -96,7 +125,7 @@ public partial class ChampionSpawn : Item
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private TimeSpan _expireDelay;
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(20)]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private DateTime _expireTime;
@@ -109,7 +138,7 @@ public partial class ChampionSpawn : Item
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private TimeSpan _restartDelay;
 
-    [DeltaDateTime]
+    [AnchoredDateTime]
     [SerializableField(23, setter: "private")]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private DateTime _restartTime;
@@ -184,15 +213,15 @@ public partial class ChampionSpawn : Item
         get => _level;
         set
         {
-            for (int i = _redSkulls.Count - 1; i >= value; --i)
+            for (var i = _redSkulls.Count - 1; i >= value; --i)
             {
                 _redSkulls[i].Delete();
                 _redSkulls.RemoveAt(i);
             }
 
-            for (int i = _redSkulls.Count; i < Math.Min(value, 16); ++i)
+            for (var i = _redSkulls.Count; i < Math.Min(value, 16); ++i)
             {
-                Item skull = new Item(0x1854) { Hue = 0x26, Movable = false, Light = LightType.Circle150 };
+                var skull = new Item(0x1854) { Hue = 0x26, Movable = false, Light = LightType.Circle150 };
                 skull.MoveToWorld(GetRedSkullLocation(i), Map);
                 _redSkulls.Add(skull);
             }
@@ -203,47 +232,38 @@ public partial class ChampionSpawn : Item
         }
     }
 
-    [SerializableProperty(3)]
-    [CommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
-    public int MaxLevel
+    [SerializableField(3, allowFieldChange: nameof(AllowMaxLevelChange))]
+    [SerializedCommandProperty(AccessLevel.GameMaster, AccessLevel.Administrator)]
+    private int _maxLevel;
+
+    private bool AllowMaxLevelChange(ref int value)
     {
-        get => _maxLevel;
-        set => _maxLevel = Math.Clamp(value, 0, 18);
+        value = Math.Clamp(value, 0, 18);
+        return true;
     }
 
-    [SerializableProperty(9)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public Rectangle2D SpawnArea
+    [SerializableField(9, fieldChanged: nameof(OnSpawnAreaChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    [InvalidateProperties]
+    private Rectangle2D _spawnArea;
+
+    private void OnSpawnAreaChanged(Rectangle2D oldValue, Rectangle2D newValue)
     {
-        get => _spawnArea;
-        set
-        {
-            _spawnArea = value;
-            this.MarkDirty();
-            InvalidateProperties();
-            UpdateRegion();
-        }
+        UpdateRegion();
     }
 
-    [SerializableProperty(11)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public int Kills
+    [SerializableField(11, fieldChanged: nameof(OnKillsChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    [InvalidateProperties]
+    private int _kills;
+
+    private void OnKillsChanged(int oldValue, int newValue)
     {
-        get => _kills;
-        set
+        var n = _kills / (double)MaxKills;
+        var p = (int)(n * 100);
+        if (p < 90)
         {
-            _kills = value;
-            this.MarkDirty();
-
-            double n = _kills / (double)MaxKills;
-            int p = (int)(n * 100);
-
-            if (p < 90)
-            {
-                SetWhiteSkullCount(p / 20);
-            }
-
-            InvalidateProperties();
+            SetWhiteSkullCount(p / 20);
         }
     }
 
@@ -292,15 +312,15 @@ public partial class ChampionSpawn : Item
 
     public void SetWhiteSkullCount(int val)
     {
-        for (int i = _whiteSkulls.Count - 1; i >= val; --i)
+        for (var i = _whiteSkulls.Count - 1; i >= val; --i)
         {
             _whiteSkulls[i].Delete();
             _whiteSkulls.RemoveAt(i);
         }
 
-        for (int i = _whiteSkulls.Count; i < val; ++i)
+        for (var i = _whiteSkulls.Count; i < val; ++i)
         {
-            Item skull = new Item(0x1854)
+            var skull = new Item(0x1854)
             {
                 Movable = false,
                 Light = LightType.Circle150
@@ -454,7 +474,7 @@ public partial class ChampionSpawn : Item
         // Justice reward
         var pm = (PlayerMobile)killer;
         var prot = JusticeVirtue.GetProtector(pm);
-        if (prot == null || prot.Map != killer.Map || prot.Kills >= 5 || prot.Criminal ||
+        if (prot == null || prot.Map != killer.Map || prot.Murderer || prot.Criminal ||
             !JusticeVirtue.CheckMapRegion(killer, prot))
         {
             return;
@@ -531,11 +551,11 @@ public partial class ChampionSpawn : Item
             return;
         }
 
-        int kills = _kills;
+        var kills = _kills;
 
         for (var i = 0; i < _creatures.Count; ++i)
         {
-            Mobile m = _creatures[i];
+            var m = _creatures[i];
 
             if (!m.Deleted)
             {
@@ -551,7 +571,7 @@ public partial class ChampionSpawn : Item
             --i;
             ++_kills;
 
-            Mobile killer = m.FindMostRecentDamager(false);
+            var killer = m.FindMostRecentDamager(false);
 
             RegisterDamageTo(m);
 
@@ -565,13 +585,13 @@ public partial class ChampionSpawn : Item
                 continue;
             }
 
-            int mobSubLevel = GetSubLevelfor(m) + 1;
+            var mobSubLevel = GetSubLevelfor(m) + 1;
 
             if (mobSubLevel >= 0)
             {
-                bool gainedPath = false;
+                var gainedPath = false;
 
-                int pointsToGain = mobSubLevel * 40;
+                var pointsToGain = mobSubLevel * 40;
 
                 if (VirtueSystem.Award(pm, VirtueName.Valor, pointsToGain, ref gainedPath))
                 {
@@ -631,8 +651,8 @@ public partial class ChampionSpawn : Item
             InvalidateProperties();
         }
 
-        double n = _kills / (double)MaxKills;
-        int p = (int)(n * 100);
+        var n = _kills / (double)MaxKills;
+        var p = (int)(n * 100);
 
         if (p >= 99)
         {
@@ -723,13 +743,13 @@ public partial class ChampionSpawn : Item
                     bc.Home = bc.Location;
                     bc.HomeMap = bc.Map;
 
-                    Point2D xWall1 = new Point2D(_spawnArea.X, bc.Y);
-                    Point2D xWall2 = new Point2D(_spawnArea.X + _spawnArea.Width, bc.Y);
-                    Point2D yWall1 = new Point2D(bc.X, _spawnArea.Y);
-                    Point2D yWall2 = new Point2D(bc.X, _spawnArea.Y + _spawnArea.Height);
+                    var xWall1 = new Point2D(_spawnArea.X, bc.Y);
+                    var xWall2 = new Point2D(_spawnArea.X + _spawnArea.Width, bc.Y);
+                    var yWall1 = new Point2D(bc.X, _spawnArea.Y);
+                    var yWall2 = new Point2D(bc.X, _spawnArea.Y + _spawnArea.Height);
 
-                    double minXDist = Math.Min(bc.GetDistanceToSqrt(xWall1), bc.GetDistanceToSqrt(xWall2));
-                    double minYDist = Math.Min(bc.GetDistanceToSqrt(yWall1), bc.GetDistanceToSqrt(yWall2));
+                    var minXDist = Math.Min(bc.GetDistanceToSqrt(xWall1), bc.GetDistanceToSqrt(xWall2));
+                    var minYDist = Math.Min(bc.GetDistanceToSqrt(yWall1), bc.GetDistanceToSqrt(yWall2));
 
                     bc.RangeHome = (int)Math.Min(minXDist, minYDist);
                 }
@@ -752,14 +772,14 @@ public partial class ChampionSpawn : Item
 
         while (_creatures.Count < MaxSpawn)
         {
-            Mobile m = Spawn();
+            var m = Spawn();
 
             if (m == null)
             {
                 return;
             }
 
-            Point3D loc = GetSpawnLocation();
+            var loc = GetSpawnLocation();
 
             // Allow creatures to turn into Paragons at Ilshenar champions.
             m.OnBeforeSpawn(loc, Map);
@@ -782,13 +802,13 @@ public partial class ChampionSpawn : Item
                     bc.Home = bc.Location;
                     bc.HomeMap = bc.Map;
 
-                    Point2D xWall1 = new Point2D(_spawnArea.X, bc.Y);
-                    Point2D xWall2 = new Point2D(_spawnArea.X + _spawnArea.Width, bc.Y);
-                    Point2D yWall1 = new Point2D(bc.X, _spawnArea.Y);
-                    Point2D yWall2 = new Point2D(bc.X, _spawnArea.Y + _spawnArea.Height);
+                    var xWall1 = new Point2D(_spawnArea.X, bc.Y);
+                    var xWall2 = new Point2D(_spawnArea.X + _spawnArea.Width, bc.Y);
+                    var yWall1 = new Point2D(bc.X, _spawnArea.Y);
+                    var yWall2 = new Point2D(bc.X, _spawnArea.Y + _spawnArea.Height);
 
-                    double minXDist = Math.Min(bc.GetDistanceToSqrt(xWall1), bc.GetDistanceToSqrt(xWall2));
-                    double minYDist = Math.Min(bc.GetDistanceToSqrt(yWall1), bc.GetDistanceToSqrt(yWall2));
+                    var minXDist = Math.Min(bc.GetDistanceToSqrt(xWall1), bc.GetDistanceToSqrt(xWall2));
+                    var minYDist = Math.Min(bc.GetDistanceToSqrt(yWall1), bc.GetDistanceToSqrt(yWall2));
 
                     bc.RangeHome = (int)Math.Min(minXDist, minYDist);
                 }
@@ -798,7 +818,7 @@ public partial class ChampionSpawn : Item
 
     public Point3D GetSpawnLocation()
     {
-        Map map = Map;
+        var map = Map;
 
         if (map == null)
         {
@@ -806,12 +826,12 @@ public partial class ChampionSpawn : Item
         }
 
         // Try 20 times to find a spawnable location.
-        for (int i = 0; i < 20; i++)
+        for (var i = 0; i < 20; i++)
         {
-            int x = Utility.Random(_spawnArea.X, _spawnArea.Width);
-            int y = Utility.Random(_spawnArea.Y, _spawnArea.Height);
+            var x = Utility.Random(_spawnArea.X, _spawnArea.Width);
+            var y = Utility.Random(_spawnArea.Y, _spawnArea.Height);
 
-            int z = Map.GetAverageZ(x, y);
+            var z = Map.GetAverageZ(x, y);
 
             if (Map.CanSpawnMobile(new Point2D(x, y), z))
             {
@@ -828,21 +848,21 @@ public partial class ChampionSpawn : Item
 
     public int GetSubLevel()
     {
-        int level = Level;
+        var level = Level;
 
         return level <= Level1 ? 0 : level <= Level2 ? 1 : level <= Level3 ? 2 : 3;
     }
 
     public int GetSubLevelfor (Mobile m)
     {
-        Type[][] types = ChampionSpawnInfo.GetInfo(_type).SpawnTypes;
-        Type t = m.GetType();
+        var types = ChampionSpawnInfo.GetInfo(_type).SpawnTypes;
+        var t = m.GetType();
 
-        for (int i = 0; i < types.GetLength(0); i++)
+        for (var i = 0; i < types.GetLength(0); i++)
         {
-            Type[] individualTypes = types[i];
+            var individualTypes = types[i];
 
-            for (int j = 0; j < individualTypes.Length; j++)
+            for (var j = 0; j < individualTypes.Length; j++)
             {
                 if (t == individualTypes[j])
                 {
@@ -856,9 +876,9 @@ public partial class ChampionSpawn : Item
 
     public Mobile Spawn()
     {
-        Type[][] types = ChampionSpawnInfo.GetInfo(_type).SpawnTypes;
+        var types = ChampionSpawnInfo.GetInfo(_type).SpawnTypes;
 
-        int v = GetSubLevel();
+        var v = GetSubLevel();
 
         if (v >= 0 && v < types.Length)
         {
@@ -1032,7 +1052,7 @@ public partial class ChampionSpawn : Item
 
         if (_whiteSkulls != null)
         {
-            for (int i = 0; i < _whiteSkulls.Count; ++i)
+            for (var i = 0; i < _whiteSkulls.Count; ++i)
             {
                 _whiteSkulls[i].Location = GetWhiteSkullLocation(i);
             }
@@ -1068,7 +1088,7 @@ public partial class ChampionSpawn : Item
 
         if (_redSkulls != null)
         {
-            for (int i = 0; i < _redSkulls.Count; ++i)
+            for (var i = 0; i < _redSkulls.Count; ++i)
             {
                 _redSkulls[i].Map = Map;
             }
@@ -1076,7 +1096,7 @@ public partial class ChampionSpawn : Item
 
         if (_whiteSkulls != null)
         {
-            for (int i = 0; i < _whiteSkulls.Count; ++i)
+            for (var i = 0; i < _whiteSkulls.Count; ++i)
             {
                 _whiteSkulls[i].Map = Map;
             }
@@ -1097,7 +1117,7 @@ public partial class ChampionSpawn : Item
 
         if (_redSkulls != null)
         {
-            for (int i = 0; i < _redSkulls.Count; ++i)
+            for (var i = 0; i < _redSkulls.Count; ++i)
             {
                 _redSkulls[i].Delete();
             }
@@ -1107,7 +1127,7 @@ public partial class ChampionSpawn : Item
 
         if (_whiteSkulls != null)
         {
-            for (int i = 0; i < _whiteSkulls.Count; ++i)
+            for (var i = 0; i < _whiteSkulls.Count; ++i)
             {
                 _whiteSkulls[i].Delete();
             }
@@ -1139,9 +1159,9 @@ public partial class ChampionSpawn : Item
     {
         if (_creatures != null)
         {
-            for (int i = 0; i < _creatures.Count; ++i)
+            for (var i = 0; i < _creatures.Count; ++i)
             {
-                Mobile mob = _creatures[i];
+                var mob = _creatures[i];
 
                 if (!mob.Player)
                 {
@@ -1160,15 +1180,10 @@ public partial class ChampionSpawn : Item
             return;
         }
 
-        foreach (DamageEntry de in m.DamageEntries)
+        foreach (var de in m.DamageEntries)
         {
-            if (de.HasExpired)
-            {
-                continue;
-            }
-
-            Mobile damager = de.Damager;
-            Mobile master = damager.GetDamageMaster(m);
+            var damager = de.Damager;
+            var master = damager.GetDamageMaster(m);
 
             if (master != null)
             {
@@ -1205,9 +1220,9 @@ public partial class ChampionSpawn : Item
             return;
         }
 
-        int totalDamage = 0;
+        var totalDamage = 0;
 
-        Dictionary<Mobile, int> validEntries = new Dictionary<Mobile, int>();
+        var validEntries = new Dictionary<Mobile, int>();
 
         foreach (var (key, value) in DamageEntries)
         {
@@ -1218,13 +1233,13 @@ public partial class ChampionSpawn : Item
             }
         }
 
-        bool artifactGiven = false;
+        var artifactGiven = false;
 
         do
         {
-            int randomDamage = Utility.RandomMinMax(1, totalDamage);
+            var randomDamage = Utility.RandomMinMax(1, totalDamage);
 
-            int checkDamage = 0;
+            var checkDamage = 0;
 
             foreach (var (key, value) in validEntries)
             {
@@ -1260,7 +1275,7 @@ public partial class ChampionSpawn : Item
             return false;
         }
 
-        Container pack = to.Backpack;
+        var pack = to.Backpack;
 
         if (pack?.TryDropItem(to, artifact, false) != true)
         {
@@ -1285,8 +1300,8 @@ public partial class ChampionSpawn : Item
         _maxLevel = reader.ReadInt();
         _activatedByValor = reader.ReadBool();
 
-        int entries = reader.ReadInt();
-        for (int i = 0; i < entries; ++i)
+        var entries = reader.ReadInt();
+        for (var i = 0; i < entries; ++i)
         {
             var m = reader.ReadEntity<Mobile>();
             var damage = reader.ReadInt();

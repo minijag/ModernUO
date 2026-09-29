@@ -1,6 +1,6 @@
 using System;
-using System.Text;
 using Server.Mobiles;
+using Server.Text;
 
 namespace Server.Engines.ConPVP
 {
@@ -74,7 +74,7 @@ namespace Server.Engines.ConPVP
         {
             get
             {
-                var sb = new StringBuilder();
+                using var sb = ValueStringBuilder.Create(256);
 
                 for (var i = 0; i < Players.Length; ++i)
                 {
@@ -135,6 +135,7 @@ namespace Server.Engines.ConPVP
 
                     if (nonLocalOverhead != null)
                     {
+                        // Phase 3 audit: Format string passed by caller; restructuring requires changing all callers — out of scope for this PR.
                         Players[i]
                             .Mobile.NonlocalOverheadMessage(
                                 MessageType.Regular,

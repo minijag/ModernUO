@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ModernUO.CodeGeneratedEvents;
-using Server.Collections;
 using Server.Mobiles;
 
 namespace Server.Engines.CannedEvil;
@@ -167,19 +166,12 @@ public class ChampionTitleSystem : GenericPersistence
                 return;
             }
 
-            using var queue = PooledRefQueue<Mobile>.Create();
-
             foreach (var context in _championTitleContexts.Values)
             {
                 if (!context.CheckAtrophy())
                 {
-                    queue.Enqueue(context.Player);
+                    _championTitleContexts.Remove(context.Player);
                 }
-            }
-
-            while (queue.Count > 0)
-            {
-                _championTitleContexts.Remove((PlayerMobile)queue.Dequeue());
             }
         }
     }

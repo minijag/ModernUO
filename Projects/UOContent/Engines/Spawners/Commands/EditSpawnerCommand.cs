@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: EditSpawnerCommand.cs                                           *
  *                                                                       *
@@ -105,8 +105,10 @@ public class EditSpawnCommand : BaseCommand
 
     public static void UpdateSpawner(BaseSpawner spawner, string name, string arguments, string properties, string find = null)
     {
-        foreach (var entry in spawner.Entries)
+        for (var i = 0; i < spawner.Entries.Count; i++)
         {
+            var entry = spawner.Entries[i];
+
             // TODO: Should cache spawn type on the entry
             if (!entry.SpawnedName.InsensitiveEquals(name))
             {

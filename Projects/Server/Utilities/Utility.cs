@@ -93,65 +93,26 @@ public static partial class Utility
 
         if (prefixLength < 64)
         {
-            int bitsToFlip = 64 - prefixLength;
-            ulong highMask = isMax ? ~0UL >> bitsToFlip : ~0UL << (bitsToFlip + 1);
+            var bitsToFlip = 64 - prefixLength;
+            var highMask = isMax ? ~0UL >> bitsToFlip : ~0UL << (bitsToFlip + 1);
 
             high = isMax ? high | highMask : high & highMask;
             low = isMax ? ~0UL : 0UL;
         }
         else
         {
-            int bitsToFlip = 128 - prefixLength;
-            ulong lowMask = isMax ? ~0UL >> (64 - bitsToFlip) : ~0UL << bitsToFlip;
+            var bitsToFlip = 128 - prefixLength;
+            var lowMask = isMax ? ~0UL >> (64 - bitsToFlip) : ~0UL << bitsToFlip;
 
             low = isMax ? low | lowMask : low & lowMask;
         }
     }
 
-    // Converts an IPAddress to a UInt128 in IPv6 format
-    public static UInt128 ToUInt128(this IPAddress ip)
-    {
-        if (ip.AddressFamily == AddressFamily.InterNetwork && !ip.IsIPv4MappedToIPv6)
-        {
-            Span<byte> integer = stackalloc byte[4];
-            return !ip.TryWriteBytes(integer, out _)
-                ? (UInt128)0
-                : new UInt128(0, 0xFFFF00000000UL | BinaryPrimitives.ReadUInt32BigEndian(integer));
-        }
-
-        Span<byte> bytes = stackalloc byte[16];
-        if (!ip.TryWriteBytes(bytes, out _))
-        {
-            return 0;
-        }
-
-        ulong high = BinaryPrimitives.ReadUInt64BigEndian(bytes[..8]);
-        ulong low = BinaryPrimitives.ReadUInt64BigEndian(bytes.Slice(8, 8));
-
-        return new UInt128(high, low);
-    }
-
-    // Converts a UInt128 in IPv6 format to an IPAddress
-    public static IPAddress ToIpAddress(this UInt128 value, bool mapToIpv6 = false)
-    {
-        // IPv4 mapped IPv6 address
-        if (!mapToIpv6 && value >= 0xFFFF00000000UL && value <= 0xFFFFFFFFFFFFUL)
-        {
-            var newAddress = IPAddress.HostToNetworkOrder((int)value);
-            return new IPAddress(unchecked((uint)newAddress));
-        }
-
-        Span<byte> bytes = stackalloc byte[16]; // 128 bits for IPv6 address
-        ((IBinaryInteger<UInt128>)value).WriteBigEndian(bytes);
-
-        return new IPAddress(bytes);
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static UInt128 CreateCidrAddress(ReadOnlySpan<byte> bytes, int prefixLength, bool isMax)
     {
-        ulong high = BinaryPrimitives.ReadUInt64BigEndian(bytes[..8]);
-        ulong low = BinaryPrimitives.ReadUInt64BigEndian(bytes.Slice(8, 8));
+        var high = BinaryPrimitives.ReadUInt64BigEndian(bytes[..8]);
+        var low = BinaryPrimitives.ReadUInt64BigEndian(bytes.Slice(8, 8));
 
         if (prefixLength < 128)
         {
@@ -209,7 +170,7 @@ public static partial class Utility
         var span = chars.AsSpan(0, str.Length);
         str.CopyTo(span);
 
-        FixHtml(span);
+        span.FixHtml();
 
         var fixedStr = span.ToString();
         STArrayPool<char>.Shared.Return(chars);
@@ -243,7 +204,7 @@ public static partial class Utility
 
         if (!str.IsNullOrWhiteSpace())
         {
-            FixHtml(span);
+            span.FixHtml();
         }
 
         return formattable;
@@ -588,7 +549,7 @@ public static partial class Utility
         while (amount > 0)
         {
             // Range is 2^amount exclusively, maximum of 62 bits can be used
-            ulong num = amount >= 62
+            var num = amount >= 62
                 ? (ulong)BuiltInRng.NextLong()
                 : (ulong)BuiltInRng.Next(1L << amount);
 
@@ -612,7 +573,7 @@ public static partial class Utility
         while (amount > 0)
         {
             // Range is 2^amount exclusively, maximum of 62 bits can be used
-            ulong num = amount >= 62
+            var num = amount >= 62
                 ? (ulong)BuiltInRng.NextLong()
                 : (ulong)BuiltInRng.Next(1L << amount);
 
@@ -1059,7 +1020,7 @@ public static partial class Utility
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Tidy<T>(this List<T> list) where T : ISerializable
     {
-        for (int i = list.Count - 1; i >= 0; i--)
+        for (var i = list.Count - 1; i >= 0; i--)
         {
             var entry = list[i];
             if (entry?.Deleted != false)
@@ -1089,28 +1050,16 @@ public static partial class Utility
             return;
         }
 
-        using var queue = PooledRefQueue<K>.Create();
         foreach (var (key, value) in dictionary)
         {
-            if (serializableKey)
-            {
-                if (key == null || ((ISerializable)key).Deleted)
-                {
-                    queue.Enqueue(key);
-                }
-            }
-            else
-            {
-                if (value == null || ((ISerializable)value).Deleted)
-                {
-                    queue.Enqueue(key);
-                }
-            }
-        }
+            var deleted = serializableKey
+                ? ((ISerializable)key).Deleted
+                : value == null || ((ISerializable)value).Deleted;
 
-        while (queue.Count > 0)
-        {
-            dictionary.Remove(queue.Dequeue());
+            if (deleted)
+            {
+                dictionary.Remove(key);
+            }
         }
 
         dictionary.TrimExcess();
@@ -1127,7 +1076,7 @@ public static partial class Utility
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Abs(this int value)
     {
-        int mask = value >> 31;
+        var mask = value >> 31;
         return (value + mask) ^ mask;
     }
 
@@ -1422,9 +1371,9 @@ public static partial class Utility
     public static bool IsNullOrWhiteSpace(this ReadOnlySpan<char> span) => span.IsEmpty || span.IsWhiteSpace();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool InTypeList<T>(this T obj, Type[] types) => obj.GetType().InTypeList(types);
+    public static bool InTypeList<T>(this T obj, ReadOnlySpan<Type> types) => obj.GetType().InTypeList(types);
 
-    public static bool InTypeList(this Type t, Type[] types)
+    public static bool InTypeList(this Type t, ReadOnlySpan<Type> types)
     {
         for (var i = 0; i < types.Length; ++i)
         {

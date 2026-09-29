@@ -10,6 +10,7 @@ using Server.Misc;
 using Server.Mobiles;
 using Server.Multis;
 using Server.Network;
+using Server.Systems.FeatureFlags;
 
 namespace Server.Accounting;
 
@@ -250,7 +251,7 @@ public partial class Account : IAccount, IComparable<Account>
     /// </summary>
     public bool Young
     {
-        get => !GetFlag(1);
+        get => ContentFeatureFlags.YoungPlayerSystem && !GetFlag(1);
         set
         {
             SetFlag(1, !value);
@@ -285,10 +286,6 @@ public partial class Account : IAccount, IComparable<Account>
     public DateTime Created { get; set; } = Core.Now;
 
     public Serial Serial { get; set; }
-
-    public byte SerializedThread { get; set; }
-    public int SerializedPosition { get; set; }
-    public int SerializedLength { get; set; }
 
     [AfterDeserialization(false)]
     private void AfterDeserialization()
@@ -381,12 +378,40 @@ public partial class Account : IAccount, IComparable<Account>
 
     public void SetPassword(string plainPassword)
     {
-        var phrase = _passwordAlgorithm is PasswordProtectionAlgorithm.SHA1 or PasswordProtectionAlgorithm.SHA2
-            ? $"{_username}{plainPassword}"
-            : plainPassword;
-
-        Password = AccountSecurity.CurrentPasswordProtection.EncryptPassword(phrase);
         PasswordAlgorithm = AccountSecurity.CurrentAlgorithm;
+        Password = AccountSecurity.CurrentPasswordProtection.EncryptPassword(
+            AccountSecurity.DerivePhrase(PasswordAlgorithm, _username, plainPassword)
+        );
+    }
+
+    /// <summary>The phrase that verifies against the currently stored hash.</summary>
+    internal string GetVerifyPhrase(string plainPassword) =>
+        AccountSecurity.DerivePhrase(_passwordAlgorithm, _username, plainPassword);
+
+    /// <summary>The phrase a rehash to the configured algorithm would be derived from.</summary>
+    internal string GetRehashPhrase(string plainPassword) =>
+        AccountSecurity.DerivePhrase(AccountSecurity.CurrentAlgorithm, _username, plainPassword);
+
+    /// <summary>
+    /// Whether a successful login should rewrite the stored hash, because the algorithm changed or
+    /// its cost parameters moved.
+    /// </summary>
+    internal bool NeedsPasswordUpgrade() =>
+        _passwordAlgorithm != AccountSecurity.CurrentAlgorithm ||
+        AccountSecurity.CurrentPasswordProtection.NeedsRehash(Password);
+
+    /// <summary>
+    /// Applies a hash derived off the game loop. Distinct from the private <c>UpgradePassword</c>
+    /// below, which adopts a legacy hash when loading pre-binary XML accounts.
+    ///
+    /// Unguarded: dispatch is on the loop, one worker drains FIFO, and results return through the
+    /// loop context in that order, so last dispatched is last applied. A second worker would need
+    /// ordering reintroduced here.
+    /// </summary>
+    internal void ApplyPasswordWrite(string newEncrypted, PasswordProtectionAlgorithm algorithm)
+    {
+        PasswordAlgorithm = algorithm;
+        Password = newEncrypted;
     }
 
     // Used only by the local Shard Account Keeper bridge. The GUI sends an Argon2 hash,
@@ -399,18 +424,16 @@ public partial class Account : IAccount, IComparable<Account>
 
     public bool CheckPassword(string plainPassword)
     {
-        var phrase = _passwordAlgorithm is PasswordProtectionAlgorithm.SHA1 or PasswordProtectionAlgorithm.SHA2
-            ? $"{_username}{plainPassword}"
-            : plainPassword;
+        var ok = AccountSecurity.GetPasswordProtection(_passwordAlgorithm)
+            .ValidatePassword(Password, GetVerifyPhrase(plainPassword));
 
-        var ok = AccountSecurity.GetPasswordProtection(_passwordAlgorithm).ValidatePassword(Password, phrase);
         if (!ok)
         {
             return false;
         }
 
         // Upgrade the password protection in case we change the algorithm
-        if (_passwordAlgorithm != AccountSecurity.CurrentAlgorithm)
+        if (NeedsPasswordUpgrade())
         {
             SetPassword(plainPassword);
         }
@@ -1142,7 +1165,7 @@ public partial class Account : IAccount, IComparable<Account>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveNext()
         {
-            Mobile[] localList = _mobiles;
+            var localList = _mobiles;
 
             while ((uint)_index < (uint)localList.Length)
             {

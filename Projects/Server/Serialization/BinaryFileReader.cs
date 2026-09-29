@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: BinaryFileReader.cs                                             *
  *                                                                       *
@@ -73,6 +73,12 @@ public sealed unsafe class BinaryFileReader : IDisposable, IGenericReader
     /// How many bits deep into the file is the reader at currently.
     /// </summary>
     public long Position => _reader.Position;
+
+    public TimeSpan AnchoredTimeShift
+    {
+        get => _reader.AnchoredTimeShift;
+        set => _reader.AnchoredTimeShift = value;
+    }
 
     public void Dispose()
     {

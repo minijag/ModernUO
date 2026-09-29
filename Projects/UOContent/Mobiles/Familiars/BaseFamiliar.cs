@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ModernUO.Serialization;
 using Server.Collections;
 using Server.ContextMenus;
@@ -9,12 +8,15 @@ namespace Server.Mobiles;
 [SerializationGenerator(0, false)]
 public abstract partial class BaseFamiliar : BaseCreature
 {
-    private bool m_LastHidden;
+    // Open-ground distance beyond which the familiar snaps to the caster.
+    public const int KeepUpRange = 10;
 
     public BaseFamiliar() : base(AIType.AI_Melee)
     {
-        SetSpeed(0.1, 0.11);
+        SetSpeed(0.1, 0.1);
     }
+
+    protected override BaseAI ForcedAI => new FamiliarAI(this);
 
     public override bool BardImmune => true;
     public override Poison PoisonImmune => Poison.Lethal;
@@ -23,89 +25,68 @@ public abstract partial class BaseFamiliar : BaseCreature
 
     public override bool PlayerRangeSensitive => false;
 
-    public virtual void RangeCheck()
+    // Joins the caster's fights; false never fights.
+    public virtual bool AssistsMaster => true;
+
+    // FamiliarAI decides whether it fights, not the ML stand-down rule.
+    public override bool StandsDownOnCommand => false;
+
+    // A wounded familiar still keeps up.
+    public override bool ReduceSpeedWithDamage => false;
+
+    // The one choke point for "never fights" / "not while the caster is hidden":
+    // BaseCreature.AggressiveAction assigns Combatant unconditionally. GetCPA does not inherit.
+    [CommandProperty(AccessLevel.GameMaster)]
+    public override Mobile Combatant
     {
-        if (Deleted || ControlMaster?.Deleted != false)
+        get => base.Combatant;
+        set
         {
-            return;
-        }
-
-        var range = RangeHome - 2;
-
-        if (InRange(ControlMaster.Location, RangeHome))
-        {
-            return;
-        }
-
-        var master = ControlMaster;
-
-        var m_Loc = Point3D.Zero;
-
-        if (Map != master.Map)
-        {
-            return;
-        }
-
-        var x = X > master.X ? master.X + range : master.X - range;
-        var y = Y > master.Y ? master.Y + range : master.Y - range;
-
-        for (var i = 0; i < 10; i++)
-        {
-            m_Loc.X = x + Utility.RandomMinMax(-1, 1);
-            m_Loc.Y = y + Utility.RandomMinMax(-1, 1);
-
-            m_Loc.Z = Map.GetAverageZ(m_Loc.X, m_Loc.Y);
-
-            if (Map.CanSpawnMobile(m_Loc))
+            if (value != null && (!AssistsMaster || ControlMaster?.Hidden == true))
             {
-                break;
+                return;
             }
 
-            m_Loc = master.Location;
-        }
-
-        if (!Deleted)
-        {
-            SetLocation(m_Loc, true);
+            base.Combatant = value;
         }
     }
 
     public override void OnThink()
     {
-        var master = ControlMaster;
+        base.OnThink();
 
         if (Deleted)
         {
             return;
         }
 
+        var master = ControlMaster;
+
         if (master?.Deleted != false)
         {
             DropPackContents();
-            EndRelease(null);
+            Delete();
             return;
         }
 
-        RangeCheck();
-
-        if (m_LastHidden != master.Hidden)
+        // Compare our own state: Mobile.OnMove reveals a stepping NPC.
+        if (Hidden != master.Hidden)
         {
-            Hidden = m_LastHidden = master.Hidden;
+            Hidden = master.Hidden;
+
+            if (Hidden)
+            {
+                Warmode = false; // nulls Combatant
+            }
         }
+    }
 
-        if (AIObject?.WalkMobileRange(master, 5, false, 1, 1) == true)
+    // Nothing reveals a hidden caster's familiar.
+    public override void RevealingAction()
+    {
+        if (ControlMaster?.Hidden != true)
         {
-            Warmode = master.Warmode;
-            Combatant = master.Combatant;
-
-            CurrentSpeed = 0.1;
-        }
-        else
-        {
-            Warmode = false;
-            FocusMob = Combatant = null;
-
-            CurrentSpeed = 0.01;
+            base.RevealingAction();
         }
     }
 
@@ -113,7 +94,7 @@ public abstract partial class BaseFamiliar : BaseCreature
     {
         base.GetContextMenuEntries(from, ref list);
 
-        if (from.Alive && Controlled && from == ControlMaster && from.InRange(this, 14))
+        if (from.Alive && from == ControlMaster && from.InRange(this, 14))
         {
             list.Add(new ReleaseEntry());
         }
@@ -151,14 +132,15 @@ public abstract partial class BaseFamiliar : BaseCreature
         var map = Map;
         var pack = Backpack;
 
-        if (map != null && map != Map.Internal && pack != null)
+        if (map == null || map == Map.Internal || pack == null)
         {
-            var list = new List<Item>(pack.Items);
+            return;
+        }
 
-            for (var i = 0; i < list.Count; ++i)
-            {
-                list[i].MoveToWorld(Location, map);
-            }
+        using var queue = pack.EnumerateItems();
+        while (queue.Count > 0)
+        {
+            queue.Dequeue().MoveToWorld(Location, map);
         }
     }
 

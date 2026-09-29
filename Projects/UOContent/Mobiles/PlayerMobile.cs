@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using ModernUO.CodeGeneratedEvents;
 using Server.Accounting;
 using Server.Collections;
@@ -10,6 +11,7 @@ using Server.Engines.CannedEvil;
 using Server.Engines.ConPVP;
 using Server.Engines.Craft;
 using Server.Engines.Help;
+using Server.Engines.Insurance;
 using Server.Engines.MLQuests;
 using Server.Engines.MLQuests.Gumps;
 using Server.Engines.PartySystem;
@@ -34,8 +36,9 @@ using Server.Spells.Necromancy;
 using Server.Spells.Ninjitsu;
 using Server.Spells.Sixth;
 using Server.Spells.Spellweaving;
+using Server.Systems.FeatureFlags;
 using Server.Targeting;
-using BaseQuestGump = Server.Engines.MLQuests.Gumps.BaseQuestGump;
+using BaseMLQuestGump = Server.Engines.MLQuests.Gumps.BaseMLQuestGump;
 using CalcMoves = Server.Movement.Movement;
 using QuestOfferGump = Server.Engines.MLQuests.Gumps.QuestOfferGump;
 using RankDefinition = Server.Guilds.RankDefinition;
@@ -159,16 +162,13 @@ namespace Server.Mobiles
         /*
          * a value of zero means, that the mobile is not executing the spell. Otherwise,
          * the value should match the BaseMana required
-        */
+         */
 
         private RankDefinition m_GuildRank;
 
         private int m_HairModID = -1, m_HairModHue;
 
         public DateTime _honorTime;
-
-        private Mobile m_InsuranceAward;
-        private int m_InsuranceBonus;
 
         private int m_LastGlobalLight = -1, m_LastPersonalLight = -1;
 
@@ -188,9 +188,6 @@ namespace Server.Mobiles
 
         private bool m_NoDeltaRecursion;
 
-        // number of items that could not be automatically reinsured because gold in bank was not enough
-        private int m_NonAutoreinsuredItems;
-
         private DateTime m_SavagePaintExpiration;
 
         private DateTime[] m_StuckMenuUses;
@@ -202,7 +199,7 @@ namespace Server.Mobiles
             VisibilityList = new List<Mobile>();
             PermaFlags = new List<Mobile>();
 
-            BOBFilter = new BOBFilter();
+            BOBFilter = new BOBFilter(this);
 
             m_GameTime = TimeSpan.Zero;
             m_GuildRank = RankDefinition.Lowest;
@@ -351,6 +348,10 @@ namespace Server.Mobiles
         }
 
         public override bool NewGuildDisplay => Guilds.Guild.NewGuildSystem;
+
+        public override bool Murderer =>
+            Core.T2A && !Core.LBR && PlayerMurderSystem.GetMurderContext(this, out var context)
+            && context.PingPongs >= 5 || base.Murderer;
 
         public bool BedrollLogout { get; set; }
 
@@ -530,8 +531,6 @@ namespace Server.Mobiles
             set => SetFlag(PlayerFlag.RefuseTrades, value);
         }
 
-        public Dictionary<Type, int> RecoverableAmmo { get; set; }
-
         [CommandProperty(AccessLevel.GameMaster)]
         public DateTime AcceleratedStart { get; set; }
 
@@ -678,7 +677,7 @@ namespace Server.Mobiles
         [CommandProperty(AccessLevel.GameMaster)]
         public bool Young
         {
-            get => GetFlag(PlayerFlag.Young);
+            get => ContentFeatureFlags.YoungPlayerSystem && GetFlag(PlayerFlag.Young);
             set
             {
                 SetFlag(PlayerFlag.Young, value);
@@ -697,6 +696,13 @@ namespace Server.Mobiles
 
         [CommandProperty(AccessLevel.GameMaster, canModify: true)]
         public ChampionTitleContext ChampionTitles => ChampionTitleSystem.GetOrCreateChampionTitleContext(this);
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public int PingPongs
+        {
+            get => PlayerMurderSystem.GetMurderContext(this, out var context) ? context.PingPongs : 0;
+            set => PlayerMurderSystem.ManuallySetPingPong(this, value);
+        }
 
         [CommandProperty(AccessLevel.GameMaster)]
         public int ShortTermMurders
@@ -855,7 +861,7 @@ namespace Server.Mobiles
 
             if (Core.AOS)
             {
-                foreach (Mobile m in Map.GetMobilesAt(location))
+                foreach (var m in Map.GetMobilesAt(location))
                 {
                     if (m.Z >= location.Z && m.Z < location.Z + 16 && (!m.Hidden || m.AccessLevel == AccessLevel.Player))
                     {
@@ -897,17 +903,17 @@ namespace Server.Mobiles
                                 {
                                     Direction.North => itemIDs[0],
                                     Direction.South => itemIDs[0],
-                                    Direction.East => itemIDs[1],
-                                    Direction.West => itemIDs[1],
-                                    _ => item.ItemID
+                                    Direction.East  => itemIDs[1],
+                                    Direction.West  => itemIDs[1],
+                                    _               => item.ItemID
                                 },
                                 4 => dir switch
                                 {
                                     Direction.South => itemIDs[0],
-                                    Direction.East => itemIDs[1],
+                                    Direction.East  => itemIDs[1],
                                     Direction.North => itemIDs[2],
-                                    Direction.West => itemIDs[3],
-                                    _ => item.ItemID
+                                    Direction.West  => itemIDs[3],
+                                    _               => item.ItemID
                                 },
                                 _ => item.ItemID
                             };
@@ -978,7 +984,7 @@ namespace Server.Mobiles
             }
 
             if (skillId == 35)
-            // AnimalTaming.DeferredTarget = true;
+                // AnimalTaming.DeferredTarget = true;
             {
                 AnimalTaming.DisableMessage = false;
             }
@@ -1764,16 +1770,25 @@ namespace Server.Mobiles
 
         public override bool AllowItemUse(Item item)
         {
-            if (DuelContext?.AllowItemUse(this, item) == false)
+            if (AccessLevel < FeatureFlagSettings.RequiredAccessLevel &&
+                FeatureFlagManager.IsItemUseBlocked(item.GetType(), out var reason))
             {
+                SendMessage(0x22, reason);
                 return false;
             }
 
-            return DesignContext.Check(this);
+            return DuelContext?.AllowItemUse(this, item) != false && DesignContext.Check(this);
         }
 
         public override bool AllowSkillUse(SkillName skill)
         {
+            if (AccessLevel < FeatureFlagSettings.RequiredAccessLevel
+                && FeatureFlagManager.IsSkillBlocked(skill, out var reason))
+            {
+                SendMessage(0x22, reason);
+                return false;
+            }
+
             if (AnimalForm.UnderTransformation(this))
             {
                 for (var i = 0; i < AnimalFormRestrictedSkills.Length; i++)
@@ -1825,7 +1840,7 @@ namespace Server.Mobiles
                 // moving, not teleporting
                 var zDrop = Location.Z - loc.Z;
 
-                if (zDrop > 20)                  // we fell more than one story
+                if (zDrop > 20) // we fell more than one story
                 {
                     Hits -= zDrop / 20 * 10 - 5; // deal some damage; does not kill, disrupt, etc
                 }
@@ -1854,7 +1869,7 @@ namespace Server.Mobiles
 
                 if (Alive)
                 {
-                    if (InsuranceEnabled)
+                    if (Insurance.Enabled)
                     {
                         if (Core.SA)
                         {
@@ -1982,9 +1997,9 @@ namespace Server.Mobiles
         {
             var house = BaseHouse.FindHouseAt(this);
 
-            if (CheckAlive() && house?.IsOwner(this) == true && house.InternalizedVendors.Count > 0 && NetState is NetState { } ns)
+            if (CheckAlive() && house?.IsOwner(this) == true && house.InternalizedVendors.Count > 0 && NetState != null)
             {
-                ns.SendGump(new ReclaimVendorGump(house));
+                ReclaimVendorGump.DisplayTo(this, house);
             }
         }
 
@@ -2033,6 +2048,13 @@ namespace Server.Mobiles
 
         public override bool CheckEquip(Item item)
         {
+            if (AccessLevel < FeatureFlagSettings.RequiredAccessLevel
+                && FeatureFlagManager.IsItemEquipBlocked(item.GetType(), out var reason))
+            {
+                SendMessage(0x22, reason);
+                return false;
+            }
+
             if (!base.CheckEquip(item))
             {
                 return false;
@@ -2283,7 +2305,8 @@ namespace Server.Mobiles
                  pm.DuelPlayer.Eliminated) || base.OnMoveOver(m);
 
         public override bool CheckShove(Mobile shoved) =>
-            IgnoreMobiles || shoved.IgnoreMobiles || TransformationSpellHelper.UnderTransformation(shoved, typeof(WraithFormSpell)) ||
+            IgnoreMobiles || shoved.IgnoreMobiles ||
+            TransformationSpellHelper.UnderTransformation(shoved, typeof(WraithFormSpell)) ||
             base.CheckShove(shoved);
 
         protected override void OnMapChange(Map oldMap)
@@ -2352,11 +2375,6 @@ namespace Server.Mobiles
             ReceivedHonorContext?.OnTargetDamaged(from, amount);
             SentHonorContext?.OnSourceDamaged(from, amount);
 
-            if (willKill && from is PlayerMobile mobile)
-            {
-                Timer.StartTimer(TimeSpan.FromSeconds(10), mobile.RecoverAmmo);
-            }
-
             base.OnDamage(amount, from, willKill);
         }
 
@@ -2377,17 +2395,10 @@ namespace Server.Mobiles
             }
         }
 
-        public override void OnWarmodeChanged()
-        {
-            if (!Warmode)
-            {
-                Timer.StartTimer(TimeSpan.FromSeconds(10), RecoverAmmo);
-            }
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool FindItems_Callback(Item item) =>
-            !item.Deleted && (item.LootType == LootType.Blessed || item.Insured) &&
-            Backpack != item.Parent;
+            !item.Deleted && Backpack != item.Parent &&
+            (item.LootType == LootType.Blessed || ServerFeatureFlags.InsuranceEnabled && item.Insured);
 
         public override bool OnBeforeDeath()
         {
@@ -2401,93 +2412,20 @@ namespace Server.Mobiles
             // This fixes a "bug" where players put blessed items in nested bags and they were dropped on death
             if (Core.AOS && Backpack?.Deleted == false)
             {
-                foreach (var item in Backpack.EnumerateItems(true, FindItems_Callback))
+                using var queue = Backpack.EnumerateItems(true, FindItems_Callback);
+                foreach (var item in queue)
                 {
                     Backpack.AddItem(item);
                 }
             }
 
-            EquipSnapshot = new List<Item>(Items);
-
-            m_NonAutoreinsuredItems = 0;
-            m_InsuranceAward = FindMostRecentDamager(false);
-
-            if (m_InsuranceAward is BaseCreature creature)
-            {
-                var master = creature.GetMaster();
-
-                if (master != null)
-                {
-                    m_InsuranceAward = master;
-                }
-            }
-
-            if (m_InsuranceAward != null && (!m_InsuranceAward.Player || m_InsuranceAward == this))
-            {
-                m_InsuranceAward = null;
-            }
-
-            if (m_InsuranceAward is PlayerMobile mobile)
-            {
-                mobile.m_InsuranceBonus = 0;
-            }
+            EquipSnapshot = [..Items];
+            Insurance.CheckInsuranceBeforeDeath(this);
 
             ReceivedHonorContext?.OnTargetKilled();
             SentHonorContext?.OnSourceKilled();
 
-            RecoverAmmo();
-
             return base.OnBeforeDeath();
-        }
-
-        private bool CheckInsuranceOnDeath(Item item)
-        {
-            if (!InsuranceEnabled || !item.Insured)
-            {
-                return false;
-            }
-
-            if (DuelContext?.Registered == true && DuelContext.Started &&
-                m_DuelPlayer?.Eliminated != true)
-            {
-                return true;
-            }
-
-            if (AutoRenewInsurance)
-            {
-                var cost = GetInsuranceCost(item);
-
-                if (m_InsuranceAward != null)
-                {
-                    cost /= 2;
-                }
-
-                if (Banker.Withdraw(this, cost))
-                {
-                    item.PaidInsurance = true;
-                    // ~1_AMOUNT~ gold has been withdrawn from your bank box.
-                    SendLocalizedMessage(1060398, cost.ToString());
-                }
-                else
-                {
-                    SendLocalizedMessage(1061079, "", 0x23); // You lack the funds to purchase the insurance
-                    item.PaidInsurance = false;
-                    item.Insured = false;
-                    m_NonAutoreinsuredItems++;
-                }
-            }
-            else
-            {
-                item.PaidInsurance = false;
-                item.Insured = false;
-            }
-
-            if (m_InsuranceAward is PlayerMobile insurancePm && Banker.Deposit(m_InsuranceAward, 300))
-            {
-                insurancePm.m_InsuranceBonus += 300;
-            }
-
-            return true;
         }
 
         public override DeathMoveResult GetParentMoveResultFor(Item item)
@@ -2498,7 +2436,7 @@ namespace Server.Mobiles
                 item.QuestItem = false;
             }
 
-            if (CheckInsuranceOnDeath(item))
+            if (Insurance.CheckItemInsuranceOnDeath(this, item))
             {
                 return DeathMoveResult.MoveToBackpack;
             }
@@ -2521,7 +2459,7 @@ namespace Server.Mobiles
                 item.QuestItem = false;
             }
 
-            if (CheckInsuranceOnDeath(item))
+            if (Insurance.CheckItemInsuranceOnDeath(this, item))
             {
                 return DeathMoveResult.MoveToBackpack;
             }
@@ -2541,11 +2479,6 @@ namespace Server.Mobiles
 
         public override void OnDeath(Container c)
         {
-            if (m_NonAutoreinsuredItems > 0)
-            {
-                SendLocalizedMessage(1061115);
-            }
-
             base.OnDeath(c);
 
             EquipSnapshot = null;
@@ -2576,7 +2509,7 @@ namespace Server.Mobiles
                 }
             }
 
-            if (Kills >= 5 && Core.Now >= m_NextJustAward)
+            if (Murderer && Core.Now >= m_NextJustAward)
             {
                 var m = FindMostRecentDamager(false);
 
@@ -2614,11 +2547,7 @@ namespace Server.Mobiles
                 }
             }
 
-            if (m_InsuranceAward is PlayerMobile insurancePm && insurancePm.m_InsuranceBonus > 0)
-            {
-                // ~1_AMOUNT~ gold has been deposited into your bank box.
-                insurancePm.SendLocalizedMessage(1060397, insurancePm.m_InsuranceBonus.ToString());
-            }
+            Insurance.CheckInsuranceOnDeath(this);
 
             var killer = FindMostRecentDamager(true);
 
@@ -2731,7 +2660,7 @@ namespace Server.Mobiles
 
         private static void SendToStaffMessage(PlayerMobile from, string text)
         {
-            Span<byte> buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLength(text)].InitializePacket();
+            var buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLength(text)].InitializePacket();
 
             foreach (var ns in from.GetClientsInRange(8))
             {
@@ -2794,13 +2723,10 @@ namespace Server.Mobiles
             // If the blood oath caster will die then damage is not reflected back to the attacker
             if (hasBloodOath && Alive && !Deleted && !IsDeadBondedPet)
             {
-                // In some expansions resisting spells reduces reflect dmg from monster blood oath
-                var resistReflectedDamage = !from.Player && Core.ML && !Core.HS
-                    ? (from.Skills.MagicResist.Value * 0.5 + 10) / 100
-                    : 0;
-
-                // Reflect damage to the attacker
-                from.Damage((int)(amount * (1.0 - resistReflectedDamage)), this);
+                // Reflect the attacker's original damage back to them, attributed to the caster.
+                // The caster is a player, so the Publish 48 resist mitigation does not apply
+                // (it only reduces reflected damage from creature casters).
+                from.Damage(BloodOathSpell.ComputeReflectedDamage(amount, 0, applyResistMitigation: false), this);
             }
         }
 
@@ -2841,7 +2767,7 @@ namespace Server.Mobiles
             base.Deserialize(reader);
             var version = reader.ReadInt();
 
-            VirtueContext virtues = version < 32 ? Virtues : null;
+            var virtues = version < 32 ? Virtues : null;
 
             switch (version)
             {
@@ -2911,7 +2837,8 @@ namespace Server.Mobiles
                             for (var i = 0; i < recipeCount; i++)
                             {
                                 var r = reader.ReadInt();
-                                if (version > 33 || reader.ReadBool()) // Don't add in recipes which we haven't gotten or have been removed
+                                // Don't add in recipes which we haven't gotten or have been removed
+                                if (version > 33 || reader.ReadBool())
                                 {
                                     _acquiredRecipes.Add(r);
                                 }
@@ -2926,6 +2853,7 @@ namespace Server.Mobiles
                         {
                             reader.ReadDeltaTime(); // LastHonorLoss - Not even used
                         }
+
                         goto case 23;
                     }
                 case 23:
@@ -3021,6 +2949,7 @@ namespace Server.Mobiles
                         {
                             virtues.LastCompassionLoss = reader.ReadDeltaTime();
                         }
+
                         goto case 14;
                     }
                 case 14:
@@ -3039,7 +2968,7 @@ namespace Server.Mobiles
                 case 13: // just removed m_PaidInsurance list
                 case 12:
                     {
-                        BOBFilter = new BOBFilter();
+                        BOBFilter = new BOBFilter(this);
                         BOBFilter.Deserialize(reader);
                         goto case 11;
                     }
@@ -3162,7 +3091,7 @@ namespace Server.Mobiles
             }
 
             PermaFlags ??= new List<Mobile>();
-            BOBFilter ??= new BOBFilter();
+            BOBFilter ??= new BOBFilter(this);
 
             // Default to member if going from older version to new version (only time it should be null)
             m_GuildRank ??= RankDefinition.Member;
@@ -3529,6 +3458,26 @@ namespace Server.Mobiles
             return true;
         }
 
+        public override void OnMovement(Mobile m, Point3D oldLocation)
+        {
+            base.OnMovement(m, oldLocation);
+
+            // Passive detect hidden: either party moving within range can trigger detection
+            if (m is PlayerMobile && Utility.InRange(Location, m.Location, 4))
+            {
+                if (m.Hidden && AccessLevel == AccessLevel.Player)
+                {
+                    // A hidden mobile (stealther) moved near us — we try to detect them
+                    DetectHidden.TryDetectStealther(this, m);
+                }
+                else if (Hidden && m.AccessLevel == AccessLevel.Player)
+                {
+                    // We're hidden and a potential detector moved near us — they try to detect us
+                    DetectHidden.TryDetectStealther(m, this);
+                }
+            }
+        }
+
         public void AddFollower(Mobile m)
         {
             _allFollowers ??= new HashSet<Mobile>();
@@ -3582,7 +3531,7 @@ namespace Server.Mobiles
 
             foreach (var follower in allFollowers)
             {
-                if (follower is not BaseCreature pet || pet.ControlMaster == null)
+                if (follower is not BaseCreature { Controlled: true } pet || pet.ControlMaster == null)
                 {
                     continue;
                 }
@@ -3618,7 +3567,6 @@ namespace Server.Mobiles
                 pet.Internalize();
 
                 pet.SetControlMaster(null);
-                pet.SummonMaster = null;
 
                 pet.IsStabled = true;
                 pet.StabledBy = this;
@@ -3667,11 +3615,6 @@ namespace Server.Mobiles
                 {
                     pet.SetControlMaster(this);
 
-                    if (pet.Summoned)
-                    {
-                        pet.SummonMaster = this;
-                    }
-
                     pet.ControlTarget = this;
                     pet.ControlOrder = OrderType.Follow;
 
@@ -3694,257 +3637,13 @@ namespace Server.Mobiles
             AutoStabled = null;
         }
 
-        public void RecoverAmmo()
-        {
-            if (!Core.SE || !Alive || RecoverableAmmo == null)
-            {
-                return;
-            }
+        private void ToggleItemInsurance() => Insurance.ToggleItemInsurance(this);
 
-            foreach (var kvp in RecoverableAmmo)
-            {
-                if (kvp.Value > 0)
-                {
-                    Item ammo = null;
+        private void OpenItemInsuranceMenu() => Insurance.OpenItemInsuranceMenu(this);
 
-                    try
-                    {
-                        ammo = kvp.Key.CreateInstance<Item>();
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
+        private void CancelRenewInventoryInsurance() => Insurance.CancelRenewInventoryInsurance(this);
 
-                    if (ammo == null)
-                    {
-                        continue;
-                    }
-
-                    ammo.Amount = kvp.Value;
-
-                    var name = ammo.Name ?? ammo switch
-                    {
-                        Arrow _ => $"arrow{(ammo.Amount != 1 ? "s" : "")}",
-                        Bolt _ => $"bolt{(ammo.Amount != 1 ? "s" : "")}",
-                        _ => $"#{ammo.LabelNumber}"
-                    };
-
-                    PlaceInBackpack(ammo);
-                    SendLocalizedMessage(1073504, $"{ammo.Amount}\t{name}"); // You recover ~1_NUM~ ~2_AMMO~.
-                }
-            }
-
-            RecoverableAmmo.Clear();
-        }
-
-        private static int GetInsuranceCost(Item item) => 600;
-
-        private void ToggleItemInsurance()
-        {
-            if (!CheckAlive())
-            {
-                return;
-            }
-
-            BeginTarget(-1, false, TargetFlags.None, ToggleItemInsurance_Callback);
-            SendLocalizedMessage(1060868); // Target the item you wish to toggle insurance status on <ESC> to cancel
-        }
-
-        private bool CanInsure(Item item)
-        {
-            if (item is Container && item is not BaseQuiver || item is BagOfSending or KeyRing or PotionKeg or Sigil)
-            {
-                return false;
-            }
-
-            if (item.Stackable)
-            {
-                return false;
-            }
-
-            if (item.LootType == LootType.Cursed)
-            {
-                return false;
-            }
-
-            if (item.ItemID == 0x204E) // death shroud
-            {
-                return false;
-            }
-
-            if (item.Layer == Layer.Mount)
-            {
-                return false;
-            }
-
-            return item.LootType != LootType.Blessed && item.LootType != LootType.Newbied && item.BlessedFor != this;
-        }
-
-        private void ToggleItemInsurance_Callback(Mobile from, object obj)
-        {
-            if (!CheckAlive())
-            {
-                return;
-            }
-
-            ToggleItemInsurance_Callback(from, obj as Item, true);
-        }
-
-        private void ToggleItemInsurance_Callback(Mobile from, Item item, bool target)
-        {
-            if (item?.IsChildOf(this) != true)
-            {
-                if (target)
-                {
-                    BeginTarget(-1, false, TargetFlags.None, ToggleItemInsurance_Callback);
-                }
-
-                SendLocalizedMessage(
-                    1060871,
-                    "",
-                    0x23
-                ); // You can only insure items that you have equipped or that are in your backpack
-            }
-            else if (item.Insured)
-            {
-                item.Insured = false;
-
-                SendLocalizedMessage(1060874, "", 0x35); // You cancel the insurance on the item
-
-                if (target)
-                {
-                    BeginTarget(-1, false, TargetFlags.None, ToggleItemInsurance_Callback);
-                    SendLocalizedMessage(
-                        1060868,
-                        "",
-                        0x23
-                    ); // Target the item you wish to toggle insurance status on <ESC> to cancel
-                }
-            }
-            else if (!CanInsure(item))
-            {
-                if (target)
-                {
-                    BeginTarget(-1, false, TargetFlags.None, ToggleItemInsurance_Callback);
-                }
-
-                SendLocalizedMessage(1060869, "", 0x23); // You cannot insure that
-            }
-            else
-            {
-                if (!item.PaidInsurance)
-                {
-                    var cost = GetInsuranceCost(item);
-
-                    if (Banker.Withdraw(from, cost))
-                    {
-                        SendLocalizedMessage(
-                            1060398,
-                            cost.ToString()
-                        ); // ~1_AMOUNT~ gold has been withdrawn from your bank box.
-                        item.PaidInsurance = true;
-                    }
-                    else
-                    {
-                        SendLocalizedMessage(1061079, "", 0x23); // You lack the funds to purchase the insurance
-                        return;
-                    }
-                }
-
-                item.Insured = true;
-
-                SendLocalizedMessage(1060873, "", 0x23); // You have insured the item
-
-                if (target)
-                {
-                    BeginTarget(-1, false, TargetFlags.None, ToggleItemInsurance_Callback);
-                    SendLocalizedMessage(
-                        1060868,
-                        "",
-                        0x23
-                    ); // Target the item you wish to toggle insurance status on <ESC> to cancel
-                }
-            }
-        }
-
-        private void AutoRenewInventoryInsurance()
-        {
-            if (!CheckAlive())
-            {
-                return;
-            }
-
-            // You have selected to automatically reinsure all insured items upon death
-            SendLocalizedMessage(1060881, "", 0x23);
-            AutoRenewInsurance = true;
-        }
-
-        private void CancelRenewInventoryInsurance()
-        {
-            if (!CheckAlive())
-            {
-                return;
-            }
-
-            if (Core.SE)
-            {
-                NetState?.SendGump(new CancelRenewInventoryInsuranceGump(null));
-            }
-            else
-            {
-                // You have cancelled automatically reinsuring all insured items upon death
-                SendLocalizedMessage(1061075, "", 0x23);
-                AutoRenewInsurance = false;
-            }
-        }
-
-        private void OpenItemInsuranceMenu()
-        {
-            if (!CheckAlive())
-            {
-                return;
-            }
-
-            using var queue = PooledRefQueue<Item>.Create(128);
-
-            foreach (var item in Items)
-            {
-                if (DisplayInItemInsuranceGump(item))
-                {
-                    queue.Enqueue(item);
-                }
-            }
-
-            var pack = Backpack;
-
-            if (pack != null)
-            {
-                foreach (var item in pack.FindItems())
-                {
-                    if (DisplayInItemInsuranceGump(item))
-                    {
-                        queue.Enqueue(item);
-                    }
-                }
-            }
-
-            // TODO: Investigate item sorting
-            if (NetState != null)
-            {
-                if (queue.Count == 0)
-                {
-                    SendLocalizedMessage(1114915, "", 0x35); // None of your current items meet the requirements for insurance.
-                }
-                else
-                {
-                    NetState.SendGump(new ItemInsuranceMenuGump(this, queue.ToArray()));
-                }
-            }
-        }
-
-        private bool DisplayInItemInsuranceGump(Item item) => (item.Visible || AccessLevel >= AccessLevel.GameMaster) &&
-                                                              (item.Insured || CanInsure(item));
+        private void AutoRenewInventoryInsurance() => Insurance.AutoRenewInventoryInsurance(this);
 
         private void ToggleQuestItem()
         {
@@ -3960,7 +3659,7 @@ namespace Server.Mobiles
         {
             if (NetState != null)
             {
-                BaseQuestGump.CloseOtherGumps(this);
+                BaseMLQuestGump.CloseOtherGumps(this);
                 var gumps = this.GetGumps();
                 gumps.Close<QuestLogDetailedGump>();
                 gumps.Close<QuestLogGump>();
@@ -4050,7 +3749,7 @@ namespace Server.Mobiles
 
             if (EvilOmenSpell.EndEffect(this))
             {
-                poison = PoisonImpl.IncreaseLevel(poison);
+                poison = Poison.IncreaseLevel(poison);
             }
 
             var result = base.ApplyPoison(from, poison);
@@ -4139,6 +3838,8 @@ namespace Server.Mobiles
             ReceivedHonorContext?.Cancel();
             SentHonorContext?.Cancel();
 
+            AmmoRecovery.Forget(this);
+
             if (Stabled != null)
             {
                 foreach (var stabled in Stabled)
@@ -4147,6 +3848,35 @@ namespace Server.Mobiles
                 }
 
                 Stabled = null;
+            }
+
+            if (_allFollowers?.Count > 0)
+            {
+                // Releasing or deleting a follower removes it from _allFollowers.
+                using var followers = PooledRefQueue<BaseCreature>.Create(_allFollowers.Count);
+
+                foreach (var follower in _allFollowers)
+                {
+                    // Escorts and hirelings notice a deleted master and walk off on their own.
+                    if (follower is BaseCreature bc and not (BaseEscortable or BaseHire))
+                    {
+                        followers.Enqueue(bc);
+                    }
+                }
+
+                while (followers.Count > 0)
+                {
+                    var bc = followers.Dequeue();
+                    if (bc.Summoned || bc.IsBonded || bc.IsDeadPet)
+                    {
+                        bc.Delete();
+                    }
+                    else
+                    {
+                        // An unbonded pet goes wild and despawns on the abandoned-pet timer.
+                        bc.ControlOrder = OrderType.Release;
+                    }
+                }
             }
         }
 
@@ -4499,7 +4229,9 @@ namespace Server.Mobiles
             var offset = duration.TotalMilliseconds - roundedSeconds * TimeSpan.MillisecondsPerSecond;
             if (offset > 0)
             {
-                Timer.DelayCall(TimeSpan.FromMilliseconds(offset), () =>
+                Timer.DelayCall(
+                    TimeSpan.FromMilliseconds(offset),
+                    () =>
                     {
                         // They are still online, we still have the buff icon in the table, and it is the same buff icon
                         if (NetState != null && m_BuffTable?.GetValueOrDefault(buffInfo.ID) == buffInfo)
@@ -4622,296 +4354,6 @@ namespace Server.Mobiles
             public override void OnClick(Mobile from, IEntity target)
             {
                 m_Callback?.Invoke();
-            }
-        }
-
-        private class CancelRenewInventoryInsuranceGump : StaticGump<CancelRenewInventoryInsuranceGump>
-        {
-            private readonly ItemInsuranceMenuGump _insuranceGump;
-
-            public override bool Singleton => true;
-
-            public CancelRenewInventoryInsuranceGump(ItemInsuranceMenuGump insuranceGump) : base(250, 200) =>
-                _insuranceGump = insuranceGump;
-
-            protected override void BuildLayout(ref StaticGumpBuilder builder)
-            {
-                builder.AddBackground(0, 0, 240, 142, 0x13BE);
-                builder.AddImageTiled(6, 6, 228, 100, 0xA40);
-                builder.AddImageTiled(6, 116, 228, 20, 0xA40);
-                builder.AddAlphaRegion(6, 6, 228, 142);
-
-                // You are about to disable inventory insurance auto-renewal.
-                builder.AddHtmlLocalized(8, 8, 228, 100, 1071021, 0x7FFF);
-
-                builder.AddButton(6, 116, 0xFB1, 0xFB2, 0);
-                builder.AddHtmlLocalized(40, 118, 450, 20, 1060051, 0x7FFF); // CANCEL
-
-                builder.AddButton(114, 116, 0xFA5, 0xFA7, 1);
-                builder.AddHtmlLocalized(148, 118, 450, 20, 1071022, 0x7FFF); // DISABLE IT!
-            }
-
-            public override void OnResponse(NetState sender, in RelayInfo info)
-            {
-                if (sender.Mobile is not PlayerMobile pm || !pm.CheckAlive())
-                {
-                    return;
-                }
-
-                if (info.ButtonID == 1)
-                {
-                    // You have cancelled automatically reinsuring all insured items upon death
-                    pm.SendLocalizedMessage(1061075, "", 0x23);
-                    pm.AutoRenewInsurance = false;
-                }
-                else
-                {
-                    pm.SendLocalizedMessage(1042021); // Cancelled.
-                }
-
-                if (_insuranceGump != null)
-                {
-                    pm.SendGump(_insuranceGump);
-                }
-            }
-        }
-
-        private class ItemInsuranceMenuGump : DynamicGump
-        {
-            private readonly PlayerMobile _from;
-            private readonly bool[] _insure;
-            private readonly Item[] _items;
-            private int _page;
-
-            public override bool Singleton => true;
-
-            public ItemInsuranceMenuGump(PlayerMobile from, Item[] items) : base(25, 50)
-            {
-                _from = from;
-                _items = items;
-                _insure = new bool[items.Length];
-
-                for (var i = 0; i < items.Length; ++i)
-                {
-                    _insure[i] = items[i].Insured;
-                }
-            }
-
-            protected override void BuildLayout(ref DynamicGumpBuilder builder)
-            {
-                builder.AddPage();
-
-                builder.AddBackground(0, 0, 520, 510, 0x13BE);
-                builder.AddImageTiled(10, 10, 500, 30, 0xA40);
-                builder.AddImageTiled(10, 50, 500, 355, 0xA40);
-                builder.AddImageTiled(10, 415, 500, 80, 0xA40);
-                builder.AddAlphaRegion(10, 10, 500, 485);
-
-                builder.AddButton(15, 470, 0xFB1, 0xFB2, 0);
-                builder.AddHtmlLocalized(50, 472, 80, 20, 1011012, 0x7FFF); // CANCEL
-
-                if (_from.AutoRenewInsurance)
-                {
-                    builder.AddButton(360, 10, 9723, 9724, 1);
-                }
-                else
-                {
-                    builder.AddButton(360, 10, 9720, 9722, 1);
-                }
-
-                builder.AddHtmlLocalized(395, 14, 105, 20, 1114122, 0x7FFF); // AUTO REINSURE
-
-                builder.AddButton(395, 470, 0xFA5, 0xFA6, 2);
-                builder.AddHtmlLocalized(430, 472, 50, 20, 1006044, 0x7FFF); // OK
-
-                builder.AddHtmlLocalized(10, 14, 150, 20, 1114121, 0x7FFF); // <CENTER>ITEM INSURANCE MENU</CENTER>
-
-                builder.AddHtmlLocalized(45, 54, 70, 20, 1062214, 0x7FFF);  // Item
-                builder.AddHtmlLocalized(250, 54, 70, 20, 1061038, 0x7FFF); // Cost
-                builder.AddHtmlLocalized(400, 54, 70, 20, 1114311, 0x7FFF); // Insured
-
-                var balance = Banker.GetBalance(_from);
-                var cost = 0;
-
-                for (var i = 0; i < _items.Length; ++i)
-                {
-                    if (_insure[i])
-                    {
-                        cost += GetInsuranceCost(_items[i]);
-                    }
-                }
-
-                builder.AddHtmlLocalized(15, 420, 300, 20, 1114310, 0x7FFF); // GOLD AVAILABLE:
-                builder.AddLabel(215, 420, 0x481, balance.ToString());
-                builder.AddHtmlLocalized(15, 435, 300, 20, 1114123, 0x7FFF); // TOTAL COST OF INSURANCE:
-                builder.AddLabel(215, 435, 0x481, cost.ToString());
-
-                if (cost != 0)
-                {
-                    builder.AddHtmlLocalized(15, 450, 300, 20, 1114125, 0x7FFF); // NUMBER OF DEATHS PAYABLE:
-                    builder.AddLabel(215, 450, 0x481, (balance / cost).ToString());
-                }
-
-                for (int i = _page * 4, y = 72; i < (_page + 1) * 4 && i < _items.Length; ++i, y += 75)
-                {
-                    var item = _items[i];
-                    var b = ItemBounds.Bounds[item.ItemID];
-
-                    builder.AddImageTiledButton(
-                        40,
-                        y,
-                        0x918,
-                        0x918,
-                        0,
-                        GumpButtonType.Page,
-                        0,
-                        item.ItemID,
-                        item.Hue,
-                        40 - b.Width / 2 - b.X,
-                        30 - b.Height / 2 - b.Y
-                    );
-                    builder.AddItemProperty(item.Serial);
-
-                    if (_insure[i])
-                    {
-                        builder.AddButton(400, y, 9723, 9724, 100 + i);
-                        builder.AddLabel(250, y, 0x481, GetInsuranceCost(item).ToString());
-                    }
-                    else
-                    {
-                        builder.AddButton(400, y, 9720, 9722, 100 + i);
-                        builder.AddLabel(250, y, 0x66C, GetInsuranceCost(item).ToString());
-                    }
-                }
-
-                if (_page >= 1)
-                {
-                    builder.AddButton(15, 380, 0xFAE, 0xFAF, 3);
-                    builder.AddHtmlLocalized(50, 380, 450, 20, 1044044, 0x7FFF); // PREV PAGE
-                }
-
-                if ((_page + 1) * 4 < _items.Length)
-                {
-                    builder.AddButton(400, 380, 0xFA5, 0xFA7, 4);
-                    builder.AddHtmlLocalized(435, 380, 70, 20, 1044045, 0x7FFF); // NEXT PAGE
-                }
-            }
-
-            public override void OnResponse(NetState sender, in RelayInfo info)
-            {
-                if (info.ButtonID == 0 || !_from.CheckAlive())
-                {
-                    return;
-                }
-
-                switch (info.ButtonID)
-                {
-                    case 1: // Auto Reinsure
-                        {
-                            if (_from.AutoRenewInsurance)
-                            {
-                                _from.SendGump(new CancelRenewInventoryInsuranceGump(this));
-                            }
-                            else
-                            {
-                                _from.AutoRenewInventoryInsurance();
-                                _from.SendGump(this);
-                            }
-
-                            break;
-                        }
-                    case 2: // OK
-                        {
-                            _from.SendGump(new ItemInsuranceMenuConfirmGump(this));
-
-                            break;
-                        }
-                    case 3: // Prev
-                        {
-                            if (_page >= 1)
-                            {
-                                _page--;
-                                _from.SendGump(this);
-                            }
-
-                            break;
-                        }
-                    case 4: // Next
-                        {
-                            if ((_page + 1) * 4 < _items.Length)
-                            {
-                                _page++;
-                                _from.SendGump(this);
-                            }
-
-                            break;
-                        }
-                    default:
-                        {
-                            var idx = info.ButtonID - 100;
-
-                            if (idx >= 0 && idx < _items.Length)
-                            {
-                                _insure[idx] = !_insure[idx];
-                            }
-
-                            _from.SendGump(this);
-
-                            break;
-                        }
-                }
-            }
-
-            private class ItemInsuranceMenuConfirmGump : StaticGump<ItemInsuranceMenuConfirmGump>
-            {
-                private readonly ItemInsuranceMenuGump _parentGump;
-
-                public ItemInsuranceMenuConfirmGump(ItemInsuranceMenuGump parentGump) : base(250, 200) =>
-                    _parentGump = parentGump;
-
-                protected override void BuildLayout(ref StaticGumpBuilder builder)
-                {
-                    builder.AddBackground(0, 0, 240, 142, 0x13BE);
-                    builder.AddImageTiled(6, 6, 228, 100, 0xA40);
-                    builder.AddImageTiled(6, 116, 228, 20, 0xA40);
-                    builder.AddAlphaRegion(6, 6, 228, 142);
-
-                    builder.AddHtmlLocalized(8, 8, 228, 100, 1114300, 0x7FFF); // Do you wish to insure all newly selected items?
-
-                    builder.AddButton(6, 116, 0xFB1, 0xFB2, 0);
-                    builder.AddHtmlLocalized(40, 118, 450, 20, 1060051, 0x7FFF); // CANCEL
-
-                    builder.AddButton(114, 116, 0xFA5, 0xFA7, 1);
-                    builder.AddHtmlLocalized(148, 118, 450, 20, 1073996, 0x7FFF); // ACCEPT
-                }
-
-                public override void OnResponse(NetState sender, in RelayInfo info)
-                {
-                    if (sender.Mobile is not PlayerMobile pm || !pm.CheckAlive())
-                    {
-                        return;
-                    }
-
-                    if (info.ButtonID == 1)
-                    {
-                        var items = _parentGump._items;
-                        var insure = _parentGump._insure;
-                        for (var i = 0; i < items.Length; ++i)
-                        {
-                            var item = items[i];
-
-                            if (item.Insured != insure[i])
-                            {
-                                pm.ToggleItemInsurance_Callback(pm, item, false);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        pm.SendLocalizedMessage(1042021); // Cancelled.
-                        pm.SendGump(_parentGump);
-                    }
-                }
             }
         }
     }

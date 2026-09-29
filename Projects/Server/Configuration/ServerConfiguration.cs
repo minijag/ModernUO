@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: ServerConfiguration.cs                                          *
  *                                                                       *
@@ -44,7 +44,7 @@ public static class ServerConfiguration
         _settings.Settings.TryGetValue(key, out var value) ? new ClientVersion(value) : defaultValue;
 
     public static string GetSetting(string key, string defaultValue) =>
-        _settings.Settings.TryGetValue(key, out var value) ? value : defaultValue;
+        _settings.Settings.GetValueOrDefault(key, defaultValue);
 
     public static int GetSetting(string key, int defaultValue)
     {
@@ -218,11 +218,13 @@ public static class ServerConfiguration
         Save();
     }
 
-    // If mock is enabled we skip the console readline.
+    // Reads (or creates) the configuration file. The interactive first-boot prompts live in
+    // ConfigurePrompts (run later via AssemblyHandler.Invoke("ConfigurePrompts")) so all
+    // first-boot prompting — engine and content — shares one phase/wiring. mocked skips prompts
+    // entirely (ConfigurePrompts is gated on m_Mocked and isn't invoked by the test fixtures).
     public static void Load(bool mocked = false)
     {
         m_Mocked = mocked;
-        var updated = false;
 
         if (File.Exists(m_FilePath))
         {
@@ -239,14 +241,26 @@ public static class ServerConfiguration
         }
         else
         {
-            updated = true;
             _settings = new ServerSettings();
         }
+    }
 
-        if (mocked)
+    // First-boot interactive configuration, discovered + run by AssemblyHandler.Invoke(
+    // "ConfigurePrompts") after assemblies load but before Serilog's first log line, so the
+    // console prompts are not interleaved with the async console sink (see
+    // dev-docs/server-lifecycle.md). CallPriority(0) so the engine's own prompts (data dirs,
+    // listeners, server name, expansion + map selection) run before any content ConfigurePrompts
+    // that build on them (e.g. map selection before a pathfinding pre-bake prompt). Also resolves
+    // Core.Expansion on every non-mocked boot.
+    [CallPriority(0)]
+    public static void ConfigurePrompts()
+    {
+        if (m_Mocked)
         {
             return;
         }
+
+        var updated = false;
 
         if (_settings.DataDirectories.Count == 0)
         {
@@ -269,6 +283,12 @@ public static class ServerConfiguration
         {
             updated = true;
             _settings.Listeners.AddRange(ServerConfigurationPrompts.GetListeners());
+        }
+
+        if (!_settings.Settings.ContainsKey("serverListing.serverName"))
+        {
+            updated = true;
+            _settings.Settings["serverListing.serverName"] = ServerConfigurationPrompts.GetServerName();
         }
 
         // We have a known, current expansion, so we can deserialize it from Configuration

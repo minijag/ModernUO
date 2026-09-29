@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: Rectangle3DConverter.cs                                         *
  *                                                                       *
@@ -175,7 +175,7 @@ public class Rectangle3DConverter : JsonConverter<Rectangle3D>
 
     public override void Write(Utf8JsonWriter writer, Rectangle3D value, JsonSerializerOptions options)
     {
-        var writeZ = value.Start.Z is > sbyte.MinValue and < sbyte.MaxValue || value.End.Z is > sbyte.MinValue and < sbyte.MaxValue;
+        var writeZ = value.Start.Z != sbyte.MinValue || value.End.Z != sbyte.MaxValue;
 
         writer.WriteStartObject();
         writer.WritePropertyName("x1");

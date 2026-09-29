@@ -9,16 +9,30 @@
 /Distribution/bsdtar
 /Distribution/Configuration/antimacro.json
 /Distribution/Configuration/assistants.json
+/Distribution/Configuration/auto-denylist.json
+/Distribution/Configuration/bans.json
+/Distribution/Configuration/blocklist.json
+/Distribution/Configuration/crowdsec.json
 /Distribution/Configuration/expansion.json
+/Distribution/Configuration/firewall.json
+/Distribution/Configuration/ip-allowlist*.txt
+/Distribution/Configuration/ip-allowlist*.txt.tmp
+/Distribution/Configuration/ip-blocklist.txt
+/Distribution/Configuration/ip-blocklist.txt.tmp
+/Distribution/Configuration/login-allowlist.json
+/Distribution/Configuration/login-allowlist.txt
+/Distribution/Configuration/login-allowlist.txt.tmp
 /Distribution/Configuration/modernuo.json
 /Distribution/Configuration/email-settings.json
 /Distribution/Configuration/throttles.json
 /Distribution/Configuration/tot.json
+/Distribution/Data/Pathfinding
 /Distribution/Logs
 /Distribution/Archives
 /Distribution/Backups
 /Distribution/Saves
 /Distribution/docs
+/docs/
 /Distribution/temp
 /Distribution/*.dylib
 /Distribution/*.so
@@ -39,6 +53,7 @@
 /.idea
 /.vs
 /.vscode
+/.claude
 
 .DS_Store
 
@@ -50,3 +65,5 @@
 /Tools/MinotaurArt/**/*.idx
 __pycache__/
 *.pyc
+# BuildTool native binaries; keep Zodiac's Tools source directories visible on Windows.
+/tools/ModernUO.BuildTool*

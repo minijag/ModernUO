@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2025 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: Html.cs                                                         *
  *                                                                       *
@@ -167,14 +167,14 @@ public static class Html
             return string.Empty;
         }
 
-        int indexOfAny = input.IndexOfAny(_htmlSearchValues);
+        var indexOfAny = input.IndexOfAny(_htmlSearchValues);
         if (indexOfAny < 0)
         {
             return input.ToString();
         }
 
         using var builder = ValueStringBuilder.Create(input.Length * 2);
-        int lastIndex = 0;
+        var lastIndex = 0;
 
         while (indexOfAny >= 0)
         {
@@ -183,7 +183,7 @@ public static class Html
                 builder.Append(input[lastIndex..indexOfAny]);
             }
 
-            char c = input[indexOfAny];
+            var c = input[indexOfAny];
             var replacement = c switch
             {
                 '&'  => "&amp;",

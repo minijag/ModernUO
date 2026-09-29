@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: BufferReader.cs                                                 *
  *                                                                       *
@@ -36,6 +36,8 @@ public class BufferReader : IGenericReader
 
     public long Position => _position;
     public long BufferSize => _buffer.Length;
+
+    public TimeSpan AnchoredTimeShift { get; set; }
 
     public BufferReader(byte[] buffer, Dictionary<ulong, string> typesDb = null, Encoding encoding = null)
     {

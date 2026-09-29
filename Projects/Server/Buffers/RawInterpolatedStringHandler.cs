@@ -84,7 +84,7 @@ public ref struct RawInterpolatedStringHandler
     [MethodImpl(MethodImplOptions.AggressiveInlining)] // used only on a few hot paths
     public void Clear()
     {
-        char[]? toReturn = _arrayToReturnToPool;
+        var toReturn = _arrayToReturnToPool;
         this = default; // defensive clear
         if (toReturn is not null)
         {
@@ -102,8 +102,8 @@ public ref struct RawInterpolatedStringHandler
     {
         if (value.Length == 1)
         {
-            Span<char> chars = _chars;
-            int pos = _pos;
+            var chars = _chars;
+            var pos = _pos;
             if ((uint)pos < (uint)chars.Length)
             {
                 chars[pos] = value[0];
@@ -261,49 +261,72 @@ public ref struct RawInterpolatedStringHandler
     }
     /// <summary>Writes the specified value to the handler.</summary>
     /// <param name="value">The value to write.</param>
-    /// <param name="format">The format string.</param>
+    /// <param name="format">
+    /// The format string. Pass <c>"L"</c> to lowercase the formatted hole's output
+    /// using <see cref="char.ToLowerInvariant(char)"/>; the underlying value's
+    /// <c>TryFormat</c>/<c>ToString</c> never sees <c>"L"</c>.
+    /// </param>
     public void AppendFormatted<T>(T value, string? format)
     {
+        var lowercase = format == "L";
+        if (lowercase)
+        {
+            format = null;
+        }
+
+        var startPos = _pos;
+
         // If there's a custom formatter, always use it.
         if (_hasCustomFormatter)
         {
             AppendCustomFormatter(value, format);
-            return;
-        }
-
-        // Check first for IFormattable, even though we'll prefer to use ISpanFormattable, as the latter
-        // requires the former.  For value types, it won't matter as the type checks devolve into
-        // JIT-time constants.  For reference types, they're more likely to implement IFormattable
-        // than they are to implement ISpanFormattable: if they don't implement either, we save an
-        // interface check over first checking for ISpanFormattable and then for IFormattable, and
-        // if it only implements IFormattable, we come out even: only if it implements both do we
-        // end up paying for an extra interface check.
-        string? s;
-        if (value is IFormattable)
-        {
-            // If the value can format itself directly into our buffer, do so.
-            if (value is ISpanFormattable)
-            {
-                int charsWritten;
-                while (!((ISpanFormattable)value).TryFormat(_chars[_pos..], out charsWritten, format, _provider)) // constrained call avoiding boxing for value types
-                {
-                    Grow();
-                }
-
-                _pos += charsWritten;
-                return;
-            }
-
-            s = ((IFormattable)value).ToString(format, _provider); // constrained call avoiding boxing for value types
         }
         else
         {
-            s = value?.ToString();
+            // Check first for IFormattable, even though we'll prefer to use ISpanFormattable, as the latter
+            // requires the former.  For value types, it won't matter as the type checks devolve into
+            // JIT-time constants.  For reference types, they're more likely to implement IFormattable
+            // than they are to implement ISpanFormattable: if they don't implement either, we save an
+            // interface check over first checking for ISpanFormattable and then for IFormattable, and
+            // if it only implements IFormattable, we come out even: only if it implements both do we
+            // end up paying for an extra interface check.
+            string? s;
+            if (value is IFormattable)
+            {
+                // If the value can format itself directly into our buffer, do so.
+                if (value is ISpanFormattable)
+                {
+                    int charsWritten;
+                    while (!((ISpanFormattable)value).TryFormat(_chars[_pos..], out charsWritten, format, _provider)) // constrained call avoiding boxing for value types
+                    {
+                        Grow();
+                    }
+
+                    _pos += charsWritten;
+
+                    if (lowercase)
+                    {
+                        LowercaseRange(_chars.Slice(startPos, _pos - startPos));
+                    }
+                    return;
+                }
+
+                s = ((IFormattable)value).ToString(format, _provider); // constrained call avoiding boxing for value types
+            }
+            else
+            {
+                s = value?.ToString();
+            }
+
+            if (s is not null)
+            {
+                AppendStringDirect(s);
+            }
         }
 
-        if (s is not null)
+        if (lowercase)
         {
-            AppendStringDirect(s);
+            LowercaseRange(_chars.Slice(startPos, _pos - startPos));
         }
     }
 
@@ -312,7 +335,7 @@ public ref struct RawInterpolatedStringHandler
     /// <param name="alignment">Minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
     public void AppendFormatted<T>(T value, int alignment)
     {
-        int startingPos = _pos;
+        var startingPos = _pos;
         AppendFormatted(value);
         if (alignment != 0)
         {
@@ -326,7 +349,7 @@ public ref struct RawInterpolatedStringHandler
     /// <param name="alignment">Minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
     public void AppendFormatted<T>(T value, int alignment, string? format)
     {
-        int startingPos = _pos;
+        var startingPos = _pos;
         AppendFormatted(value, format);
         if (alignment != 0)
         {
@@ -354,22 +377,32 @@ public ref struct RawInterpolatedStringHandler
     /// <summary>Writes the specified string of chars to the handler.</summary>
     /// <param name="value">The span to write.</param>
     /// <param name="alignment">Minimum number of characters that should be written for this value.  If the value is negative, it indicates left-aligned and the required minimum is the absolute value.</param>
-    /// <param name="format">The format string.</param>
+    /// <param name="format">
+    /// The format string. Pass <c>"L"</c> to lowercase the value's chars (only the
+    /// value range, not any alignment padding) using <see cref="char.ToLowerInvariant(char)"/>.
+    /// </param>
     public void AppendFormatted(ReadOnlySpan<char> value, int alignment = 0, string? format = null)
     {
-        bool leftAlign = false;
+        var lowercase = format == "L";
+
+        var leftAlign = false;
         if (alignment < 0)
         {
             leftAlign = true;
             alignment = -alignment;
         }
 
-        int paddingRequired = alignment - value.Length;
+        var paddingRequired = alignment - value.Length;
         if (paddingRequired <= 0)
         {
             // The value is as large or larger than the required amount of padding,
             // so just write the value.
+            var startPos = _pos;
             AppendFormatted(value);
+            if (lowercase)
+            {
+                LowercaseRange(_chars.Slice(startPos, _pos - startPos));
+            }
             return;
         }
 
@@ -377,8 +410,13 @@ public ref struct RawInterpolatedStringHandler
         EnsureCapacityForAdditionalChars(value.Length + paddingRequired);
         if (leftAlign)
         {
+            var valueStart = _pos;
             value.CopyTo(_chars[_pos..]);
             _pos += value.Length;
+            if (lowercase)
+            {
+                LowercaseRange(_chars.Slice(valueStart, _pos - valueStart));
+            }
             _chars.Slice(_pos, paddingRequired).Fill(' ');
             _pos += paddingRequired;
         }
@@ -386,8 +424,13 @@ public ref struct RawInterpolatedStringHandler
         {
             _chars.Slice(_pos, paddingRequired).Fill(' ');
             _pos += paddingRequired;
+            var valueStart = _pos;
             value.CopyTo(_chars[_pos..]);
             _pos += value.Length;
+            if (lowercase)
+            {
+                LowercaseRange(_chars.Slice(valueStart, _pos - valueStart));
+            }
         }
     }
     #endregion
@@ -477,7 +520,7 @@ public ref struct RawInterpolatedStringHandler
         Debug.Assert(_hasCustomFormatter);
         Debug.Assert(_provider != null);
 
-        ICustomFormatter? formatter = (ICustomFormatter?)_provider.GetFormat(typeof(ICustomFormatter));
+        var formatter = (ICustomFormatter?)_provider.GetFormat(typeof(ICustomFormatter));
         Debug.Assert(formatter != null, "An incorrectly written provider said it implemented ICustomFormatter, and then didn't");
 
         if (formatter?.Format(format, value, _provider) is string customFormatted)
@@ -494,16 +537,16 @@ public ref struct RawInterpolatedStringHandler
         Debug.Assert(startingPos >= 0 && startingPos <= _pos);
         Debug.Assert(alignment != 0);
 
-        int charsWritten = _pos - startingPos;
+        var charsWritten = _pos - startingPos;
 
-        bool leftAlign = false;
+        var leftAlign = false;
         if (alignment < 0)
         {
             leftAlign = true;
             alignment = -alignment;
         }
 
-        int paddingNeeded = alignment - charsWritten;
+        var paddingNeeded = alignment - charsWritten;
         if (paddingNeeded > 0)
         {
             EnsureCapacityForAdditionalChars(paddingNeeded);
@@ -520,6 +563,32 @@ public ref struct RawInterpolatedStringHandler
 
             _pos += paddingNeeded;
         }
+    }
+
+    /// <summary>
+    /// Lowercases the chars in <see cref="_chars"/> in the half-open range <c>[start, end)</c>
+    /// using the BCL's vectorized <see cref="MemoryExtensions.ToLowerInvariant(ReadOnlySpan{char}, Span{char})"/>.
+    /// Copies through a stackalloc temp for ranges up to 256 chars, otherwise rents from
+    /// <see cref="STArrayPool{T}.Shared"/>. The BCL overload throws on overlapping source/destination
+    /// spans, so a temp is always required; running one big SIMD pass beats chunking on long inputs
+    /// and avoids splitting surrogate pairs at chunk boundaries.
+    /// </summary>
+    private static void LowercaseRange(Span<char> dest)
+    {
+        if (dest.Length <= MinimumArrayPoolLength)
+        {
+            Span<char> temp = stackalloc char[MinimumArrayPoolLength];
+            var t = temp[..dest.Length];
+            dest.CopyTo(t);
+            ((ReadOnlySpan<char>)t).ToLowerInvariant(dest);
+            return;
+        }
+
+        var rented = STArrayPool<char>.Shared.Rent(dest.Length);
+        var rentedSlice = rented.AsSpan(0, dest.Length);
+        dest.CopyTo(rentedSlice);
+        ((ReadOnlySpan<char>)rentedSlice).ToLowerInvariant(dest);
+        STArrayPool<char>.Shared.Return(rented);
     }
 
     /// <summary>Ensures <see cref="_chars"/> has the capacity to store <paramref name="additionalChars"/> beyond <see cref="_pos"/>.</summary>
@@ -583,13 +652,13 @@ public ref struct RawInterpolatedStringHandler
         // ints that could technically overflow if someone tried to, for example, append a huge string to a huge string, we also clamp to int.MaxValue.
         // Even if the array creation fails in such a case, we may later fail in ToStringAndClear.
 
-        uint newCapacity = Math.Max(requiredMinCapacity, Math.Min((uint)_chars.Length * 2, 0x3FFFFFDF));
-        int arraySize = (int)Math.Clamp(newCapacity, MinimumArrayPoolLength, int.MaxValue);
+        var newCapacity = Math.Max(requiredMinCapacity, Math.Min((uint)_chars.Length * 2, 0x3FFFFFDF));
+        var arraySize = (int)Math.Clamp(newCapacity, MinimumArrayPoolLength, int.MaxValue);
 
-        char[] newArray = STArrayPool<char>.Shared.Rent(arraySize);
+        var newArray = STArrayPool<char>.Shared.Rent(arraySize);
         _chars[.._pos].CopyTo(newArray);
 
-        char[]? toReturn = _arrayToReturnToPool;
+        var toReturn = _arrayToReturnToPool;
         _chars = _arrayToReturnToPool = newArray;
 
         if (toReturn is not null)

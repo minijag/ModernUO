@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: DynamicGump.cs                                                  *
  *                                                                       *
@@ -43,10 +43,11 @@ public abstract class DynamicGump : BaseGump
         writer.Write(X);
         writer.Write(Y);
 
-        DynamicGumpBuilder gumpBuilder = new DynamicGumpBuilder();
+        var gumpBuilder = new DynamicGumpBuilder();
         BuildLayout(ref gumpBuilder);
         gumpBuilder.FinalizeLayout();
 
+        HasVisualElements = gumpBuilder.HasVisualElements;
         _switches = gumpBuilder.Switches;
         _textEntries = gumpBuilder.TextEntries;
 

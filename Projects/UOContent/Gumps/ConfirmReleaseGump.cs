@@ -36,13 +36,12 @@ public class ConfirmReleaseGump : StaticGump<ConfirmReleaseGump>
     public override void OnResponse(NetState sender, in RelayInfo info)
     {
         if (info.ButtonID != 2 || _pet.Deleted ||
-            !(_pet.Controlled && _from == _pet.ControlMaster &&
+            !(_from == _pet.ControlMaster &&
               _from.CheckAlive() && _pet.Map == _from.Map && _pet.InRange(_from, 14)))
         {
             return;
         }
 
-        _pet.ControlTarget = null;
-        _pet.ControlOrder = OrderType.Release;
+        _pet.IssueOrder(OrderType.Release, _from);
     }
 }

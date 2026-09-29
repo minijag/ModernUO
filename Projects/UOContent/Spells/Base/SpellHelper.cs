@@ -407,32 +407,8 @@ namespace Server.Spells
             };
         }
 
-        public static Guild GetGuildFor(Mobile m)
-        {
-            var g = m.Guild as Guild;
-
-            if (g == null && m is BaseCreature c)
-            {
-                m = c.ControlMaster;
-
-                if (m != null)
-                {
-                    g = m.Guild as Guild;
-                }
-
-                if (g == null)
-                {
-                    m = c.SummonMaster;
-
-                    if (m != null)
-                    {
-                        g = m.Guild as Guild;
-                    }
-                }
-            }
-
-            return g;
-        }
+        public static Guild GetGuildFor(Mobile m) =>
+            m.Guild as Guild ?? (m as BaseCreature)?.GetMaster()?.Guild as Guild;
 
         public static bool ValidIndirectTarget(Mobile from, Mobile to)
         {
@@ -473,36 +449,24 @@ namespace Server.Spells
                 return false;
             }
 
-            if (bcTarg != null && (bcTarg.Controlled || bcTarg.Summoned))
+            if (bcTarg?.GetMaster() is { } targMaster)
             {
-                if (bcTarg.ControlMaster == from || bcTarg.SummonMaster == from)
-                {
-                    return false;
-                }
-
-                if (p != null && (p.Contains(bcTarg.ControlMaster) || p.Contains(bcTarg.SummonMaster)))
+                if (targMaster == from || p?.Contains(targMaster) == true)
                 {
                     return false;
                 }
             }
 
-            if (bcFrom != null && (bcFrom.Controlled || bcFrom.Summoned))
+            if (bcFrom?.GetMaster() is { } fromMaster)
             {
-                if (bcFrom.ControlMaster == to || bcFrom.SummonMaster == to)
-                {
-                    return false;
-                }
-
-                p = Party.Get(to);
-
-                if (p != null && (p.Contains(bcFrom.ControlMaster) || p.Contains(bcFrom.SummonMaster)))
+                if (fromMaster == to || Party.Get(to)?.Contains(fromMaster) == true)
                 {
                     return false;
                 }
             }
 
             return bcTarg?.Controlled == false && bcTarg.InitialInnocent ||
-                   Notoriety.Compute(from, to) != Notoriety.Innocent || from.Kills >= 5;
+                   Notoriety.Compute(from, to) != Notoriety.Innocent || from.Murderer;
         }
 
         public static void Summon(
@@ -893,16 +857,25 @@ namespace Server.Spells
 
             if (target.MagicDamageAbsorb > 0)
             {
-                ++circle;
-
-                target.MagicDamageAbsorb -= circle;
-
-                // This order isn't very intuitive, but you have to nullify reflect before target gets switched
-                reflect = target.MagicDamageAbsorb >= 0;
-                if (target.MagicDamageAbsorb <= 0)
+                if (!Core.UOR)
                 {
+                    // T2A: single-use reflection, consumed immediately
                     target.MagicDamageAbsorb = 0;
-                    DefensiveSpell.Nullify(target);
+                    reflect = true;
+                }
+                else
+                {
+                    ++circle;
+
+                    target.MagicDamageAbsorb -= circle;
+
+                    // This order isn't very intuitive, but you have to nullify reflect before target gets switched
+                    reflect = target.MagicDamageAbsorb >= 0;
+                    if (target.MagicDamageAbsorb <= 0)
+                    {
+                        target.MagicDamageAbsorb = 0;
+                        DefensiveSpell.Nullify(target);
+                    }
                 }
             }
 
@@ -1017,7 +990,7 @@ namespace Server.Spells
 
                 bcTarget?.AlterSpellDamageFrom(from, ref dmg);
 
-                if (Feint.GetDamageReduction(from, target, out int feintReduction))
+                if (Feint.GetDamageReduction(from, target, out var feintReduction))
                 {
                     // example: 35 damage * 50 / 100 = 17 damage
                     dmg -= dmg * feintReduction / 100;
@@ -1331,12 +1304,7 @@ namespace Server.Spells
             context.Spell.RemoveEffect(m);
         }
 
-        public static TransformContext GetContext(Mobile m)
-        {
-            _table.TryGetValue(m, out var context);
-
-            return context;
-        }
+        public static TransformContext GetContext(Mobile m) => _table.GetValueOrDefault(m);
 
         public static bool UnderTransformation(Mobile m) => GetContext(m) != null;
 

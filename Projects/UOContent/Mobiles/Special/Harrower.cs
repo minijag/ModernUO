@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ModernUO.Serialization;
+using Server.Collections;
 using Server.Engines.CannedEvil;
 using Server.Engines.Virtues;
 using Server.Items;
@@ -279,7 +280,7 @@ public partial class Harrower : BaseCreature
 
             var prot = JusticeVirtue.GetProtector(pm);
 
-            if (prot == null || prot.Map != pm.Map || prot.Kills >= 5 || prot.Criminal ||
+            if (prot == null || prot.Map != pm.Map || prot.Murderer || prot.Criminal ||
                 !JusticeVirtue.CheckMapRegion(pm, prot))
             {
                 continue;

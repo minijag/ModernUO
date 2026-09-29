@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: DynamicGumpBuilder.cs                                           *
  *                                                                       *
@@ -36,6 +36,7 @@ public ref struct DynamicGumpBuilder
 
     public int Switches => _gumpBuilder._switches;
     public int TextEntries => _gumpBuilder._textEntries;
+    internal bool HasVisualElements => _gumpBuilder._hasVisualElements;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public DynamicGumpBuilder()
@@ -278,11 +279,11 @@ public ref struct DynamicGumpBuilder
         }
 
         var newSize = Math.Max(_stringBytesWritten + needed, _stringsBuffer.Length * 2);
-        byte[] poolArray = STArrayPool<byte>.Shared.Rent(newSize);
+        var poolArray = STArrayPool<byte>.Shared.Rent(newSize);
 
         _stringsBuffer.AsSpan(0, _stringBytesWritten).CopyTo(poolArray);
 
-        byte[] toReturn = _stringsBuffer;
+        var toReturn = _stringsBuffer;
         _stringsBuffer = poolArray;
 
         if (toReturn != null && toReturn != _staticStringsBuffer)

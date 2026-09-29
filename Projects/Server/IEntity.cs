@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: IEntity.cs                                                      *
  *                                                                       *
@@ -114,10 +114,6 @@ public class Entity : IEntity
         // Should not actually be saved
         Timer.StartTimer(Delete);
     }
-
-    public byte SerializedThread { get; set; }
-    public int SerializedPosition { get; set; }
-    public int SerializedLength { get; set; }
 
     public void Serialize(IGenericWriter writer)
     {

@@ -5,12 +5,14 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Server.Accounting;
+using Server.Accounting.Security;
 using Server.Collections;
 using Server.Commands;
 using Server.Maps;
 using Server.Misc;
 using Server.Multis;
 using Server.Network;
+using Server.Network.Bans;
 using Server.Prompts;
 using Server.Saves;
 using Server.Text;
@@ -59,7 +61,7 @@ namespace Server.Gumps
         private const int RedHue = 0x20;
 
         private static readonly string[] m_AccessLevelStrings =
-        {
+        [
             "Player",
             "Counselor",
             "Game Master",
@@ -67,7 +69,7 @@ namespace Server.Gumps
             "Administrator",
             "Developer",
             "Owner"
-        };
+        ];
 
         private readonly Mobile m_From;
         private readonly List<object> m_List;
@@ -225,31 +227,23 @@ namespace Server.Gumps
                     }
                 case AdminGumpPage.Information_Perf:
                     {
-                        AddLabel(20, 130, LabelHue, "Cycles Per Second:");
-                        AddLabel(40, 150, LabelHue, $"Current: {Core.CyclesPerSecond:N2}");
-                        AddLabel(40, 170, LabelHue, $"Average: {Core.AverageCPS:N2}");
+                        var loopStatus = Core.IdleSleepUnsupported ? "Spinning - host cannot honor short waits" :
+                            Core.EventLoopIdleWaitMs == 0 ? "Spinning (configured)" :
+                            Core.IdleSleepSuspended ? "Sleep suspended - host returning waits late" : "Healthy";
 
-                        using var sb = ValueStringBuilder.Create();
+                        AddLabel(20, 130, LabelHue, "Event Loop:");
+                        AddLabel(40, 150, LabelHue, loopStatus);
 
-                        ThreadPool.GetAvailableThreads(out var curUser, out var curIOCP);
-                        ThreadPool.GetMaxThreads(out var maxUser, out var maxIOCP);
+                        var net = NetState.GetNetworkStats();
 
-                        sb.Append("Worker Threads:<br>Capacity: ");
-                        sb.Append(maxUser);
-                        sb.Append("<br>Available: ");
-                        sb.Append(curUser);
-                        sb.Append("<br>Usage: ");
-                        sb.Append((maxUser - curUser) * 100 / maxUser);
-                        sb.Append("%<br><br>IOCP Threads:<br>Capacity: ");
-                        sb.Append(maxIOCP);
-                        sb.Append("<br>Available: ");
-                        sb.Append(curIOCP);
-                        sb.Append("<br>Usage: ");
-                        sb.Append((maxIOCP - curIOCP) * 100 / maxIOCP);
-                        sb.Append('%');
+                        AddLabel(20, 170, LabelHue, "Connections:");
+                        AddLabel(150, 170, LabelHue, $"{net.Connected} / {net.MaxConnections} ({net.Authenticated} authenticated)");
 
-                        AddLabel(20, 200, LabelHue, "Pooling:");
-                        AddHtml(20, 220, 380, 150, sb.ToString(), true, true);
+                        AddLabel(20, 190, LabelHue, "Loop Queues:");
+                        AddLabel(150, 190, LabelHue, $"throttled {net.Throttled}, flush {net.FlushPending}, closing {net.PendingDisconnects}");
+
+                        AddLabel(20, 210, LabelHue, "Send Buffers:");
+                        AddHtml(20, 230, 380, 180, FormatSendBuffers(net), true, true);
 
                         AddPageButton(200, 20, GetButtonID(0, 0), "General", AdminGumpPage.Information_General);
                         AddPageButton(200, 40, GetButtonID(0, 5), "Performance", AdminGumpPage.Information_Perf);
@@ -702,7 +696,7 @@ namespace Server.Gumps
                     }
                 case AdminGumpPage.Accounts:
                     {
-                        m_List ??= new List<object>();
+                        m_List ??= [];
 
                         var rads = state as List<Account>;
 
@@ -1118,12 +1112,7 @@ namespace Server.Gumps
                             }
 
                             var c = a.Comments[i];
-                            sb.Append('[');
-                            sb.Append(c.AddedBy);
-                            sb.Append(" on ");
-                            sb.Append(c.LastModified.ToString());
-                            sb.Append("]<BR>");
-                            sb.Append(c.Content);
+                            sb.Append($"[{c.AddedBy} on {c.LastModified}]<BR>{c.Content}");
                         }
 
                         AddHtml(20, 180, 380, 190, sb.ToString(), true, true);
@@ -1158,9 +1147,7 @@ namespace Server.Gumps
 
                             var tag = a.Tags[i];
 
-                            sb.Append(tag.Name);
-                            sb.Append(" = ");
-                            sb.Append(tag.Value);
+                            sb.Append($"{tag.Name} = {tag.Value}");
                         }
 
                         AddHtml(20, 180, 380, 190, sb.ToString(), true, true);
@@ -1365,6 +1352,48 @@ namespace Server.Gumps
         public static string FormatTimeSpan(TimeSpan ts) =>
             $"{ts.Days:D2}:{ts.Hours % 24:D2}:{ts.Minutes % 60:D2}:{ts.Seconds % 60:D2}";
 
+        private static string FormatSendBuffers(NetworkStats net)
+        {
+            using var sb = ValueStringBuilder.Create();
+
+            sb.Append($"Base: {FormatByteAmount(net.RecvBufferSize)} recv, {FormatByteAmount(net.SendBufferSize)} send");
+            if (net.InitialRecvBufferSize > 0)
+            {
+                sb.Append($"; pre-auth {FormatByteAmount(net.InitialRecvBufferSize)} / {FormatByteAmount(net.InitialSendBufferSize)}");
+            }
+
+            var sweep = net.LastSweep;
+            if (sweep.Ran)
+            {
+                sb.Append($"<br>Base pools: {FormatByteAmount(sweep.BaseCapacityBytes)}");
+            }
+
+            long tierBytes = 0;
+            sb.Append("<br><br>Growth tiers (live):");
+            for (var i = 0; i < net.Tiers.Length; i++)
+            {
+                var tier = net.Tiers[i];
+                tierBytes += (long)tier.Capacity * tier.BufferSize;
+                sb.Append($"<br>  {FormatByteAmount(tier.BufferSize)}: {tier.InUse} / {tier.Capacity} in use, floor {tier.RetainFloor}");
+            }
+
+            sb.Append($"<br>Budget: {FormatByteAmount(tierBytes)} of {FormatByteAmount(net.SendBufferGrowthBudget)}, max {FormatByteAmount(net.MaxSendBufferSize)} per socket");
+            sb.Append($"<br>Ceiling: {net.MemoryCeilingPercent}% of {FormatByteAmount(net.AvailableMemoryBytes)} available");
+
+            if (sweep.Ran)
+            {
+                var ageSeconds = (Core.TickCount - sweep.Tick) / 1000;
+                sb.Append($"<br><br>Last sweep {ageSeconds}s ago: released {sweep.TierBuffersReleased} tier, {sweep.BaseBuffersReleased} base");
+                sb.Append($"<br>Refused: budget {sweep.BudgetRefusals}, at max {sweep.CapRefusals}, ceiling {sweep.CeilingRefusals}");
+            }
+            else
+            {
+                sb.Append("<br><br>First sweep pending");
+            }
+
+            return sb.ToString();
+        }
+
         public static string FormatByteAmount(long totalBytes)
         {
             return totalBytes switch
@@ -1418,7 +1447,7 @@ namespace Server.Gumps
                     }
                 default:
                     {
-                        if (m.Kills >= 5)
+                        if (m.Murderer)
                         {
                             return 0x21;
                         }
@@ -1506,7 +1535,7 @@ namespace Server.Gumps
                     // If we don't have a list, create one
                     if (!acctExists)
                     {
-                        accts = new List<Account>();
+                        accts = [];
                     }
 
                     accts.Add(acct);
@@ -1749,7 +1778,8 @@ namespace Server.Gumps
             {
                 for (var i = 0; i < a.LoginIPs.Length; ++i)
                 {
-                    AdminFirewall.Add(a.LoginIPs[i]);
+                    Firewall.Add(new SingleIpFirewallEntry(a.LoginIPs[i]));
+                    BanChannel.Report(a.LoginIPs[i], TimeSpan.Zero, BanReasons.Manual);
                 }
 
                 notice = "All addresses in the list have been firewalled.";
@@ -1773,7 +1803,13 @@ namespace Server.Gumps
 
             if (okay)
             {
-                AdminFirewall.Add(toFirewall);
+                var firewallEntry = Firewall.ToFirewallEntry(toFirewall);
+                Firewall.Add(firewallEntry);
+
+                if (firewallEntry.MinIpAddress == firewallEntry.MaxIpAddress)
+                {
+                    BanChannel.Report(firewallEntry.MinIpAddress.ToIpAddress(), TimeSpan.Zero, BanReasons.Manual);
+                }
 
                 notice = $"{toFirewall} : Added to firewall.";
             }
@@ -1835,7 +1871,7 @@ namespace Server.Gumps
                     --AccountHandler.IPTable[ips[0]];
                 }
 
-                a.LoginIPs = Array.Empty<IPAddress>();
+                a.LoginIPs = [];
 
                 notice = "All addresses in the list have been removed.";
             }
@@ -1871,16 +1907,13 @@ namespace Server.Gumps
                     {
                         var acct = (Account)m_List[v];
 
-                        if (info.IsSwitched(v))
-                        {
-                            if (!rads.Contains(acct))
-                            {
-                                rads.Add(acct);
-                            }
-                        }
-                        else if (rads.Contains(acct))
+                        if (!info.IsSwitched(v))
                         {
                             rads.Remove(acct);
+                        }
+                        else if (!rads.Contains(acct))
+                        {
+                            rads.Add(acct);
                         }
                     }
                 }
@@ -2772,7 +2805,7 @@ namespace Server.Gumps
                                     }
                                     else
                                     {
-                                        results = new List<IAccount>();
+                                        results = [];
                                         foreach (var acct in Accounts.GetAccounts())
                                         {
                                             if (acct.Username.InsensitiveContains(match))
@@ -2898,7 +2931,7 @@ namespace Server.Gumps
                                     else
                                     {
                                         notice = "The password has been changed.";
-                                        a.SetPassword(password);
+                                        PasswordWorker.SetPassword(a, password, null);
                                         page = AdminGumpPage.AccountDetails_Information;
                                         CommandLogging.WriteLine(
                                             from,
@@ -3562,7 +3595,7 @@ namespace Server.Gumps
                                         IFirewallEntry firewallEntry;
                                         try
                                         {
-                                            firewallEntry = AdminFirewall.ToFirewallEntry(text);
+                                            firewallEntry = Firewall.ToFirewallEntry(text);
                                         }
                                         catch
                                         {
@@ -3584,7 +3617,17 @@ namespace Server.Gumps
                                             $"{from.AccessLevel} {CommandLogging.Format(from)} firewalling {firewallEntry}"
                                         );
 
-                                        AdminFirewall.Add(firewallEntry);
+                                        Firewall.Add(firewallEntry);
+
+                                        if (firewallEntry.MinIpAddress == firewallEntry.MaxIpAddress)
+                                        {
+                                            BanChannel.Report(
+                                                firewallEntry.MinIpAddress.ToIpAddress(),
+                                                TimeSpan.Zero,
+                                                BanReasons.Manual
+                                            );
+                                        }
+
                                         from.SendGump(
                                             new AdminGump(
                                                 from,
@@ -3623,7 +3666,13 @@ namespace Server.Gumps
                                             $"{from.AccessLevel} {CommandLogging.Format(from)} removing {m_State} from firewall list"
                                         );
 
-                                        AdminFirewall.Remove(m_State);
+                                        Firewall.Remove(m_State as IFirewallEntry);
+
+                                        if (m_State is IFirewallEntry fe && fe.MinIpAddress == fe.MaxIpAddress)
+                                        {
+                                            BanChannel.Retract(fe.MinIpAddress.ToIpAddress());
+                                        }
+
                                         from.SendGump(
                                             new AdminGump(
                                                 from,
@@ -3978,31 +4027,37 @@ namespace Server.Gumps
             if (Core.SA && availableMaps.Includes(MapSelectionFlags.TerMur))
             {
                 InvokeCommand("GenerateSpawners Data/Spawns/post-uoml/termur/**.json");
+                InvokeCommand("GenerateSpawners Data/Spawns/shared/termur/**.json");
             }
 
             if (availableMaps.Includes(MapSelectionFlags.Malas))
             {
                 InvokeCommand($"GenerateSpawners Data/Spawns/{folder}/malas/**.json");
+                InvokeCommand("GenerateSpawners Data/Spawns/shared/malas/**.json");
             }
 
             if (availableMaps.Includes(MapSelectionFlags.Tokuno))
             {
                 InvokeCommand($"GenerateSpawners Data/Spawns/{folder}/tokuno/**.json");
+                InvokeCommand("GenerateSpawners Data/Spawns/shared/tokuno/**.json");
             }
 
             if (availableMaps.Includes(MapSelectionFlags.Ilshenar))
             {
                 InvokeCommand($"GenerateSpawners Data/Spawns/{folder}/ilshenar/**.json");
+                InvokeCommand("GenerateSpawners Data/Spawns/shared/ilshenar/**.json");
             }
 
             if (availableMaps.Includes(MapSelectionFlags.Trammel))
             {
                 InvokeCommand($"GenerateSpawners Data/Spawns/{folder}/trammel/**.json");
+                InvokeCommand("GenerateSpawners Data/Spawns/shared/trammel/**.json");
             }
 
             if (availableMaps.Includes(MapSelectionFlags.Felucca))
             {
                 InvokeCommand($"GenerateSpawners Data/Spawns/{folder}/felucca/**.json");
+                InvokeCommand("GenerateSpawners Data/Spawns/shared/felucca/**.json");
             }
         }
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ModernUO.CodeGeneratedEvents;
 using Server.Mobiles;
@@ -74,7 +73,7 @@ namespace Server.Commands
 
                 if (list.Count > 0)
                 {
-                    Span<byte> removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
+                    var removeEntity = stackalloc byte[OutgoingEntityPackets.RemoveEntityLength].InitializePacket();
 
                     for (var i = 0; i < list.Count; ++i)
                     {
@@ -104,9 +103,8 @@ namespace Server.Commands
                     {
                         var list = pm.VisibilityList;
 
-                        if (list.Contains(targ))
+                        if (list.Remove(targ))
                         {
-                            list.Remove(targ);
                             pm.SendMessage($"{targ.Name} has been removed from your visibility list.");
                         }
                         else

@@ -56,19 +56,19 @@ public static class ArborExpansionDeployment
         File.WriteAllText(Path.Combine(Data,"audit.txt"),summary);Console.WriteLine("[ArborMazeV2] "+summary);
         if(!File.Exists(Path.Combine(Data,"install.pending")))return;
         if(File.Exists(Path.Combine(Data,"installed.txt")))throw new Exception("V2 already applied; refusing repeated migration");
-        var options=JsonConfig.GetOptions();
-        var selected=JsonConfig.Deserialize<List<DynamicJson>>(Path.Combine(Core.BaseDirectory,"zodiac.json")).Where(j=>j.GetProperty("guid",options,out Guid id)&&m.NewSpawnerGuids.Contains(id)).ToArray();
+        var options=SpawnerJsonSerializer.Options;
+        var selected=JsonConfig.Deserialize<List<SpawnerDto>>(Path.Combine(Core.BaseDirectory,"zodiac.json"), options).Where(j=>(j.Guid is var id)&&m.NewSpawnerGuids.Contains(id)).ToArray();
         var tele=JsonConfig.Deserialize<List<TeleporterDefinition>>(Path.Combine(Core.BaseDirectory,"Data","teleporters.json")).Where(t=>t.Source.Map==Map.Felucca&&m.Portals.Any(p=>p.X==t.Source.X&&p.Y==t.Source.Y&&p.Z==t.Source.Z)).ToArray();
         if(selected.Length!=26||tele.Length!=13)throw new Exception("Definition count mismatch");
         var bad=new List<string>();
-        foreach(var j in selected){j.GetProperty("location",options,out Point3D p);if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))bad.Add($"spawn {p}");}
+        foreach(var j in selected){Point3D p = j.Location;if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))bad.Add($"spawn {p}");}
         foreach(var t in tele)foreach(var p in new[]{new Point3D(t.Source.X,t.Source.Y,t.Source.Z),new Point3D(t.Destination.X,t.Destination.Y,t.Destination.Z)})if(!Map.Felucca.CanFit(p.X,p.Y,p.Z,16,false,false))bad.Add($"portal {p}");
         foreach(var b in m.Books)if(!Map.Felucca.CanFit(b.X,b.Y,b.Z,16,false,false))bad.Add($"book {b.X},{b.Y},{b.Z}");
         if(bad.Count>0)throw new Exception("Blocked placements: "+string.Join("; ",bad));
         foreach(var s in old)s.Delete();
         foreach(var mob in mobs)if(!mob.Deleted)mob.Delete();
         foreach(var i in items)if(!i.Deleted)i.Delete();
-        foreach(var j in selected){j.GetProperty("location",options,out Point3D p);var s=new Spawner(j,options);s.MoveToWorld(p,Map.Felucca);s.Respawn();}
+        foreach(var j in selected){Point3D p = j.Location;var s=j.ToSpawner();s.MoveToWorld(p,Map.Felucca);s.Respawn();}
         foreach(var t in tele){var p=new Point3D(t.Source.X,t.Source.Y,t.Source.Z);var mark=m.Portals.Single(b=>b.X==p.X&&b.Y==p.Y&&b.Z==p.Z);new Teleporter(new Point3D(t.Destination.X,t.Destination.Y,t.Destination.Z),Map.Felucca){Name=mark.Name}.MoveToWorld(p,Map.Felucca);new Static(0xF6C){Name=mark.Name,Hue=mark.Hue}.MoveToWorld(p,Map.Felucca);}
         foreach(var b in m.Books){var book=new BaseBook(0xFF1,b.Name,"The Keeper of the Labrynth",1,false){Movable=false};book.Pages[0].Lines=b.Lines;book.MoveToWorld(new Point3D(b.X,b.Y,b.Z),Map.Felucca);}
         File.WriteAllText(Path.Combine(Data,"installed.txt"),"26 spawners, 13 portals, 3 books installed. Pending save.");

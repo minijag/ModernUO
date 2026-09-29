@@ -3,7 +3,7 @@
     <PropertyGroup>
         <Authors>Kamron Batman</Authors>
         <Company>ModernUO</Company>
-        <Copyright>2019-2025</Copyright>
+        <Copyright>2019-2026</Copyright>
         <TargetFramework>net10.0</TargetFramework>
         <LangVersion>14</LangVersion>
         <PublicRelease>true</PublicRelease>
@@ -31,10 +31,12 @@
         <GitVersionBaseDirectory>$(SolutionDir)</GitVersionBaseDirectory>
         <PredefinedCulturesOnly>false</PredefinedCulturesOnly>
     </PropertyGroup>
+    <PropertyGroup>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(RuntimeIdentifier)'==''">
         <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
         <SelfContained>false</SelfContained>
-        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <InvariantGlobalization>false</InvariantGlobalization>
     </PropertyGroup>
     <PropertyGroup Condition="'$(IsWindows)'=='true' AND '$(IsX64)'=='true' AND '$(RuntimeIdentifier)'==''">
@@ -61,12 +63,19 @@
         <CodeAnalysisRuleSet>..\..\Rules.ruleset</CodeAnalysisRuleSet>
         <AnalysisLevel>latest</AnalysisLevel>
     </PropertyGroup>
+    <!-- Event-loop time accounting, compiled out unless requested:
+         dotnet build -p:EventLoopProfiling=true
+         See dev-docs/debugging-event-loop.md. Placed last so it appends to whatever the
+         configuration groups above set DefineConstants to. -->
+    <PropertyGroup Condition="'$(EventLoopProfiling)'=='true'">
+        <DefineConstants>$(DefineConstants);EVENT_LOOP_PROFILING</DefineConstants>
+    </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="Serilog" Version="4.4.0" />
         <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
         <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
-            <Version>3.9.50</Version>
+            <Version>3.10.94</Version>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <AdditionalFiles Include="..\..\Rules.ruleset" />

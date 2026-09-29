@@ -27,7 +27,7 @@ public interface ISlayer
     SlayerName Slayer2 { get; set; }
 }
 
-[SerializationGenerator(10, false)]
+[SerializationGenerator(11, false)]
 public abstract partial class BaseWeapon
     : Item, IWeapon, IFactionItem, ICraftable, ISlayer, IDurability, IAosItem, IIdentifiable
 {
@@ -56,140 +56,128 @@ public abstract partial class BaseWeapon
 
     [InvalidateProperties]
     [SerializableField(0)]
+    [SaveFlag(nameof(ShouldSerializeDamageLevel))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private WeaponDamageLevel _damageLevel;
 
-    [SerializableFieldSaveFlag(0)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeDamageLevel() => _damageLevel != WeaponDamageLevel.Regular;
 
     [InvalidateProperties]
     [SerializableField(5)]
+    [SaveFlag(nameof(ShouldSerializeMaxHitPoints))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private int _maxHitPoints;
 
-    [SerializableFieldSaveFlag(5)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeMaxHitPoints() => _maxHitPoints != 0;
 
     [InvalidateProperties]
     [SerializableField(6)]
+    [SaveFlag(nameof(ShouldSerializeSlayer))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private SlayerName _slayer;
 
-    [SerializableFieldSaveFlag(6)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeSlayer() => _slayer != SlayerName.None;
 
     [InvalidateProperties]
     [SerializableField(7)]
+    [SaveFlag(nameof(ShouldSerializePoison))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private Poison _poison;
 
-    [SerializableFieldSaveFlag(7)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializePoison() => _poison != null;
 
     [InvalidateProperties]
     [SerializableField(8)]
+    [SaveFlag(nameof(ShouldSerializePoisonCharges))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private int _poisonCharges;
 
-    [SerializableFieldSaveFlag(8)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializePoisonCharges() => _poisonCharges > 0;
 
     [InvalidateProperties]
     [SerializableField(9)]
+    [SaveFlag(nameof(ShouldSerializeCrafter))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private string _crafter;
 
-    [SerializableFieldSaveFlag(9)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeCrafter() => !string.IsNullOrEmpty(_crafter);
 
     [InvalidateProperties]
     [SerializableField(10)]
+    [SaveFlag(nameof(ShouldSerializeIdentified))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private bool _identified;
 
-    [SerializableFieldSaveFlag(10)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeIdentified() => _identified;
 
     [SerializedIgnoreDupe]
     [SerializableField(24, setter: "private")]
+    [SaveFlag(nameof(ShouldSerializeAttributes), nameof(AttributesDefaultValue))]
     [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
     private AosAttributes _attributes;
 
-    [SerializableFieldSaveFlag(24)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeAttributes() => !_attributes.IsEmpty;
 
-    [SerializableFieldDefault(24)]
     private AosAttributes AttributesDefaultValue() => new(this);
 
     [SerializedIgnoreDupe]
     [SerializableField(25, setter: "private")]
+    [SaveFlag(nameof(ShouldSerializeWeaponAttributes), nameof(WeaponAttributesDefaultValue))]
     [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
     private AosWeaponAttributes _weaponAttributes;
 
-    [SerializableFieldSaveFlag(25)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeWeaponAttributes() => !_weaponAttributes.IsEmpty;
 
-    [SerializableFieldDefault(25)]
     private AosWeaponAttributes WeaponAttributesDefaultValue() => new(this);
 
-    [SerializableField(26)]
-    [SerializedCommandProperty(AccessLevel.GameMaster)]
-    private bool _playerConstructed;
-
-    [SerializableFieldSaveFlag(26)]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private bool ShouldSerializePlayerConstructed() => _playerConstructed;
-
     [SerializedIgnoreDupe]
-    [SerializableField(27, setter: "private")]
+    [SerializableField(26, setter: "private")]
+    [SaveFlag(nameof(ShouldSerializeSkillBonuses), nameof(SkillBonusesDefaultValue))]
     [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
     private AosSkillBonuses _skillBonuses;
 
-    [SerializableFieldSaveFlag(27)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeSkillBonuses() => !_skillBonuses.IsEmpty;
 
-    [SerializableFieldDefault(27)]
     private AosSkillBonuses SkillBonusesDefaultValue() => new(this);
 
     [InvalidateProperties]
-    [SerializableField(28)]
+    [SerializableField(27)]
+    [SaveFlag(nameof(ShouldSerializeSlayer2))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private SlayerName _slayer2;
 
-    [SerializableFieldSaveFlag(28)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeSlayer2() => _slayer2 != SlayerName.None;
 
     [SerializedIgnoreDupe]
-    [SerializableField(29, setter: "private")]
+    [SerializableField(28, setter: "private")]
+    [SaveFlag(nameof(ShouldSerializeElementAttributes), nameof(AosElementAttributesDefaultValue))]
     [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
     private AosElementAttributes _aosElementDamages;
 
-    [SerializableFieldSaveFlag(29)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool ShouldSerializeElementAttributes() => !_aosElementDamages.IsEmpty;
 
-    [SerializableFieldDefault(29)]
     private AosElementAttributes AosElementAttributesDefaultValue() => new(this);
 
     [InvalidateProperties]
-    [SerializableField(30)]
+    [SerializableField(29)]
+    [SaveFlag(nameof(ShouldSerializeEngravedText))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private string _engravedText;
 
-    [SerializableFieldSaveFlag(30)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private bool ShouldSerializeEngravedText() => string.IsNullOrEmpty(_engravedText);
+    private bool ShouldSerializeEngravedText() => !string.IsNullOrEmpty(_engravedText);
 
     private FactionItem m_FactionState;
     private SkillMod m_SkillMod, m_MageMod;
@@ -294,6 +282,7 @@ public abstract partial class BaseWeapon
     public bool Consecrated { get; set; }
 
     [SerializableProperty(1)]
+    [SaveFlag(nameof(ShouldSerializeWeaponAccuracy))]
     [CommandProperty(AccessLevel.GameMaster)]
     public WeaponAccuracyLevel AccuracyLevel
     {
@@ -329,10 +318,10 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(1)]
     private bool ShouldSerializeWeaponAccuracy() => _accuracyLevel != WeaponAccuracyLevel.Regular;
 
     [SerializableProperty(2)]
+    [SaveFlag(nameof(ShouldSerializeDurabilityLevel))]
     [CommandProperty(AccessLevel.GameMaster)]
     public WeaponDurabilityLevel DurabilityLevel
     {
@@ -347,10 +336,10 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(2)]
     private bool ShouldSerializeDurabilityLevel() => _durabilityLevel != WeaponDurabilityLevel.Regular;
 
     [SerializableProperty(3)]
+    [SaveFlag(nameof(ShouldSerializeQuality), nameof(QualityDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public WeaponQuality Quality
     {
@@ -365,13 +354,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(3)]
     private bool ShouldSerializeQuality() => _quality != WeaponQuality.Regular;
 
-    [SerializableFieldDefault(3)]
     private WeaponQuality QualityDefaultValue() => WeaponQuality.Regular;
 
     [SerializableProperty(4)]
+    [SaveFlag(nameof(ShouldSerializeHitPoints))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int HitPoints
     {
@@ -395,10 +383,10 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(4)]
     private bool ShouldSerializeHitPoints() => _hitPoints > 0;
 
     [SerializableProperty(11)]
+    [SaveFlag(nameof(ShouldSerializeStrReq), nameof(StrReqDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int StrRequirement
     {
@@ -411,13 +399,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(11)]
     private bool ShouldSerializeStrReq() => _strRequirement != -1;
 
-    [SerializableFieldDefault(11)]
     private int StrReqDefaultValue() => -1;
 
     [SerializableProperty(12)]
+    [SaveFlag(nameof(ShouldSerializeDexReq), nameof(DexReqDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int DexRequirement
     {
@@ -430,13 +417,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(12)]
     private bool ShouldSerializeDexReq() => _dexRequirement != -1;
 
-    [SerializableFieldDefault(12)]
     private int DexReqDefaultValue() => -1;
 
     [SerializableProperty(13)]
+    [SaveFlag(nameof(ShouldSerializeIntReq), nameof(IntReqDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int IntRequirement
     {
@@ -449,13 +435,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(13)]
     private bool ShouldSerializeIntReq() => _intRequirement != -1;
 
-    [SerializableFieldDefault(13)]
     private int IntReqDefaultValue() => -1;
 
     [SerializableProperty(14)]
+    [SaveFlag(nameof(ShouldSerializeMinDamage), nameof(MinDamageDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int MinDamage
     {
@@ -468,13 +453,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(14)]
     private bool ShouldSerializeMinDamage() => _minDamage != -1;
 
-    [SerializableFieldDefault(14)]
     private int MinDamageDefaultValue() => -1;
 
     [SerializableProperty(15)]
+    [SaveFlag(nameof(ShouldSerializeMaxDamage), nameof(MaxDamageDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int MaxDamage
     {
@@ -487,13 +471,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(15)]
     private bool ShouldSerializeMaxDamage() => _maxDamage != -1;
 
-    [SerializableFieldDefault(15)]
     private int MaxDamageDefaultValue() => -1;
 
     [SerializableProperty(16)]
+    [SaveFlag(nameof(ShouldSerializeHitSound), nameof(HitSoundDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int HitSound
     {
@@ -505,13 +488,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(16)]
     private bool ShouldSerializeHitSound() => _hitSound != -1;
 
-    [SerializableFieldDefault(16)]
     private int HitSoundDefaultValue() => -1;
 
     [SerializableProperty(17)]
+    [SaveFlag(nameof(ShouldSerializeMissSound), nameof(MissSoundDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int MissSound
     {
@@ -523,13 +505,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(17)]
     private bool ShouldSerializeMissSound() => _missSound != -1;
 
-    [SerializableFieldDefault(17)]
     private int MissSoundDefaultValue() => -1;
 
     [SerializableProperty(18)]
+    [SaveFlag(nameof(ShouldSerializeSpeed), nameof(SpeedDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public float Speed
     {
@@ -560,13 +541,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(18)]
     private bool ShouldSerializeSpeed() => _speed != -1;
 
-    [SerializableFieldDefault(18)]
     private float SpeedDefaultValue() => -1;
 
     [SerializableProperty(19)]
+    [SaveFlag(nameof(ShouldSerializeMaxRange), nameof(MaxRangeDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public int MaxRange
     {
@@ -579,13 +559,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(19)]
     private bool ShouldSerializeMaxRange() => _maxRange != -1;
 
-    [SerializableFieldDefault(19)]
     private int MaxRangeDefaultValue() => -1;
 
     [SerializableProperty(20)]
+    [SaveFlag(nameof(ShouldSerializeSkill), nameof(SkillNameDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public SkillName Skill
     {
@@ -598,13 +577,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(20)]
     private bool ShouldSerializeSkill() => _skill != (SkillName)(-1);
 
-    [SerializableFieldDefault(20)]
     private SkillName SkillNameDefaultValue() => (SkillName)(-1);
 
     [SerializableProperty(21)]
+    [SaveFlag(nameof(ShouldSerializeType), nameof(TypeDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public WeaponType Type
     {
@@ -616,13 +594,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(21)]
     private bool ShouldSerializeType() => _type != (WeaponType)(-1);
 
-    [SerializableFieldDefault(21)]
     private WeaponType TypeDefaultValue() => (WeaponType)(-1);
 
     [SerializableProperty(22)]
+    [SaveFlag(nameof(ShouldSerializeAnimation), nameof(AnimationDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public WeaponAnimation Animation
     {
@@ -634,13 +611,12 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(22)]
     private bool ShouldSerializeAnimation() => _animation != (WeaponAnimation)(-1);
 
-    [SerializableFieldDefault(22)]
     private WeaponAnimation AnimationDefaultValue() => (WeaponAnimation)(-1);
 
     [SerializableProperty(23)]
+    [SaveFlag(nameof(ShouldSerializeResource), nameof(ResourceDefaultValue))]
     [CommandProperty(AccessLevel.GameMaster)]
     public CraftResource Resource
     {
@@ -656,10 +632,8 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [SerializableFieldSaveFlag(23)]
     private bool ShouldSerializeResource() => _resource != CraftResource.Iron;
 
-    [SerializableFieldDefault(23)]
     private CraftResource ResourceDefaultValue() => CraftResource.Iron;
 
     public virtual int OnCraft(
@@ -674,7 +648,6 @@ public abstract partial class BaseWeapon
             Crafter = from.RawName;
         }
 
-        PlayerConstructed = true;
         Identified = true;
 
         var resourceType = typeRes ?? craftItem.Resources[0].ItemType;
@@ -1357,6 +1330,8 @@ public abstract partial class BaseWeapon
 
         var chance = ourValue / (theirValue * 2.0) * 1.0 + (double)bonus / 100;
 
+        chance = ModifyHitChance(attacker, defender, chance);
+
         if (Core.AOS && chance < 0.02)
         {
             chance = 0.02;
@@ -1364,6 +1339,19 @@ public abstract partial class BaseWeapon
 
         return attacker.CheckSkill(atkSkill.SkillName, chance);
     }
+
+    /// <summary>
+    ///     Allows subclasses to modify the final hit chance before the dice roll.
+    ///     Called after all standard AOS bonuses are applied but before the 2% floor.
+    ///     Supports both additive adjustments (chance -= 0.12) and multiplicative ones (chance *= scalar).
+    /// </summary>
+    protected virtual double ModifyHitChance(Mobile attacker, Mobile defender, double chance) => chance;
+
+    /// <summary>
+    ///     Allows subclasses to modify the final post-bonus damage (e.g. range-based penalties)
+    ///     before defender mitigation is applied. Mirrors <see cref="ModifyHitChance" />.
+    /// </summary>
+    protected virtual int ModifyDamage(Mobile attacker, Mobile defender, int damage) => damage;
 
     public virtual TimeSpan GetDelay(Mobile m)
     {
@@ -1633,7 +1621,7 @@ public abstract partial class BaseWeapon
         {
             var positionChance = Utility.RandomDouble();
 
-            Item armorItem = positionChance switch
+            var armorItem = positionChance switch
             {
                 < 0.07 => defender.NeckArmor,
                 < 0.14 => defender.HandArmor,
@@ -1666,7 +1654,7 @@ public abstract partial class BaseWeapon
 
         var chance = Utility.RandomDouble();
 
-        Item armorItem = chance switch
+        var armorItem = chance switch
         {
             < 0.07 => defender.NeckArmor,
             < 0.14 => defender.HandArmor,
@@ -1685,7 +1673,7 @@ public abstract partial class BaseWeapon
 
         if (virtualArmor > 0)
         {
-            double scalar = chance switch
+            var scalar = chance switch
             {
                 < 0.14 => 0.07,
                 < 0.28 => 0.14,
@@ -1710,12 +1698,12 @@ public abstract partial class BaseWeapon
             return 0;
         }
 
-        if (attacker is not BaseCreature bc || bc.PackInstinct == PackInstinct.None || !bc.Controlled && !bc.Summoned)
+        if (attacker is not BaseCreature bc || bc.PackInstinct == PackInstinct.None)
         {
             return 0;
         }
 
-        var master = bc.ControlMaster ?? bc.SummonMaster;
+        var master = bc.GetMaster();
 
         if (master == null)
         {
@@ -1725,8 +1713,7 @@ public abstract partial class BaseWeapon
         var inPack = 1;
         foreach (var m in defender.GetMobilesInRange<BaseCreature>(1))
         {
-            if (m != attacker && (m.PackInstinct & bc.PackInstinct) != 0 && (m.Controlled || m.Summoned) &&
-                master == (m.ControlMaster ?? m.SummonMaster) && m.Combatant == defender)
+            if (m != attacker && (m.PackInstinct & bc.PackInstinct) != 0 && master == m.GetMaster() && m.Combatant == defender)
             {
                 inPack++;
             }
@@ -1748,7 +1735,7 @@ public abstract partial class BaseWeapon
         {
             foreach (var m in defender.GetMobilesInRange<Clone>(4))
             {
-                if (m?.Summoned == true && m.SummonMaster == defender)
+                if (m?.SummonMaster == defender)
                 {
                     // Your attack has been diverted to a nearby mirror image of your target!
                     attacker.SendLocalizedMessage(1063141);
@@ -1874,6 +1861,7 @@ public abstract partial class BaseWeapon
         percentageBonus = Math.Min(percentageBonus, 300);
 
         damage = AOS.Scale(damage, 100 + percentageBonus);
+        damage = ModifyDamage(attacker, defender, damage);
 
         var defLoc = new WorldLocation(defender);
         var bcAtt = attacker as BaseCreature;
@@ -2111,15 +2099,11 @@ public abstract partial class BaseWeapon
 
             if (attacker is VampireBatFamiliar bc)
             {
-                var caster = bc.ControlMaster ?? bc.SummonMaster;
+                var caster = bc.GetMaster();
 
-                if (caster != null && caster.Map == bc.Map && caster.InRange(bc, 2))
+                if (caster != null && caster.Map == bc.Map)
                 {
                     caster.Hits += damage;
-                }
-                else
-                {
-                    bc.Hits += damage;
                 }
             }
 
@@ -2615,7 +2599,7 @@ public abstract partial class BaseWeapon
             // Passively check Anatomy for gain
             attacker.CheckSkill(SkillName.Anatomy, 0.0, attacker.Skills.Anatomy.Cap);
 
-            if (Type == WeaponType.Axe)
+            if (Core.UOR && Type == WeaponType.Axe)
             {
                 // Passively check Lumberjacking for gain
                 attacker.CheckSkill(SkillName.Lumberjacking, 0.0, 100.0);
@@ -2636,27 +2620,27 @@ public abstract partial class BaseWeapon
 
         /* Compute anatomy modifier
          * : 1% bonus for every 5 points of anatomy
-         * : +10% bonus at Grandmaster or higher
+         * : +10% bonus at Grandmaster or higher (UOTD+)
          */
         var anatomyValue = attacker.Skills.Anatomy.Value;
         modifiers += anatomyValue / 5.0 / 100.0;
 
-        if (anatomyValue >= 100.0)
+        if (Core.UOTD && anatomyValue >= 100.0)
         {
             modifiers += 0.1;
         }
 
-        /* Compute lumberjacking bonus
+        /* Compute lumberjacking bonus (UOR+)
          * : 1% bonus for every 5 points of lumberjacking
-         * : +10% bonus at Grandmaster or higher
+         * : +10% bonus at Grandmaster or higher (UOTD+)
          */
-        if (Type == WeaponType.Axe)
+        if (Core.UOR && Type == WeaponType.Axe)
         {
             var lumberValue = attacker.Skills.Lumberjacking.Value;
 
             modifiers += lumberValue / 5.0 / 100.0;
 
-            if (lumberValue >= 100.0)
+            if (Core.UOTD && lumberValue >= 100.0)
             {
                 modifiers += 0.1;
             }
@@ -2998,115 +2982,7 @@ public abstract partial class BaseWeapon
             list.Add(1072792); // Balanced
         }
 
-        if (WeaponAttributes.UseBestSkill != 0)
-        {
-            list.Add(1060400); // use best weapon skill
-        }
-
-        if ((prop = GetDamageBonus() + Attributes.WeaponDamage) != 0)
-        {
-            list.Add(1060401, prop); // damage increase ~1_val~%
-        }
-
-        if ((prop = Attributes.DefendChance) != 0)
-        {
-            list.Add(1060408, prop); // defense chance increase ~1_val~%
-        }
-
-        if ((prop = Attributes.EnhancePotions) != 0)
-        {
-            list.Add(1060411, prop); // enhance potions ~1_val~%
-        }
-
-        if ((prop = Attributes.CastRecovery) != 0)
-        {
-            list.Add(1060412, prop); // faster cast recovery ~1_val~
-        }
-
-        if ((prop = Attributes.CastSpeed) != 0)
-        {
-            list.Add(1060413, prop); // faster casting ~1_val~
-        }
-
-        if ((prop = GetHitChanceBonus() + Attributes.AttackChance) != 0)
-        {
-            list.Add(1060415, prop); // hit chance increase ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitColdArea) != 0)
-        {
-            list.Add(1060416, prop); // hit cold area ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitDispel) != 0)
-        {
-            list.Add(1060417, prop); // hit dispel ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitEnergyArea) != 0)
-        {
-            list.Add(1060418, prop); // hit energy area ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitFireArea) != 0)
-        {
-            list.Add(1060419, prop); // hit fire area ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitFireball) != 0)
-        {
-            list.Add(1060420, prop); // hit fireball ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitHarm) != 0)
-        {
-            list.Add(1060421, prop); // hit harm ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitLeechHits) != 0)
-        {
-            list.Add(1060422, prop); // hit life leech ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitLightning) != 0)
-        {
-            list.Add(1060423, prop); // hit lightning ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitLowerAttack) != 0)
-        {
-            list.Add(1060424, prop); // hit lower attack ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitLowerDefend) != 0)
-        {
-            list.Add(1060425, prop); // hit lower defense ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitMagicArrow) != 0)
-        {
-            list.Add(1060426, prop); // hit magic arrow ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitLeechMana) != 0)
-        {
-            list.Add(1060427, prop); // hit mana leech ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitPhysicalArea) != 0)
-        {
-            list.Add(1060428, prop); // hit physical area ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitPoisonArea) != 0)
-        {
-            list.Add(1060429, prop); // hit poison area ~1_val~%
-        }
-
-        if ((prop = WeaponAttributes.HitLeechStam) != 0)
-        {
-            list.Add(1060430, prop); // hit stamina leech ~1_val~%
-        }
+        WeaponAttributes.GetProperties(list);
 
         if (ImmolatingWeaponSpell.IsImmolating(this))
         {
@@ -3118,109 +2994,17 @@ public abstract partial class BaseWeapon
             list.Add(1072793, prop); // Velocity ~1_val~%
         }
 
-        if ((prop = Attributes.BonusDex) != 0)
-        {
-            list.Add(1060409, prop); // dexterity bonus ~1_val~
-        }
+        Attributes.GetProperties(
+            list,
+            damageBonus: GetDamageBonus(),
+            hitChanceBonus: GetHitChanceBonus(),
+            luckBonus: GetLuckBonus()
+        );
 
-        if ((prop = Attributes.BonusHits) != 0)
+        var lowerStatReq = GetLowerStatReq();
+        if (lowerStatReq != 0)
         {
-            list.Add(1060431, prop); // hit point increase ~1_val~
-        }
-
-        if ((prop = Attributes.BonusInt) != 0)
-        {
-            list.Add(1060432, prop); // intelligence bonus ~1_val~
-        }
-
-        if ((prop = Attributes.LowerManaCost) != 0)
-        {
-            list.Add(1060433, prop); // lower mana cost ~1_val~%
-        }
-
-        if ((prop = Attributes.LowerRegCost) != 0)
-        {
-            list.Add(1060434, prop); // lower reagent cost ~1_val~%
-        }
-
-        if ((prop = GetLowerStatReq()) != 0)
-        {
-            list.Add(1060435, prop); // lower requirements ~1_val~%
-        }
-
-        if ((prop = GetLuckBonus() + Attributes.Luck) != 0)
-        {
-            list.Add(1060436, prop); // luck ~1_val~
-        }
-
-        if ((prop = WeaponAttributes.MageWeapon) != 0)
-        {
-            list.Add(1060438, 30 - prop); // mage weapon -~1_val~ skill
-        }
-
-        if ((prop = Attributes.BonusMana) != 0)
-        {
-            list.Add(1060439, prop); // mana increase ~1_val~
-        }
-
-        if ((prop = Attributes.RegenMana) != 0)
-        {
-            list.Add(1060440, prop); // mana regeneration ~1_val~
-        }
-
-        if (Attributes.NightSight != 0)
-        {
-            list.Add(1060441); // night sight
-        }
-
-        if ((prop = Attributes.ReflectPhysical) != 0)
-        {
-            list.Add(1060442, prop); // reflect physical damage ~1_val~%
-        }
-
-        if ((prop = Attributes.RegenStam) != 0)
-        {
-            list.Add(1060443, prop); // stamina regeneration ~1_val~
-        }
-
-        if ((prop = Attributes.RegenHits) != 0)
-        {
-            list.Add(1060444, prop); // hit point regeneration ~1_val~
-        }
-
-        if ((prop = WeaponAttributes.SelfRepair) != 0)
-        {
-            list.Add(1060450, prop); // self repair ~1_val~
-        }
-
-        if (Attributes.SpellChanneling != 0)
-        {
-            list.Add(1060482); // spell channeling
-        }
-
-        if ((prop = Attributes.SpellDamage) != 0)
-        {
-            list.Add(1060483, prop); // spell damage increase ~1_val~%
-        }
-
-        if ((prop = Attributes.BonusStam) != 0)
-        {
-            list.Add(1060484, prop); // stamina increase ~1_val~
-        }
-
-        if ((prop = Attributes.BonusStr) != 0)
-        {
-            list.Add(1060485, prop); // strength bonus ~1_val~
-        }
-
-        if ((prop = Attributes.WeaponSpeed) != 0)
-        {
-            list.Add(1060486, prop); // swing speed increase ~1_val~%
-        }
-
-        if (Core.ML && (prop = Attributes.IncreasedKarmaLoss) != 0)
-        {
-            list.Add(1075210, prop); // Increased Karma Loss ~1val~%
+            list.Add(1060435, lowerStatReq); // lower requirements ~1_val~%
         }
 
         GetDamageTypes(
@@ -3239,14 +3023,14 @@ public abstract partial class BaseWeapon
             list.Add(1060403, phys); // physical damage ~1_val~%
         }
 
-        if (fire != 0)
-        {
-            list.Add(1060405, fire); // fire damage ~1_val~%
-        }
-
         if (cold != 0)
         {
             list.Add(1060404, cold); // cold damage ~1_val~%
+        }
+
+        if (fire != 0)
+        {
+            list.Add(1060405, fire); // fire damage ~1_val~%
         }
 
         if (pois != 0)
@@ -3323,6 +3107,11 @@ public abstract partial class BaseWeapon
                 case SkillName.Archery:
                     {
                         list.Add(1061175); // skill required: archery
+                        break;
+                    }
+                case SkillName.Throwing:
+                    {
+                        list.Add(1112075); // skill required: throwing
                         break;
                     }
             }
@@ -3451,7 +3240,7 @@ public abstract partial class BaseWeapon
 
         if (isMagicItem)
         {
-            var builder = ValueStringBuilder.Create(128);
+            var builder = new ValueStringBuilder(stackalloc char[160]);
 
             var durabilityText = DurabilityText(out var articleAnDurability);
             if (durabilityText != null)
@@ -3759,236 +3548,6 @@ public abstract partial class BaseWeapon
         }
     }
 
-    private static bool GetSaveFlag(OldSaveFlag flags, OldSaveFlag toGet) => (flags & toGet) != 0;
-
-    private void Deserialize(IGenericReader reader, int version)
-    {
-        var flags = (OldSaveFlag)reader.ReadInt();
-
-        if (GetSaveFlag(flags, OldSaveFlag.DamageLevel))
-        {
-            _damageLevel = (WeaponDamageLevel)reader.ReadInt();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.AccuracyLevel))
-        {
-            _accuracyLevel = (WeaponAccuracyLevel)reader.ReadInt();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.DurabilityLevel))
-        {
-            _durabilityLevel = (WeaponDurabilityLevel)reader.ReadInt();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Quality))
-        {
-            _quality = (WeaponQuality)reader.ReadInt();
-        }
-        else
-        {
-            _quality = WeaponQuality.Regular;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Hits))
-        {
-            _hitPoints = reader.ReadInt();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.MaxHits))
-        {
-            _maxHitPoints = reader.ReadInt();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Slayer))
-        {
-            _slayer = (SlayerName)reader.ReadInt();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Poison))
-        {
-            _poison = reader.ReadPoison();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.PoisonCharges))
-        {
-            _poisonCharges = reader.ReadInt();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Crafter))
-        {
-            Timer.DelayCall(crafter => _crafter = crafter?.RawName, reader.ReadEntity<Mobile>());
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Identified))
-        {
-            _identified = version >= 6 || reader.ReadBool();
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.StrReq))
-        {
-            _strRequirement = reader.ReadInt();
-        }
-        else
-        {
-            _strRequirement = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.DexReq))
-        {
-            _dexRequirement = reader.ReadInt();
-        }
-        else
-        {
-            _dexRequirement = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.IntReq))
-        {
-            _intRequirement = reader.ReadInt();
-        }
-        else
-        {
-            _intRequirement = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.MinDamage))
-        {
-            _minDamage = reader.ReadInt();
-        }
-        else
-        {
-            _minDamage = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.MaxDamage))
-        {
-            _maxDamage = reader.ReadInt();
-        }
-        else
-        {
-            _maxDamage = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.HitSound))
-        {
-            _hitSound = reader.ReadInt();
-        }
-        else
-        {
-            _hitSound = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.MissSound))
-        {
-            _missSound = reader.ReadInt();
-        }
-        else
-        {
-            _missSound = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Speed))
-        {
-            if (version < 9)
-            {
-                _speed = reader.ReadInt();
-            }
-            else
-            {
-                _speed = reader.ReadFloat();
-            }
-        }
-        else
-        {
-            _speed = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.MaxRange))
-        {
-            _maxRange = reader.ReadInt();
-        }
-        else
-        {
-            _maxRange = -1;
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Skill))
-        {
-            _skill = (SkillName)reader.ReadInt();
-        }
-        else
-        {
-            _skill = (SkillName)(-1);
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Type))
-        {
-            _type = (WeaponType)reader.ReadInt();
-        }
-        else
-        {
-            _type = (WeaponType)(-1);
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Animation))
-        {
-            _animation = (WeaponAnimation)reader.ReadInt();
-        }
-        else
-        {
-            _animation = (WeaponAnimation)(-1);
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Resource))
-        {
-            _resource = (CraftResource)reader.ReadInt();
-        }
-        else
-        {
-            _resource = CraftResource.Iron;
-        }
-
-        Attributes = new AosAttributes(this);
-
-        if (GetSaveFlag(flags, OldSaveFlag.Attributes))
-        {
-            Attributes.Deserialize(reader);
-        }
-
-        WeaponAttributes = new AosWeaponAttributes(this);
-
-        if (GetSaveFlag(flags, OldSaveFlag.WeaponAttributes))
-        {
-            WeaponAttributes.Deserialize(reader);
-        }
-
-        PlayerConstructed = GetSaveFlag(flags, OldSaveFlag.PlayerConstructed);
-
-        SkillBonuses = new AosSkillBonuses(this);
-
-        if (GetSaveFlag(flags, OldSaveFlag.SkillBonuses))
-        {
-            SkillBonuses.Deserialize(reader);
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.Slayer2))
-        {
-            _slayer2 = (SlayerName)reader.ReadInt();
-        }
-
-        AosElementDamages = new AosElementAttributes(this);
-
-        if (GetSaveFlag(flags, OldSaveFlag.ElementalDamages))
-        {
-            AosElementDamages.Deserialize(reader);
-        }
-
-        if (GetSaveFlag(flags, OldSaveFlag.EngravedText))
-        {
-            _engravedText = reader.ReadString();
-        }
-    }
-
     [AfterDeserialization]
     private void AfterDeserialization()
     {
@@ -4054,42 +3613,6 @@ public abstract partial class BaseWeapon
         }
     }
 
-    [Flags]
-    private enum OldSaveFlag
-    {
-        None = 0x00000000,
-        DamageLevel = 0x00000001,
-        AccuracyLevel = 0x00000002,
-        DurabilityLevel = 0x00000004,
-        Quality = 0x00000008,
-        Hits = 0x00000010,
-        MaxHits = 0x00000020,
-        Slayer = 0x00000040,
-        Poison = 0x00000080,
-        PoisonCharges = 0x00000100,
-        Crafter = 0x00000200,
-        Identified = 0x00000400,
-        StrReq = 0x00000800,
-        DexReq = 0x00001000,
-        IntReq = 0x00002000,
-        MinDamage = 0x00004000,
-        MaxDamage = 0x00008000,
-        HitSound = 0x00010000,
-        MissSound = 0x00020000,
-        Speed = 0x00040000,
-        MaxRange = 0x00080000,
-        Skill = 0x00100000,
-        Type = 0x00200000,
-        Animation = 0x00400000,
-        Resource = 0x00800000,
-        Attributes = 0x01000000,
-        WeaponAttributes = 0x02000000,
-        PlayerConstructed = 0x04000000,
-        SkillBonuses = 0x08000000,
-        Slayer2 = 0x10000000,
-        ElementalDamages = 0x20000000,
-        EngravedText = 0x40000000
-    }
 }
 
 public enum CheckSlayerResult

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Server.Accounting;
 using Server.Engines.Help;
 using Server.Factions;
@@ -8,6 +9,7 @@ using Server.Items;
 using Server.Mobiles;
 using Server.Multis;
 using Server.Network;
+using Server.Network.Bans;
 using Server.Spells;
 
 namespace Server.Commands.Generic
@@ -511,36 +513,39 @@ namespace Server.Commands.Generic
 
         public override bool ValidateArgs(BaseCommandImplementor impl, CommandEventArgs e)
         {
-            if (e.Length >= 1)
-            {
-                var t = AssemblyHandler.FindTypeByName(e.GetString(0));
-
-                if (t == null)
-                {
-                    e.Mobile.SendMessage("No type with that name was found.");
-
-                    var match = e.GetString(0).Trim();
-
-                    if (match.Length < 3)
-                    {
-                        e.Mobile.SendMessage("Invalid search string.");
-                        e.Mobile.SendGump(new AddGump(match, 0, Type.EmptyTypes, false));
-                    }
-                    else
-                    {
-                        e.Mobile.SendGump(new AddGump(match, 0, AddGump.Match(match), true));
-                    }
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
+            if (e.Length < 1)
             {
                 e.Mobile.SendGump(new CategorizedAddGump(e.Mobile));
+                return false;
             }
 
+            var match = e.GetString(0).Trim();
+            if (e.GetContext<Type>("exactMatch", out var exactMatch))
+            {
+                return true;
+            }
+
+            exactMatch = AddGump.ExactMatch(match);
+            if (exactMatch != null)
+            {
+                e.SetContext("exactMatch", exactMatch);
+                return true;
+            }
+
+            if (match.Length < 3)
+            {
+                e.Mobile.SendMessage("Invalid search string.");
+                e.Mobile.SendGump(new AddGump(match, 0, [], false));
+                return false;
+            }
+
+            if (!e.GetContext<ConstructorInfo[]>("matches", out var matches))
+            {
+                matches = e.SetContext("matches", AddGump.MatchEmptyCtor(match));
+            }
+
+            e.Mobile.SendMessage("No type with that name was found.");
+            e.Mobile.SendGump(new AddGump(match, 0, matches, true));
             return false;
         }
 
@@ -551,14 +556,20 @@ namespace Server.Commands.Generic
                 return;
             }
 
-            Point3D p = ip switch
+            var p = ip switch
             {
                 Item item => item.GetWorldTop(),
                 Mobile m  => m.Location,
                 _         => new Point3D(ip)
             };
 
-            Add.Invoke(e.Mobile, p, p, e.Arguments);
+            if (e.GetContext<Type>("exactMatch", out var exactMatch))
+            {
+                Add.Invoke(e.Mobile, p, p, exactMatch, e.Arguments.AsSpan(1));
+                return;
+            }
+
+            e.Mobile.SendMessage("No type with that name was found.");
         }
     }
 
@@ -1144,7 +1155,8 @@ namespace Server.Commands.Generic
 
                 try
                 {
-                    AdminFirewall.Add(state.Address);
+                    Firewall.Add(new SingleIpFirewallEntry(state.Address));
+                    BanChannel.Report(state.Address, TimeSpan.Zero, BanReasons.Manual);
                     AddResponse("They have been firewalled.");
                 }
                 catch (Exception ex)
@@ -1199,7 +1211,7 @@ namespace Server.Commands.Generic
                     {
                         CommandLogging.WriteLine(
                             from,
-                            $"{from.AccessLevel} {CommandLogging.Format(from)} {(m_Ban ? "banning" : "kicking")} {(CommandLogging.Format(targ))}"
+                            $"{from.AccessLevel} {CommandLogging.Format(from)} {(m_Ban ? "banning" : "kicking")} {CommandLogging.Format(targ)}"
                         );
 
                         targ.Say(m_Ban ? "I've been banned." : "I've been kicked");

@@ -54,14 +54,12 @@ public partial class Guildstone : Item, IAddon, IChoppable
 
         var house = BaseHouse.FindHouseAt(this);
 
-        if (house?.IsOwner(from) == true && house.Addons.Contains(this))
+        if (house?.IsOwner(from) == true && house.Addons.Remove(this))
         {
             Effects.PlaySound(GetWorldLocation(), Map, 0x3B3);
             from.SendLocalizedMessage(500461); // You destroy the item.
 
             Delete();
-
-            house.Addons.Remove(this);
 
             var deed = Deed;
 
@@ -187,8 +185,7 @@ public partial class Guildstone : Item, IAddon, IChoppable
             _guild.Accepted.Remove(from);
             _guild.AddMember(from);
 
-            GuildGump.EnsureClosed(from);
-            from.SendGump(new GuildGump(from, Guild));
+            GuildGump.DisplayTo(from, Guild);
         }
         else if (from.AccessLevel < AccessLevel.GameMaster && !_guild.IsMember(from))
         {
@@ -197,8 +194,7 @@ public partial class Guildstone : Item, IAddon, IChoppable
         }
         else
         {
-            GuildGump.EnsureClosed(from);
-            from.SendGump(new GuildGump(from, _guild));
+            GuildGump.DisplayTo(from, _guild);
         }
     }
 }

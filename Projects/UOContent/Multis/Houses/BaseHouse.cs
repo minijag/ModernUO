@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using ModernUO.CodeGeneratedEvents;
+using ModernUO.Serialization;
 using Server.Accounting;
 using Server.Collections;
 using Server.ContextMenus;
+using Server.Engines.Spawners;
 using Server.Ethics;
 using Server.Guilds;
 using Server.Gumps;
@@ -16,7 +18,7 @@ using Server.Targeting;
 
 namespace Server.Multis
 {
-    public abstract class BaseHouse : BaseMulti
+    public abstract partial class BaseHouse : BaseMulti
     {
         public static bool DecayEnabled { get; set; }
 
@@ -29,6 +31,7 @@ namespace Server.Multis
         private DecayLevel m_CurrentStage;
 
         private DecayLevel m_LastDecayLevel;
+        private bool _wasUndecayable; // not serialized: decay tick state only
 
         private Mobile m_Owner;
 
@@ -196,19 +199,58 @@ namespace Server.Multis
         {
             get
             {
-                DecayLevel result;
-
                 if (!CanDecay)
                 {
+                    return DecayLevel.Ageless;
+                }
+
+                if (DynamicDecay.Enabled)
+                {
+                    var stage = m_CurrentStage;
+
+                    if (stage == DecayLevel.Collapsed && (HasRentedVendors || VendorInventories.Count > 0))
+                    {
+                        return DecayLevel.DemolitionPending;
+                    }
+
+                    return stage;
+                }
+
+                return GetOldDecayLevel();
+            }
+        }
+
+        /// <summary>
+        /// Advances decay bookkeeping. Runs from the decay tick, never from a read: a getter that
+        /// writes persisted fields makes every house record change on every read.
+        /// </summary>
+        public virtual void UpdateDecay()
+        {
+            if (!CanDecay)
+            {
+                if (DynamicDecay.Enabled && m_CurrentStage != DecayLevel.Ageless)
+                {
+                    ResetDynamicDecay();
+                }
+
+                _wasUndecayable = true;
+            }
+            else
+            {
+                if (_wasUndecayable)
+                {
+                    // Leaving the undecayable state counts as a refresh, which the old getter
+                    // guaranteed by restamping LastRefreshed on every read while undecayable.
+                    _wasUndecayable = false;
+                    LastRefreshed = Core.Now;
+
                     if (DynamicDecay.Enabled)
                     {
                         ResetDynamicDecay();
                     }
-
-                    LastRefreshed = Core.Now;
-                    result = DecayLevel.Ageless;
                 }
-                else if (DynamicDecay.Enabled)
+
+                if (DynamicDecay.Enabled)
                 {
                     var stage = m_CurrentStage;
 
@@ -216,32 +258,19 @@ namespace Server.Multis
                     {
                         SetDynamicDecay(++stage);
                     }
-
-                    if (stage == DecayLevel.Collapsed && (HasRentedVendors || VendorInventories.Count > 0))
-                    {
-                        result = DecayLevel.DemolitionPending;
-                    }
-                    else
-                    {
-                        result = stage;
-                    }
                 }
-                else
+            }
+
+            var level = DecayLevel;
+
+            if (level != m_LastDecayLevel)
+            {
+                m_LastDecayLevel = level;
+
+                if (Sign?.GettingProperties == false)
                 {
-                    result = GetOldDecayLevel();
+                    Sign.InvalidateProperties();
                 }
-
-                if (result != m_LastDecayLevel)
-                {
-                    m_LastDecayLevel = result;
-
-                    if (Sign?.GettingProperties == false)
-                    {
-                        Sign.InvalidateProperties();
-                    }
-                }
-
-                return result;
             }
         }
 
@@ -580,6 +609,7 @@ namespace Server.Multis
                 return false;
             }
 
+            UpdateDecay();
             var oldLevel = DecayLevel;
 
             LastRefreshed = Core.Now;
@@ -596,6 +626,8 @@ namespace Server.Multis
 
         public virtual bool CheckDecay()
         {
+            UpdateDecay();
+
             if (!Deleted && DecayLevel == DecayLevel.Collapsed)
             {
                 Timer.StartTimer(Decay_Sandbox);
@@ -793,8 +825,8 @@ namespace Server.Multis
 
         public List<Mobile> AvailableVendorsFor(Mobile m)
         {
-            List<Mobile> list = new List<Mobile>();
-            foreach (PlayerVendor vendor in PlayerVendors)
+            var list = new List<Mobile>();
+            foreach (var vendor in PlayerVendors)
             {
                 if (vendor.CanInteractWith(m, false))
                 {
@@ -1554,12 +1586,27 @@ namespace Server.Multis
 
         public override void OnMapChange()
         {
+            base.OnMapChange();
+
             if (LockDowns == null)
             {
                 return;
             }
 
             UpdateRegion();
+
+            // Invalidate spawn position cache for affected sectors
+            if (Map != null && Map != Map.Internal)
+            {
+                var mcl = Components;
+                var bounds = new Rectangle2D(
+                    X + mcl.Min.X,
+                    Y + mcl.Min.Y,
+                    mcl.Width,
+                    mcl.Height
+                );
+                SectorSpawnCacheManager.InvalidateSectors(Map, bounds);
+            }
 
             if (Sign?.Deleted == false)
             {
@@ -1612,6 +1659,8 @@ namespace Server.Multis
 
         public override void OnLocationChange(Point3D oldLocation)
         {
+            base.OnLocationChange(oldLocation);
+
             if (LockDowns == null)
             {
                 return;
@@ -2623,10 +2672,8 @@ namespace Server.Multis
                 return;
             }
 
-            if (Access.Contains(targ))
+            if (Access.Remove(targ))
             {
-                Access.Remove(targ);
-
                 if (!HasAccess(targ) && IsInside(targ))
                 {
                     targ.Location = BanLocation;
@@ -2781,10 +2828,8 @@ namespace Server.Multis
                 return;
             }
 
-            if (CoOwners.Contains(targ))
+            if (CoOwners.Remove(targ))
             {
-                CoOwners.Remove(targ);
-
                 targ.Delta(MobileDelta.Noto);
 
                 from.SendLocalizedMessage(501299); // Co-owner removed from list.
@@ -2853,10 +2898,8 @@ namespace Server.Multis
                 return;
             }
 
-            if (Friends.Contains(targ))
+            if (Friends.Remove(targ))
             {
-                Friends.Remove(targ);
-
                 targ.Delta(MobileDelta.Noto);
 
                 from.SendLocalizedMessage(501298);  // Friend removed from list.
@@ -2956,28 +2999,6 @@ namespace Server.Multis
 
             writer.Write(MaxLockDowns);
             writer.Write(MaxSecures);
-
-            // Items in locked down containers that aren't locked down themselves must decay!
-            for (var i = 0; i < LockDowns.Count; ++i)
-            {
-                var item = LockDowns[i];
-
-                if (item is Container cont && !(cont is BaseBoard or Aquarium or FishBowl))
-                {
-                    var children = cont.Items;
-
-                    for (var j = 0; j < children.Count; ++j)
-                    {
-                        var child = children[j];
-
-                        if (child.Decays && !child.IsLockedDown && !child.IsSecure &&
-                            child.LastMoved + child.DecayTime <= Core.Now)
-                        {
-                            Timer.StartTimer(child.Delete);
-                        }
-                    }
-                }
-            }
         }
 
         public override void Deserialize(IGenericReader reader)
@@ -3329,6 +3350,19 @@ namespace Server.Multis
         {
             RestoreRelocatedEntities();
 
+            // Invalidate spawn position cache for affected sectors before deletion
+            if (Map != null && Map != Map.Internal)
+            {
+                var mcl = Components;
+                var bounds = new Rectangle2D(
+                    X + mcl.Min.X,
+                    Y + mcl.Min.Y,
+                    mcl.Width,
+                    mcl.Height
+                );
+                SectorSpawnCacheManager.InvalidateSectors(Map, bounds);
+            }
+
             new FixColumnTimer(this).Start();
 
             base.OnDelete();
@@ -3626,12 +3660,7 @@ namespace Server.Multis
                 return true;
             }
 
-            if (!(bc.Controlled || bc.Summoned))
-            {
-                return false;
-            }
-
-            m = bc.ControlMaster ?? bc.SummonMaster;
+            m = bc.GetMaster();
 
             return m != null && (m.AccessLevel > AccessLevel.Player || IsFriend(m) || Access?.Contains(m) == true);
         }
@@ -3698,21 +3727,20 @@ namespace Server.Multis
             }
         }
 
-        private class TransferItem : Item
+        [SerializationGenerator(0)]
+        private partial class TransferItem : Item
         {
-            private readonly BaseHouse m_House;
+            private readonly BaseHouse _house;
 
             public TransferItem(BaseHouse house) : base(0x14F0)
             {
-                m_House = house;
+                _house = house;
 
                 Hue = 0x480;
                 Movable = false;
             }
 
-            public TransferItem(Serial serial) : base(serial)
-            {
-            }
+            public override bool SkipSerialization => true;
 
             public override string DefaultName => "a house transfer contract";
 
@@ -3720,15 +3748,15 @@ namespace Server.Multis
             {
                 base.GetProperties(list);
 
-                var houseName = m_House == null ? "an unnamed house" : m_House.Sign.GetName();
-                var owner = m_House?.Owner?.Name ?? "nobody";
+                var houseName = _house == null ? "an unnamed house" : _house.Sign.GetName();
+                var owner = _house?.Owner?.Name ?? "nobody";
 
                 int xLong = 0, yLat = 0, xMins = 0, yMins = 0;
                 bool xEast = false, ySouth = false;
 
-                var valid = m_House != null && Sextant.Format(
-                    m_House.Location,
-                    m_House.Map,
+                var valid = _house != null && Sextant.Format(
+                    _house.Location,
+                    _house.Map,
                     ref xLong,
                     ref yLat,
                     ref xMins,
@@ -3750,22 +3778,6 @@ namespace Server.Multis
                 }
             }
 
-            public override void Serialize(IGenericWriter writer)
-            {
-                base.Serialize(writer);
-
-                writer.Write(0); // version
-            }
-
-            public override void Deserialize(IGenericReader reader)
-            {
-                base.Deserialize(reader);
-
-                var version = reader.ReadInt();
-
-                Timer.DelayCall(Delete);
-            }
-
             public override bool AllowSecureTrade(Mobile from, Mobile to, Mobile newOwner, bool accepted)
             {
                 if (!base.AllowSecureTrade(from, to, newOwner, accepted))
@@ -3778,7 +3790,7 @@ namespace Server.Multis
                     return true;
                 }
 
-                if (Deleted || m_House?.Deleted != false || !m_House.IsOwner(from) || !from.CheckAlive() ||
+                if (Deleted || _house?.Deleted != false || !_house.IsOwner(from) || !from.CheckAlive() ||
                     !to.CheckAlive())
                 {
                     return false;
@@ -3790,7 +3802,7 @@ namespace Server.Multis
                     return false;
                 }
 
-                return m_House.CheckTransferPosition(from, to);
+                return _house.CheckTransferPosition(from, to);
             }
 
             public override void OnSecureTrade(Mobile from, Mobile to, Mobile newOwner, bool accepted)
@@ -3802,7 +3814,7 @@ namespace Server.Multis
 
                 Delete();
 
-                if (m_House?.Deleted != false || !m_House.IsOwner(from) || !from.CheckAlive() || !to.CheckAlive())
+                if (_house?.Deleted != false || !_house.IsOwner(from) || !from.CheckAlive() || !to.CheckAlive())
                 {
                     return;
                 }
@@ -3820,13 +3832,13 @@ namespace Server.Multis
                  */
                 to.SendLocalizedMessage(501339);
 
-                m_House.RemoveKeys(from);
-                m_House.Owner = to;
-                m_House.Bans.Clear();
-                m_House.Friends.Clear();
-                m_House.CoOwners.Clear();
-                m_House.ChangeLocks(to);
-                m_House.LastTraded = Core.Now;
+                _house.RemoveKeys(from);
+                _house.Owner = to;
+                _house.Bans.Clear();
+                _house.Friends.Clear();
+                _house.CoOwners.Clear();
+                _house.ChangeLocks(to);
+                _house.LastTraded = Core.Now;
             }
         }
 

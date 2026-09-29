@@ -16,7 +16,7 @@ using Server.Targeting;
 namespace Server.Factions;
 
 [CustomEnum(["Minax", "Council of Mages", "True Britannians", "Shadowlords"])]
-public abstract class Faction : IComparable<Faction>
+public abstract class Faction : IComparable<Faction>, ISpanParsable<Faction>
 {
     public const int StabilityFactor = 300;     // 300% greater (3 times) than smallest faction
     public const int StabilityActivation = 200; // Stability code goes into effect when largest faction has > 200 people
@@ -242,7 +242,11 @@ public abstract class Faction : IComparable<Faction>
 
     public virtual void AddMember(Mobile mob)
     {
-        Members.Insert(ZeroRankOffset, new PlayerState(mob, this, Members));
+        var state = new PlayerState(mob, this, Members);
+        Members.Insert(ZeroRankOffset, state);
+
+        // Ranked after the insert: the ctor ran while Owner was still short a member.
+        state.UpdateRank();
 
         mob.AddToBackpack(FactionItem.Imbue(new Robe(), this, false, Definition.HuePrimary));
         mob.SendLocalizedMessage(1010374); // You have been granted a robe which signifies your faction
@@ -283,8 +287,8 @@ public abstract class Faction : IComparable<Faction>
 
     public static bool IsNearType(Mobile mob, Type[] types, int range)
     {
-        bool mobs = false;
-        bool items = false;
+        var mobs = false;
+        var items = false;
         for (var i = 0; !(mobs && items) && i < types.Length; i++)
         {
             var type = types[i];
@@ -410,7 +414,8 @@ public abstract class Faction : IComparable<Faction>
 
         if (mob.Backpack != null)
         {
-            foreach (var sigil in mob.Backpack.EnumerateItemsByType<Sigil>())
+            using var queue = mob.Backpack.EnumerateItemsByType<Sigil>();
+            foreach (var sigil in queue)
             {
                 sigil.ReturnHome();
             }
@@ -1073,7 +1078,8 @@ public abstract class Faction : IComparable<Faction>
 
         if (victim.Backpack != null)
         {
-            foreach (var sigil in victim.Backpack.EnumerateItemsByType<Sigil>())
+            using var queue = victim.Backpack.EnumerateItemsByType<Sigil>();
+            foreach (var sigil in queue)
             {
                 if (killerState == null || killerPack == null)
                 {
@@ -1254,7 +1260,8 @@ public abstract class Faction : IComparable<Faction>
     {
         if (m.Backpack != null)
         {
-            foreach (var sigil in m.Backpack.EnumerateItemsByType<Sigil>())
+            using var queue = m.Backpack.EnumerateItemsByType<Sigil>();
+            foreach (var sigil in queue)
             {
                 sigil.ReturnHome();
             }
@@ -1310,7 +1317,27 @@ public abstract class Faction : IComparable<Faction>
         return null;
     }
 
-    public static Faction Parse(string name)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Faction Parse(string s) => Parse(s, null);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Faction Parse(string s, IFormatProvider provider) => Parse(s.AsSpan(), provider);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryParse(string s, IFormatProvider provider, out Faction result) =>
+        TryParse(s.AsSpan(), provider, out result);
+
+    public static Faction Parse(ReadOnlySpan<char> s, IFormatProvider provider)
+    {
+        if (TryParse(s, provider, out var result))
+        {
+            return result;
+        }
+
+        throw new FormatException($"The input string '{s}' was not in a correct format.");
+    }
+
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider provider, out Faction result)
     {
         var factions = Factions;
 
@@ -1318,13 +1345,15 @@ public abstract class Faction : IComparable<Faction>
         {
             var faction = factions[i];
 
-            if (faction.Definition.FriendlyName.InsensitiveEquals(name))
+            if (s.InsensitiveEquals(faction.Definition.FriendlyName))
             {
-                return faction;
+                result = faction;
+                return true;
             }
         }
 
-        return null;
+        result = null;
+        return false;
     }
 
     public static bool InSkillLoss(Mobile mob) => m_SkillLoss.ContainsKey(mob);

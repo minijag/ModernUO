@@ -43,7 +43,7 @@ public class ThiefAI : BaseAI
             return true;
         }
 
-        if (!WalkMobileRange(combatant, 1, false, Mobile.RangeFight, Mobile.RangeFight))
+        if (!WalkMobileRange(combatant, 1, Mobile.RangeFight, Mobile.RangeFight))
         {
             this.DebugSayFormatted($"I should be closer to {combatant.Name}");
         }
@@ -73,7 +73,7 @@ public class ThiefAI : BaseAI
             {
                 this.DebugSayFormatted($"Trying to steal from {combatant.Name}.");
 
-                bool didSteal = TryStealFrom<Bandage>(combatant);
+                var didSteal = TryStealFrom<Bandage>(combatant);
                 didSteal = TryStealFrom<Nightshade>(combatant) || didSteal;
                 didSteal = TryStealFrom<BlackPearl>(combatant) || didSteal;
                 didSteal = TryStealFrom<MandrakeRoot>(combatant) || didSteal;

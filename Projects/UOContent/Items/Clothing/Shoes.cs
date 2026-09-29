@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using ModernUO.Serialization;
 
 namespace Server.Items
@@ -51,6 +52,15 @@ namespace Server.Items
     [SerializationGenerator(2, false)]
     public partial class ThighBoots : BaseShoes, IArcaneEquip
     {
+        [EncodedInt]
+        [InvalidateProperties]
+        [SerializableField(0, fieldChanged: nameof(OnCurArcaneChargesChanged))]
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
+        private int _curArcaneCharges;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void OnCurArcaneChargesChanged(int oldValue, int newValue) => Update();
+
         [Constructible]
         public ThighBoots(int hue = 0) : base(0x1711, hue)
         {
@@ -60,34 +70,15 @@ namespace Server.Items
 
         public override CraftResource DefaultResource => CraftResource.RegularLeather;
 
+        [SerializableField(1, fieldChanged: nameof(OnMaxArcaneChargesChanged))]
         [EncodedInt]
-        [SerializableProperty(0)]
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int CurArcaneCharges
-        {
-            get => _curArcaneCharges;
-            set
-            {
-                _curArcaneCharges = value;
-                InvalidateProperties();
-                Update();
-                this.MarkDirty();
-            }
-        }
+        [SerializedCommandProperty(AccessLevel.GameMaster)]
+        [InvalidateProperties]
+        private int _maxArcaneCharges;
 
-        [EncodedInt]
-        [SerializableProperty(1)]
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int MaxArcaneCharges
+        private void OnMaxArcaneChargesChanged(int oldValue, int newValue)
         {
-            get => _maxArcaneCharges;
-            set
-            {
-                _maxArcaneCharges = value;
-                InvalidateProperties();
-                Update();
-                this.MarkDirty();
-            }
+            Update();
         }
 
         [CommandProperty(AccessLevel.GameMaster)]

@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2025 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: AIMovement.cs                                                   *
  *                                                                       *
@@ -13,16 +13,48 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.  *
  ************************************************************************/
 
+using System;
 using System.Runtime.CompilerServices;
 using Server.Collections;
 using Server.Items;
 using MoveImpl = Server.Movement.MovementImpl;
+using Moves = Server.Movement.Movement;
 
 namespace Server.Mobiles;
 
 public abstract partial class BaseAI
 {
-    public static double BadlyHurtMoveDelay(BaseCreature bc)
+    // --- Centralized progress-based approach state (see ApproachTarget) ---------------
+    // Consecutive move-eligible ticks a creature may fail to improve its best distance to a
+    // STATIONARY goal before it gives up and idles. A moving goal (an active chase) never
+    // triggers give-up. Must exceed the longest no-improvement stretch of a valid detour
+    // (the Britain Inn detour's is ~13 ticks), with margin; this also bounds the largest
+    // concave detour a creature will navigate before idling on a stationary goal.
+    private const int ApproachGiveUpTicks = 40;
+
+    private Mobile _approachGoal;
+    private Point3D _approachGoalLoc;
+    private double _approachBestDist;
+    private int _approachStallTicks;
+    private bool _approachGaveUp;
+    private Point3D _approachGaveUpGoalLoc;
+
+    /// <summary>Which exit the last <see cref="ApproachTarget"/> (via <see cref="MoveTo"/> or
+    /// <see cref="WalkMobileRange"/>) took. A <see cref="WalkMobileRange"/> retreat step does not
+    /// classify.</summary>
+    public ApproachOutcome LastApproach { get; private set; }
+
+    // --- Move intent (see ContinueMove) ------------------------------------------------
+    // Durable movement goal renewed by en-route ApproachTarget/MoveToPoint calls; while
+    // live, the AITimer wakes at NextMove between think ticks to advance the step.
+    private Mobile _moveIntentTarget;
+    private IPoint3D _moveIntentPoint;
+    private int _moveIntentRange;
+    private long _moveIntentExpire;
+
+    // Inflates a step delay while badly hurt; computed from the passed base so it cannot
+    // compound across steps. Damage slows steps, never decisions.
+    public static double BadlyHurtMoveDelay(BaseCreature bc, double delay)
     {
         var statMin = Core.HS ? bc.Stam : bc.Hits;
         var statMax = Core.HS ? bc.StamMax : bc.HitsMax;
@@ -30,20 +62,59 @@ public abstract partial class BaseAI
         if (!bc.IsDeadPet && (bc.ReduceSpeedWithDamage || bc.IsSubdued)
                           && statMax > 0 && statMin < statMax * 0.3)
         {
-            var hits = (double)statMin / statMax;
+            var stat = (double)statMin / statMax;
 
-            if (hits < 0.1) { return bc.CurrentSpeed + 0.15; }
-            if (hits < 0.2) { return bc.CurrentSpeed + 0.1; }
-            if (hits < 0.3) { return bc.CurrentSpeed + 0.05; }
+            if (stat < 0.1) { return delay + 0.15; }
+            if (stat < 0.2) { return delay + 0.1; }
+
+            return delay + 0.05;
         }
 
-        return bc.CurrentSpeed;
+        return delay;
     }
 
     public bool CanMoveNow(out double delay)
     {
         delay = 0.0;
-        return Core.TickCount >= NextMove;
+        return Core.TickCount - NextMove >= 0;
+    }
+
+    // Seconds per step as the client observes it: the move clock plus the hurt inflation.
+    private double EffectiveStepDelay()
+    {
+        var stepDelay = Mobile.CurrentMoveSpeed;
+
+        return Core.AOS && IsFollowingMaster() ? stepDelay : BadlyHurtMoveDelay(Mobile, stepDelay);
+    }
+
+    // The Running bit only selects the client's per-step interpolation (walk 400ms / run
+    // 200ms on foot, 200/100 mounted). A step shorter than the walk time must run or the
+    // client falls behind and snaps — but an isolated step (after standing at least a walk
+    // interval) renders alone and darts if run-flagged, so it goes out as a walk. A true
+    // sprinter always runs: a walk-rendered first step would flood the client's queue.
+    public bool ShouldRun()
+    {
+        var mounted = Mobile.Mounted || Mobile.Flying;
+        var walkDelay = mounted ? Moves.WalkMountDelay : Moves.WalkFootDelay;
+        var pace = EffectiveStepDelay() * 1000;
+
+        if (pace >= walkDelay)
+        {
+            return false;
+        }
+
+        var runDelay = mounted ? Moves.RunMountDelay : Moves.RunFootDelay;
+
+        return pace < runDelay || Core.TickCount - Mobile.LastMoveTime < walkDelay;
+    }
+
+    // One step per period, paced from the step just taken — no debt accrual: repaying a
+    // late step with a quicker follow-up puts two steps ~100ms apart, which renders as a
+    // dart. In continuous pursuit the move-wake lands within wheel resolution of this
+    // deadline, so the only cost is single-digit-ms drift per step.
+    private void ConsumeMoveBudget()
+    {
+        NextMove = Core.TickCount + Math.Max(50, (long)(EffectiveStepDelay() * 1000));
     }
 
     public virtual bool CheckMove() => !(Mobile.Deleted || Mobile.DisallowAllMoves);
@@ -61,6 +132,8 @@ public abstract partial class BaseAI
             return MoveResult.BadState;
         }
 
+        d = (d & Direction.Mask) | (ShouldRun() ? Direction.Running : 0);
+
         if ((Mobile.Direction & Direction.Mask) != (d & Direction.Mask))
         {
             Mobile.Direction = d;
@@ -71,9 +144,20 @@ public abstract partial class BaseAI
 
         if (TryMove(d))
         {
-            Mobile.CurrentSpeed = Mobile.Hits < Mobile.HitsMax * 0.3
-                ? BadlyHurtMoveDelay(Mobile)
-                : Mobile.Warmode || Mobile.Combatant != null ? Mobile.ActiveSpeed : Mobile.PassiveSpeed;
+            // Obeying pets are paced by their order handlers.
+            if (!IsObeyingMoveOrder())
+            {
+                if (Mobile.Warmode || Mobile.Combatant != null)
+                {
+                    Mobile.SetCurrentSpeedToActive();
+                }
+                else
+                {
+                    Mobile.SetCurrentSpeedToPassive();
+                }
+            }
+
+            ConsumeMoveBudget();
 
             return MoveResult.Success;
         }
@@ -123,6 +207,7 @@ public abstract partial class BaseAI
 
             if (Mobile.Move(Mobile.Direction))
             {
+                ConsumeMoveBudget();
                 return MoveResult.SuccessAutoTurn;
             }
         }
@@ -266,46 +351,286 @@ public abstract partial class BaseAI
         }
     }
 
-    public virtual bool MoveTo(Mobile m, bool run, int range)
+    /// <summary>
+    /// Centralized "move toward <paramref name="target"/> until within
+    /// <paramref name="range"/>" decision shared by MoveTo and WalkMobileRange. A greedy
+    /// step is taken only when it actually gets the creature closer; a blocked step or an
+    /// auto-turn sidestep that made no progress falls through to a persistent PathFollower
+    /// that routes around the obstacle and is never discarded by a greedy step. A
+    /// best-distance stall counter idles the creature if an in-range goal is genuinely
+    /// unreachable, without ever abandoning a real chase or detour.
+    /// </summary>
+    protected bool ApproachTarget(Mobile target, int range)
     {
-        if (Mobile.Deleted || Mobile.DisallowAllMoves || m?.Deleted != false)
+        if (Mobile.Deleted || Mobile.DisallowAllMoves || target?.Deleted != false)
         {
+            LastApproach = ApproachOutcome.InvalidGoal;
+            ClearMoveIntent();
             return false;
         }
 
-        var distance = (int)Mobile.GetDistanceToSqrt(m);
-        var distanceThreshold = Core.AOS && IsFollowingMaster() ? 1 : 5;
+        if (Mobile.InRange(target, range))
+        {
+            LastApproach = ApproachOutcome.Arrived;
+            ResetApproach();
+            ClearMoveIntent();
+            return true;
+        }
 
-        var shouldRun = run && distance > distanceThreshold;
+        // Already gave up on this exact (unreachable) goal: idle until it moves.
+        if (_approachGaveUp && _approachGoal == target)
+        {
+            if (target.Location == _approachGaveUpGoalLoc)
+            {
+                LastApproach = ApproachOutcome.GaveUp;
+                ClearMoveIntent();
+                return false;
+            }
+
+            ResetApproach(); // target moved — try again fresh
+        }
+
+        RenewMoveIntent(target, null, range);
+
+        // FAST PATH: greedy step toward the target, counted as success ONLY when the move
+        // fully succeeded (not an auto-turn sidestep) and actually got us closer. An
+        // auto-turn sidestep can reduce Euclidean distance while moving in the wrong
+        // direction (e.g., east when the true route requires going south-first around a
+        // concave obstacle); treating it as progress would discard a PathFollower that is
+        // the only way to navigate. A blocked step or a non-Success result falls through to
+        // the planner immediately.
+        if (Path == null && Mobile.InLOS(target))
+        {
+            var distBefore = Mobile.GetDistanceToSqrt(target);
+            var res = DoMoveImpl(Mobile.GetDirectionTo(target), true);
+
+            if (res == MoveResult.BadState)
+            {
+                LastApproach = ApproachOutcome.Waiting;
+                return true; // not allowed to move this tick (frozen/casting/throttled); not a failure
+            }
+
+            if (res == MoveResult.Success && Mobile.GetDistanceToSqrt(target) < distBefore)
+            {
+                LastApproach = ApproachOutcome.DirectProgress;
+                ResetApproach();
+                return true; // healthy en-route progress
+            }
+
+            // else: fall through; let the PathFollower route around the obstacle.
+        }
+
+        // PLANNING PATH: a persistent PathFollower, never discarded by a greedy step.
+        if (Path == null || Path.Goal != target)
+        {
+            Path = new PathFollower(Mobile, target) { Mover = DoMoveImpl };
+        }
+
+        // Sample move-eligibility BEFORE the attempt: a successful step consumes the move
+        // budget, which would mask stall accounting and the progress signal.
+        var couldMove = CanMoveNow(out _) && !IsInBadState();
+        var locBefore = Mobile.Location;
+
+        if (Path.Follow(range))
+        {
+            LastApproach = ApproachOutcome.Arrived;
+            ResetApproach();
+            return true;
+        }
+
+        TrackApproachProgress(target, couldMove);
+
+        if (_approachGaveUp)
+        {
+            LastApproach = ApproachOutcome.GaveUp;
+            return false;
+        }
+
+        // En-route progress is success; failure only when a move-eligible tick took no step
+        // (no working path).
+        var progressed = Mobile.Location != locBefore || !couldMove;
+        LastApproach = progressed ? ApproachOutcome.Routing : ApproachOutcome.Blocked;
+
+        return progressed;
+    }
+
+    /// <summary>
+    /// Walks toward a fixed point (e.g. a target's last-known position), pathfinding around
+    /// obstacles, until within <paramref name="range"/> (0 = onto the tile). Returns false on
+    /// arrival or when genuinely unable to make progress.
+    /// </summary>
+    public bool MoveToPoint(IPoint3D goal, int range = 1)
+    {
+        if (Mobile.Deleted || Mobile.DisallowAllMoves || goal == null)
+        {
+            ClearMoveIntent();
+            return false;
+        }
+
+        if (Path?.Goal != goal)
+        {
+            Path = new PathFollower(Mobile, goal) { Mover = DoMoveImpl };
+        }
+
+        RenewMoveIntent(null, goal, range);
+
+        var couldMove = CanMoveNow(out _) && !IsInBadState();
+        var locBefore = Mobile.Location;
+
+        if (Path.Follow(range))
+        {
+            Path = null;
+            ClearMoveIntent();
+            return false; // arrived
+        }
+
+        var progressed = Mobile.Location != locBefore || !couldMove;
+
+        if (!progressed)
+        {
+            ClearMoveIntent();
+        }
+
+        return progressed;
+    }
+
+    /// <summary>
+    /// Best-distance stuck detection. A creature making real headway keeps lowering its
+    /// closest-ever distance to the goal (a detour's outbound leg pauses that, but it
+    /// resumes once the creature rounds the obstacle). A creature that cannot reach a
+    /// STATIONARY goal never lowers it and, after <see cref="ApproachGiveUpTicks"/> ticks,
+    /// gives up and idles. A MOVING goal (an active chase) resets the baseline every tick,
+    /// so chases never give up even when the gap holds constant.
+    /// </summary>
+    private void TrackApproachProgress(Mobile target, bool couldMove)
+    {
+        if (!couldMove)
+        {
+            return; // a tick that was never allowed to move (stun, stall) is not a stall
+        }
+
+        var dist = Mobile.GetDistanceToSqrt(target);
+        var goalLoc = target.Location;
+
+        // New goal, or the goal moved (active chase): reset the stall baseline. Clearing the
+        // give-up flag here prevents a prior goal's give-up state from leaking onto a new one.
+        if (_approachGoal != target || goalLoc != _approachGoalLoc)
+        {
+            _approachGoal = target;
+            _approachGoalLoc = goalLoc;
+            _approachBestDist = dist;
+            _approachStallTicks = 0;
+            _approachGaveUp = false;
+            return;
+        }
+
+        // Stationary goal: getting closer than ever resets the stall.
+        if (dist < _approachBestDist)
+        {
+            _approachBestDist = dist;
+            _approachStallTicks = 0;
+            return;
+        }
+
+        if (++_approachStallTicks >= ApproachGiveUpTicks)
+        {
+            _approachGaveUp = true;
+            _approachGaveUpGoalLoc = goalLoc;
+            Path = null;
+            ClearMoveIntent();
+        }
+    }
+
+    /// <summary>Clears all approach state (called on arrival, real greedy progress, or when
+    /// a given-up goal moves).</summary>
+    private void ResetApproach()
+    {
+        Path = null;
+        _approachGoal = null;
+        _approachGoalLoc = Point3D.Zero;
+        _approachBestDist = 0;
+        _approachStallTicks = 0;
+        _approachGaveUp = false;
+    }
+
+    /// <summary>Drops the path, stall state, and move intent (after a relocation).</summary>
+    public void ResetApproachState()
+    {
+        ResetApproach();
+        ClearMoveIntent();
+    }
+
+    private void RenewMoveIntent(Mobile target, IPoint3D point, int range)
+    {
+        _moveIntentTarget = target;
+        _moveIntentPoint = point;
+        _moveIntentRange = range;
+
+        // A live pursuit renews every think tick; unrenewed intent dies on its own.
+        _moveIntentExpire = Core.TickCount + (long)(Mobile.CurrentSpeed * 2000) + 250;
+    }
+
+    public void ClearMoveIntent()
+    {
+        _moveIntentTarget = null;
+        _moveIntentPoint = null;
+    }
+
+    /// <summary>
+    /// True while a durable movement goal is live; <paramref name="nextMove"/> is the tick
+    /// the movement budget elapses.
+    /// </summary>
+    public bool TryGetMoveWake(out long nextMove)
+    {
+        nextMove = NextMove;
+
+        return (_moveIntentTarget != null || _moveIntentPoint != null) && Core.TickCount - _moveIntentExpire < 0;
+    }
+
+    /// <summary>
+    /// Advances the current pursuit/investigation by one step on a movement-clock wake;
+    /// no decisions run.
+    /// </summary>
+    public void ContinueMove()
+    {
+        if (!TryGetMoveWake(out var nextMove) || Core.TickCount - nextMove < 0)
+        {
+            return;
+        }
+
+        if (_moveIntentTarget != null)
+        {
+            ApproachTarget(_moveIntentTarget, _moveIntentRange);
+        }
+        else
+        {
+            MoveToPoint(_moveIntentPoint, _moveIntentRange);
+        }
+    }
+
+    public virtual bool MoveTo(Mobile m, int range)
+    {
+        if (Mobile.Deleted || Mobile.DisallowAllMoves || m?.Deleted != false)
+        {
+            LastApproach = ApproachOutcome.InvalidGoal;
+            ClearMoveIntent();
+            return false;
+        }
 
         if (Mobile.InRange(m, range))
         {
-            Path = null;
+            LastApproach = ApproachOutcome.Arrived;
+            ResetApproach();
+            ClearMoveIntent();
             return true;
         }
 
-        if (UseGroupMovement(m))
+        if (UseGroupMovement(m, range))
         {
-            return MoveToWithGroup(this, m, shouldRun, range);
+            return MoveToWithGroup(this, m, range);
         }
 
-        if (Path == null && Mobile.InLOS(m) && DoMove(Mobile.GetDirectionTo(m), true))
-        {
-            return true;
-        }
-
-        if (Path?.Goal != m)
-        {
-            Path = new PathFollower(Mobile, m) { Mover = DoMoveImpl };
-        }
-
-        if (Path.Follow(shouldRun, 1))
-        {
-            Path = null;
-            return true;
-        }
-
-        return false;
+        return ApproachTarget(m, range);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -315,15 +640,40 @@ public abstract partial class BaseAI
         Mobile.ControlTarget == Mobile.ControlMaster &&
         Mobile.Combatant == null;
 
-    private bool MoveToWithCollisionAvoidance(Mobile target, bool run, int range)
+    // Following its master, or guarding from outside guard range. FollowMoveSpeed caps the step
+    // delay while this holds.
+    public bool IsPacingToMaster()
     {
-        var distance = (int)Mobile.GetDistanceToSqrt(target);
+        if (!Mobile.Controlled || Mobile.Combatant != null)
+        {
+            return false;
+        }
 
-        var shouldRun = run && distance > 5;
+        return Mobile.ControlOrder switch
+        {
+            OrderType.Follow => Mobile.ControlTarget == Mobile.ControlMaster,
+            OrderType.Guard  => Mobile.ControlMaster?.Deleted == false &&
+                                (int)Mobile.GetDistanceToSqrt(Mobile.ControlMaster) > GuardRange,
+            _                => false
+        };
+    }
 
+    // A pet executing a movement order outside combat; its order handler owns its speed.
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool IsObeyingMoveOrder() =>
+        Mobile.Controlled &&
+        Mobile.Combatant == null &&
+        Mobile.ControlOrder is OrderType.Come or OrderType.Follow or OrderType.Guard;
+
+    private bool MoveToWithCollisionAvoidance(Mobile target, int range)
+    {
         var direction = Mobile.GetDirectionTo(target);
 
-        if (DoMove(direction, true))
+        // Wall-slide auto-turns must not count as progress, or a creature pinned on
+        // geometry reports success forever.
+        var res = DoMoveImpl(direction, true);
+
+        if (res is MoveResult.Success or MoveResult.BadState)
         {
             return true;
         }
@@ -332,37 +682,29 @@ public abstract partial class BaseAI
         {
             var clockwise = (Direction)(((int)direction + i) % 8);
 
-            if (DoMove(clockwise, true))
+            if (DoMoveImpl(clockwise, true) == MoveResult.Success)
             {
                 return true;
             }
 
             var counterclockwise = (Direction)(((int)direction - i + 8) % 8);
 
-            if (DoMove(counterclockwise, true))
+            if (DoMoveImpl(counterclockwise, true) == MoveResult.Success)
             {
                 return true;
             }
         }
 
-        if (Path?.Goal != target)
-        {
-            Path = new PathFollower(Mobile, target) { Mover = DoMoveImpl };
-        }
-
-        if (Path.Follow(shouldRun, 1))
-        {
-            Path = null;
-            return true;
-        }
-
-        return false;
+        // Tactical sidesteps exhausted — route around the obstacle via the centralized
+        // approach primitive (persistent PathFollower, no oscillation).
+        return ApproachTarget(target, range);
     }
 
-    public virtual bool WalkMobileRange(Mobile m, int iSteps, bool run, int iWantDistMin, int iWantDistMax)
+    public virtual bool WalkMobileRange(Mobile m, int iSteps, int iWantDistMin, int iWantDistMax)
     {
         if (Mobile.Deleted || Mobile.DisallowAllMoves || m == null)
         {
+            LastApproach = ApproachOutcome.InvalidGoal;
             return false;
         }
 
@@ -370,14 +712,13 @@ public abstract partial class BaseAI
         {
             var iCurrDist = (int)Mobile.GetDistanceToSqrt(m);
 
-            var shouldRun = run && iCurrDist > 5;
-
             if (iCurrDist >= iWantDistMin && iCurrDist <= iWantDistMax)
             {
+                LastApproach = ApproachOutcome.Arrived;
                 return true;
             }
 
-            if (!MoveTowardsOrAwayFrom(m, shouldRun, iCurrDist, iWantDistMax))
+            if (!MoveTowardsOrAwayFrom(m, iCurrDist, iWantDistMax))
             {
                 return false;
             }
@@ -388,40 +729,19 @@ public abstract partial class BaseAI
         return dist >= iWantDistMin && dist <= iWantDistMax;
     }
 
-    private bool MoveTowardsOrAwayFrom(Mobile m, bool run, int iCurrDist, int iWantDistMax)
+    private bool MoveTowardsOrAwayFrom(Mobile m, int iCurrDist, int iWantDistMax)
     {
-        var shouldRun = run && iCurrDist > 5;
-
-        var needCloser = iCurrDist > iWantDistMax;
-
-        if (needCloser && m != null && Path?.Goal == m)
+        if (iCurrDist > iWantDistMax)
         {
-            if (Path.Follow(shouldRun, 1))
-            {
-                Path = null;
-                return true;
-            }
+            // Too far: approach via the centralized progress-based primitive.
+            return ApproachTarget(m, iWantDistMax);
         }
-        else
+
+        // Too close: back away. Retreat keeps the simple greedy behavior (out of scope).
+        if (DoMove(m.GetDirectionTo(Mobile), true))
         {
-            var dirTo = needCloser ? Mobile.GetDirectionTo(m, shouldRun) : m.GetDirectionTo(Mobile, shouldRun);
-
-            if (DoMove(dirTo, true))
-            {
-                Path = null;
-                return true;
-            }
-
-            if (needCloser)
-            {
-                Path = new PathFollower(Mobile, m) { Mover = DoMoveImpl };
-
-                if (Path.Follow(shouldRun, 1))
-                {
-                    Path = null;
-                    return true;
-                }
-            }
+            Path = null;
+            return true;
         }
 
         return false;

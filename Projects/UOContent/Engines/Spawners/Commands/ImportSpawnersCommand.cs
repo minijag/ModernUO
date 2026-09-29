@@ -117,10 +117,10 @@ public static class ImportSpawnersCommand
         ref int totalFailures
     )
     {
-        XmlDocument doc = new XmlDocument();
+        var doc = new XmlDocument();
         doc.Load(file.FullName);
 
-        XmlElement root = doc["spawners"];
+        var root = doc["spawners"];
 
         if (root == null)
         {
@@ -132,15 +132,15 @@ public static class ImportSpawnersCommand
         {
             try
             {
-                int count = int.Parse(Utility.GetText(node["count"], "1"));
-                int homeRange = int.Parse(Utility.GetText(node["homerange"], "4"));
+                var count = int.Parse(Utility.GetText(node["count"], "1"));
+                var homeRange = int.Parse(Utility.GetText(node["homerange"], "4"));
 
-                int walkingRange = int.Parse(Utility.GetText(node["walkingrange"], "-1"));
+                var walkingRange = int.Parse(Utility.GetText(node["walkingrange"], "-1"));
 
-                int team = int.Parse(Utility.GetText(node["team"], "0"));
+                var team = int.Parse(Utility.GetText(node["team"], "0"));
 
-                TimeSpan maxDelay = TimeSpan.Parse(Utility.GetText(node["maxdelay"], "10:00"));
-                TimeSpan minDelay = TimeSpan.Parse(Utility.GetText(node["mindelay"], "05:00"));
+                var maxDelay = TimeSpan.Parse(Utility.GetText(node["maxdelay"], "10:00"));
+                var minDelay = TimeSpan.Parse(Utility.GetText(node["mindelay"], "05:00"));
                 var creaturesNameNode = node["creaturesname"];
                 List<string> creatureNames = [];
                 if (creaturesNameNode != null)
@@ -154,11 +154,11 @@ public static class ImportSpawnersCommand
                     }
                 }
 
-                string name = Utility.GetText(node["name"], "Spawner");
-                Point3D location = Point3D.Parse(Utility.GetText(node["location"], "Error"));
-                Map map = Map.Parse(Utility.GetText(node["map"], "Error"));
+                var name = Utility.GetText(node["name"], "Spawner");
+                var location = Point3D.Parse(Utility.GetText(node["location"], "Error"));
+                var map = Map.Parse(Utility.GetText(node["map"], "Error"));
 
-                Spawner spawner = new Spawner(count, minDelay, maxDelay, team, homeRange, creatureNames.ToArray());
+                var spawner = new Spawner(count, minDelay, maxDelay, team, spawnedNames: creatureNames.ToArray());
                 if (walkingRange >= 0)
                 {
                     spawner.WalkingRange = walkingRange;
@@ -166,6 +166,7 @@ public static class ImportSpawnersCommand
 
                 spawner.Name = name;
                 spawner.MoveToWorld(location, map);
+                spawner.HomeRange = homeRange;
                 if (spawner.Map == Map.Internal)
                 {
                     spawner.Delete();
@@ -189,6 +190,15 @@ public static class ImportSpawnersCommand
         }
     }
 
+    // Test seam: wraps ImportJsonSpawners without requiring a live Mobile (from = null is safe
+    // because from is only used in the JsonException path, which won't be hit for valid files).
+    internal static void ImportFile(FileInfo file, Dictionary<Guid, ISpawner> allSpawners)
+    {
+        var generated = 0;
+        var failures = 0;
+        ImportJsonSpawners(null, file, allSpawners, ref generated, ref failures);
+    }
+
     private static void ImportJsonSpawners(
         Mobile from,
         FileInfo file,
@@ -197,71 +207,89 @@ public static class ImportSpawnersCommand
         ref int totalFailures
     )
     {
-        var options = JsonConfig.GetOptions();
+        List<SpawnerDto> dtos;
         try
         {
-            var spawners = JsonConfig.Deserialize<List<DynamicJson>>(file.FullName);
-            using var queue = PooledRefQueue<Item>.Create();
-            for (var i = 0; i < spawners.Count; i++)
-            {
-                var json = spawners[i];
-                var type = AssemblyHandler.FindTypeByName(json.Type);
-
-                if (type == null || !typeof(BaseSpawner).IsAssignableFrom(type))
-                {
-                    logger.Error($"Invalid spawner type {json.Type ?? "(-null-)"} ({i}).");
-                    totalFailures++;
-                    continue;
-                }
-
-                json.GetProperty("location", options, out Point3D location);
-                json.GetProperty("map", options, out Map map);
-
-                // Delete all spawners at this location.
-                // Probably shouldn't do this outside of migrations? Is there a better way to find/fix spawners?
-                foreach (var spawner in map.GetItemsAt<BaseSpawner>(location))
-                {
-                    if (spawner.GetType() == type)
-                    {
-                        queue.Enqueue(spawner);
-                        allSpawners.Remove(spawner.Guid);
-                    }
-                }
-
-                while (queue.Count > 0)
-                {
-                    queue.Dequeue().Delete();
-                }
-
-                try
-                {
-                    var spawner = type.CreateInstance<ISpawner>(json, options);
-
-                    spawner!.MoveToWorld(location, map);
-                    spawner!.Respawn();
-
-                    if (allSpawners.Remove(spawner.Guid, out var oldSpawner))
-                    {
-                        oldSpawner.Delete();
-                    }
-
-                    allSpawners.Add(spawner.Guid, spawner);
-                    totalGenerated++;
-                }
-                catch (Exception ex)
-                {
-                    json.GetProperty("guid", options, out Guid guid);
-                    TraceException(ex, $"Failed to generate spawner {guid}.");
-
-                    totalFailures++;
-                }
-            }
+            // DTO deserialization constructs NO world objects — a malformed file fails as GC only.
+            dtos = JsonConfig.Deserialize<List<SpawnerDto>>(file.FullName, SpawnerJsonSerializer.Options);
         }
         catch (JsonException)
         {
-            from.SendMessage(
+            from?.SendMessage(
                 $"GenerateSpawners: Exception parsing {file.FullName}, file may not be in the correct format."
             );
+            return;
+        }
+
+        if (dtos == null || dtos.Count == 0)
+        {
+            from?.SendMessage($"GenerateSpawners: Skipping empty spawner file {file.Name}");
+            logger.Information("{User} is skipping empty spawner file {File}", from, file.FullName);
+            return;
+        }
+
+        using var queue = PooledRefQueue<Item>.Create();
+        for (var i = 0; i < dtos.Count; i++)
+        {
+            var dto = dtos[i];
+            var location = dto.Location;
+            var map = dto.Map;
+
+            if (map == null || map == Map.Internal)
+            {
+                logger.Error("Spawner {Guid} ({Index}) has no valid map; skipping.", dto.Guid, i);
+                totalFailures++;
+                continue;
+            }
+
+            BaseSpawner spawner;
+            try
+            {
+                spawner = dto.ToSpawner(); // constructs the single Item, now referenced
+            }
+            catch (Exception ex)
+            {
+                TraceException(ex, $"Failed to build spawner {dto.Guid}.");
+                totalFailures++;
+                continue;
+            }
+
+            var type = spawner.GetType();
+
+            // Delete all existing spawners of the same concrete type at this location.
+            foreach (var existing in map.GetItemsAt<BaseSpawner>(location))
+            {
+                if (existing.GetType() == type && existing != spawner)
+                {
+                    queue.Enqueue(existing);
+                    allSpawners.Remove(existing.Guid);
+                }
+            }
+
+            while (queue.Count > 0)
+            {
+                queue.Dequeue().Delete();
+            }
+
+            try
+            {
+                spawner.MoveToWorld(location, map);
+                spawner.Respawn();
+
+                if (allSpawners.Remove(spawner.Guid, out var oldSpawner))
+                {
+                    oldSpawner.Delete();
+                }
+
+                allSpawners.Add(spawner.Guid, spawner);
+                totalGenerated++;
+            }
+            catch (Exception ex)
+            {
+                TraceException(ex, $"Failed to generate spawner {spawner.Guid}.");
+                spawner.Delete();
+                totalFailures++;
+            }
         }
     }
 
@@ -302,9 +330,9 @@ public static class ImportSpawnersCommand
     {
         var lines = File.ReadAllLines(file.FullName);
 
-        TimeSpan minTimeOverride = TimeSpan.MinValue;
-        TimeSpan maxTimeOverride = TimeSpan.MinValue;
-        int mapIdOverride = -1;
+        var minTimeOverride = TimeSpan.MinValue;
+        var maxTimeOverride = TimeSpan.MinValue;
+        var mapIdOverride = -1;
         string spawnerIdOverride = null;
 
         for (var i = 0; i < lines.Length; i++)
@@ -347,7 +375,7 @@ public static class ImportSpawnersCommand
                             var maxDelay = GetTimeSpan(maxTimeOverride, parts[12]);
                             var homeRange = int.Parse(parts[14]);
 
-                            var spawner = new Spawner(totalCount, minDelay, maxDelay, 0, homeRange)
+                            var spawner = new Spawner(totalCount, minDelay, maxDelay)
                             {
                                 WalkingRange = int.Parse(parts[13]),
                                 Name = $"Spawner ({spawnerIdOverride ?? parts[15]})"
@@ -362,6 +390,7 @@ public static class ImportSpawnersCommand
                                 new Point3D(int.Parse(parts[7]), int.Parse(parts[8]), int.Parse(parts[9])),
                                 map
                             );
+                            spawner.HomeRange = homeRange;
 
                             spawner.Respawn();
                             allSpawners.Add(spawner.Guid, spawner);

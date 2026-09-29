@@ -4,9 +4,11 @@ using ModernUO.Serialization;
 using Server.Commands;
 using Server.Engines.Craft;
 using Server.Ethics;
+using Server.Mobiles;
 using Server.Multis;
 using Server.Network;
 using Server.Spells;
+using Server.Systems.FeatureFlags;
 using Server.Targeting;
 
 namespace Server.Items;
@@ -131,28 +133,19 @@ public partial class Spellbook : Item, ICraftable, ISlayer, IAosItem
     public virtual int BookOffset => 0;
     public virtual int BookCount => 64;
 
-    [CommandProperty(AccessLevel.GameMaster)]
-    [SerializableProperty(7)]
-    public ulong Content
+    [SerializableField(7, fieldChanged: nameof(OnContentChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    [InvalidateProperties]
+    private ulong _content;
+
+    private void OnContentChanged(ulong oldValue, ulong newValue)
     {
-        get => _content;
-        set
+        // This assignment will mark it as dirty
+        SpellCount = 0;
+        while (newValue > 0)
         {
-            if (_content != value)
-            {
-                _content = value;
-
-                // This assignment will mark it as dirty
-                SpellCount = 0;
-
-                while (value > 0)
-                {
-                    _spellCount += (int)(value & 0x1);
-                    value >>= 1;
-                }
-
-                InvalidateProperties();
-            }
+            _spellCount += (int)(newValue & 0x1);
+            newValue >>= 1;
         }
     }
 
@@ -304,6 +297,14 @@ public partial class Spellbook : Item, ICraftable, ISlayer, IAosItem
         if (!DesignContext.Check(from))
         {
             return; // They are customizing
+        }
+
+        // Early rejection by spell ID before instantiation
+        if (from is PlayerMobile { AccessLevel: < AccessLevel.Administrator }
+            && FeatureFlagManager.IsSpellBlocked(spellID, out var reason))
+        {
+            from.SendMessage(0x22, reason);
+            return;
         }
 
         var book = item as Spellbook;
@@ -667,127 +668,7 @@ public partial class Spellbook : Item, ICraftable, ISlayer, IAosItem
             }
         }
 
-        int prop;
-
-        if ((prop = _attributes.WeaponDamage) != 0)
-        {
-            list.Add(1060401, prop); // damage increase ~1_val~%
-        }
-
-        if ((prop = _attributes.DefendChance) != 0)
-        {
-            list.Add(1060408, prop); // defense chance increase ~1_val~%
-        }
-
-        if ((prop = _attributes.BonusDex) != 0)
-        {
-            list.Add(1060409, prop); // dexterity bonus ~1_val~
-        }
-
-        if ((prop = _attributes.EnhancePotions) != 0)
-        {
-            list.Add(1060411, prop); // enhance potions ~1_val~%
-        }
-
-        if ((prop = _attributes.CastRecovery) != 0)
-        {
-            list.Add(1060412, prop); // faster cast recovery ~1_val~
-        }
-
-        if ((prop = _attributes.CastSpeed) != 0)
-        {
-            list.Add(1060413, prop); // faster casting ~1_val~
-        }
-
-        if ((prop = _attributes.AttackChance) != 0)
-        {
-            list.Add(1060415, prop); // hit chance increase ~1_val~%
-        }
-
-        if ((prop = _attributes.BonusHits) != 0)
-        {
-            list.Add(1060431, prop); // hit point increase ~1_val~
-        }
-
-        if ((prop = _attributes.BonusInt) != 0)
-        {
-            list.Add(1060432, prop); // intelligence bonus ~1_val~
-        }
-
-        if ((prop = _attributes.LowerManaCost) != 0)
-        {
-            list.Add(1060433, prop); // lower mana cost ~1_val~%
-        }
-
-        if ((prop = _attributes.LowerRegCost) != 0)
-        {
-            list.Add(1060434, prop); // lower reagent cost ~1_val~%
-        }
-
-        if ((prop = _attributes.Luck) != 0)
-        {
-            list.Add(1060436, prop); // luck ~1_val~
-        }
-
-        if ((prop = _attributes.BonusMana) != 0)
-        {
-            list.Add(1060439, prop); // mana increase ~1_val~
-        }
-
-        if ((prop = _attributes.RegenMana) != 0)
-        {
-            list.Add(1060440, prop); // mana regeneration ~1_val~
-        }
-
-        if (_attributes.NightSight != 0)
-        {
-            list.Add(1060441); // night sight
-        }
-
-        if ((prop = _attributes.ReflectPhysical) != 0)
-        {
-            list.Add(1060442, prop); // reflect physical damage ~1_val~%
-        }
-
-        if ((prop = _attributes.RegenStam) != 0)
-        {
-            list.Add(1060443, prop); // stamina regeneration ~1_val~
-        }
-
-        if ((prop = _attributes.RegenHits) != 0)
-        {
-            list.Add(1060444, prop); // hit point regeneration ~1_val~
-        }
-
-        if (_attributes.SpellChanneling != 0)
-        {
-            list.Add(1060482); // spell channeling
-        }
-
-        if ((prop = _attributes.SpellDamage) != 0)
-        {
-            list.Add(1060483, prop); // spell damage increase ~1_val~%
-        }
-
-        if ((prop = _attributes.BonusStam) != 0)
-        {
-            list.Add(1060484, prop); // stamina increase ~1_val~
-        }
-
-        if ((prop = _attributes.BonusStr) != 0)
-        {
-            list.Add(1060485, prop); // strength bonus ~1_val~
-        }
-
-        if ((prop = _attributes.WeaponSpeed) != 0)
-        {
-            list.Add(1060486, prop); // swing speed increase ~1_val~%
-        }
-
-        if (Core.ML && (prop = _attributes.IncreasedKarmaLoss) != 0)
-        {
-            list.Add(1075210, prop); // Increased Karma Loss ~1val~%
-        }
+        _attributes.GetProperties(list);
 
         list.Add(1042886, _spellCount); // ~1_NUMBERS_OF_SPELLS~ Spells
     }

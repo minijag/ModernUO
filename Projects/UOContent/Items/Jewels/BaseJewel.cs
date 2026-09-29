@@ -18,7 +18,7 @@ public enum GemType
     Diamond
 }
 
-[SerializationGenerator(4, false)]
+[SerializationGenerator(5, false)]
 public abstract partial class BaseJewel : Item, ICraftable, IAosItem
 {
     [EncodedInt]
@@ -46,6 +46,11 @@ public abstract partial class BaseJewel : Item, ICraftable, IAosItem
     [SerializableField(6, setter: "private")]
     [SerializedCommandProperty(AccessLevel.GameMaster, canModify: true)]
     private AosSkillBonuses _skillBonuses;
+
+    [EncodedInt]
+    [SerializableField(7)]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private int _gemCount;
 
     public BaseJewel(int itemID, Layer layer) : base(itemID)
     {
@@ -88,16 +93,13 @@ public abstract partial class BaseJewel : Item, ICraftable, IAosItem
         }
     }
 
-    [SerializableProperty(2)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public CraftResource Resource
+    [SerializableField(2, fieldChanged: nameof(OnResourceChanged))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private CraftResource _resource;
+
+    private void OnResourceChanged(CraftResource oldValue, CraftResource newValue)
     {
-        get => _resource;
-        set
-        {
-            _resource = value;
-            Hue = CraftResources.GetHue(_resource);
-        }
+        Hue = CraftResources.GetHue(_resource);
     }
 
     public override int PhysicalResistance => Resistances.Physical;
@@ -183,8 +185,128 @@ public abstract partial class BaseJewel : Item, ICraftable, IAosItem
             }
         }
 
+        // T2A jewelry: read gem info from craft context (set by GemSelectTarget).
+        // The entire targeted gem stack is consumed and the piece is named by that
+        // count (e.g. "a 1000 diamond ring").
+        if (context is { PendingGemType: not GemType.None, PendingGemCount: > 0 })
+        {
+            var gemItemType = GetGemItemType(context.PendingGemType);
+            var gemCount = context.PendingGemCount;
+
+            if (gemItemType != null && from.Backpack?.ConsumeTotal(gemItemType, gemCount) == true)
+            {
+                GemType = context.PendingGemType;
+                GemCount = gemCount;
+            }
+            else
+            {
+                // Gems were no longer available (or unknown type): craft a plain piece
+                // rather than naming it for gems that were never consumed.
+                from.SendAsciiMessage("You lack the gemstones to set into this piece.");
+            }
+
+            context.PendingGemType = GemType.None;
+            context.PendingGemCount = 0;
+        }
+
         return 1;
     }
+
+    public override void OnSingleClick(Mobile from)
+    {
+        if (!Core.UOTD)
+        {
+            OnSingleClickPreUOTD(from);
+            return;
+        }
+
+        base.OnSingleClick(from);
+    }
+
+    public virtual void OnSingleClickPreUOTD(Mobile from)
+    {
+        var plural = _gemCount > 1;
+        string name;
+        if (this is WeddingRing)
+        {
+            name = $"a {Name}";
+        }
+        else
+        {
+            name = Name;
+
+            if (name == null)
+            {
+                var articleAnName = (TileData.ItemTable[ItemID].Flags & TileFlag.ArticleAn) != 0;
+                name = $"{(articleAnName ? "an" : "a")} {Localization.GetText(LabelNumber).ToLowerInvariant()}";
+            }
+        }
+
+        if (_gemType != GemType.None && _gemCount > 0)
+        {
+            var gemName = GetGemName(_gemType, plural);
+            LabelTo(from, plural
+                ? $"{name} with {_gemCount} {gemName}"
+                : $"{name} with {gemName}");
+        }
+        else
+        {
+            LabelTo(from, name);
+        }
+    }
+
+
+    private static string GetGemName(GemType type, bool plural = false) => type switch
+    {
+        GemType.StarSapphire when plural => "star sapphires",
+        GemType.StarSapphire             => "a star sapphire",
+        GemType.Emerald      when plural => "emeralds",
+        GemType.Emerald                  => "an emerald",
+        GemType.Sapphire     when plural => "sapphires",
+        GemType.Sapphire                 => "a sapphire",
+        GemType.Ruby         when plural => "rubies",
+        GemType.Ruby                     => "a ruby",
+        GemType.Citrine      when plural => "citrines",
+        GemType.Citrine                  => "a citrine",
+        GemType.Amethyst     when plural => "amethysts",
+        GemType.Amethyst                 => "an amethyst",
+        GemType.Tourmaline   when plural => "tourmalines",
+        GemType.Tourmaline               => "a tourmaline",
+        GemType.Amber        when plural => "ambers",
+        GemType.Amber                    => "an amber",
+        GemType.Diamond      when plural => "diamonds",
+        GemType.Diamond                  => "a diamond",
+        _                    when plural => "gems",
+        _                                => "a gem"
+    };
+
+    internal static GemType GetGemType(Item item) => item switch
+    {
+        StarSapphire => GemType.StarSapphire,
+        Emerald      => GemType.Emerald,
+        Sapphire     => GemType.Sapphire,
+        Ruby         => GemType.Ruby,
+        Citrine      => GemType.Citrine,
+        Amethyst     => GemType.Amethyst,
+        Tourmaline   => GemType.Tourmaline,
+        Amber        => GemType.Amber,
+        Diamond      => GemType.Diamond,
+        _            => GemType.None
+    };
+
+    internal static Type GetGemItemType(GemType type) => type switch
+    {
+        GemType.StarSapphire => typeof(StarSapphire),
+        GemType.Emerald      => typeof(Emerald),
+        GemType.Sapphire     => typeof(Sapphire),
+        GemType.Ruby         => typeof(Ruby),
+        GemType.Citrine      => typeof(Citrine),
+        GemType.Amethyst     => typeof(Amethyst),
+        GemType.Tourmaline   => typeof(Tourmaline),
+        GemType.Amber        => typeof(Amber),
+        GemType.Diamond      => typeof(Diamond),
+        _                    => null
+    };
 
     public override void OnAfterDuped(Item newItem)
     {
@@ -264,125 +386,7 @@ public abstract partial class BaseJewel : Item, ICraftable, IAosItem
             list.Add(1061078, prop); // artifact rarity ~1_val~
         }
 
-        if ((prop = Attributes.WeaponDamage) != 0)
-        {
-            list.Add(1060401, prop); // damage increase ~1_val~%
-        }
-
-        if ((prop = Attributes.DefendChance) != 0)
-        {
-            list.Add(1060408, prop); // defense chance increase ~1_val~%
-        }
-
-        if ((prop = Attributes.BonusDex) != 0)
-        {
-            list.Add(1060409, prop); // dexterity bonus ~1_val~
-        }
-
-        if ((prop = Attributes.EnhancePotions) != 0)
-        {
-            list.Add(1060411, prop); // enhance potions ~1_val~%
-        }
-
-        if ((prop = Attributes.CastRecovery) != 0)
-        {
-            list.Add(1060412, prop); // faster cast recovery ~1_val~
-        }
-
-        if ((prop = Attributes.CastSpeed) != 0)
-        {
-            list.Add(1060413, prop); // faster casting ~1_val~
-        }
-
-        if ((prop = Attributes.AttackChance) != 0)
-        {
-            list.Add(1060415, prop); // hit chance increase ~1_val~%
-        }
-
-        if ((prop = Attributes.BonusHits) != 0)
-        {
-            list.Add(1060431, prop); // hit point increase ~1_val~
-        }
-
-        if ((prop = Attributes.BonusInt) != 0)
-        {
-            list.Add(1060432, prop); // intelligence bonus ~1_val~
-        }
-
-        if ((prop = Attributes.LowerManaCost) != 0)
-        {
-            list.Add(1060433, prop); // lower mana cost ~1_val~%
-        }
-
-        if ((prop = Attributes.LowerRegCost) != 0)
-        {
-            list.Add(1060434, prop); // lower reagent cost ~1_val~%
-        }
-
-        if ((prop = Attributes.Luck) != 0)
-        {
-            list.Add(1060436, prop); // luck ~1_val~
-        }
-
-        if ((prop = Attributes.BonusMana) != 0)
-        {
-            list.Add(1060439, prop); // mana increase ~1_val~
-        }
-
-        if ((prop = Attributes.RegenMana) != 0)
-        {
-            list.Add(1060440, prop); // mana regeneration ~1_val~
-        }
-
-        if (Attributes.NightSight != 0)
-        {
-            list.Add(1060441); // night sight
-        }
-
-        if ((prop = Attributes.ReflectPhysical) != 0)
-        {
-            list.Add(1060442, prop); // reflect physical damage ~1_val~%
-        }
-
-        if ((prop = Attributes.RegenStam) != 0)
-        {
-            list.Add(1060443, prop); // stamina regeneration ~1_val~
-        }
-
-        if ((prop = Attributes.RegenHits) != 0)
-        {
-            list.Add(1060444, prop); // hit point regeneration ~1_val~
-        }
-
-        if (Attributes.SpellChanneling != 0)
-        {
-            list.Add(1060482); // spell channeling
-        }
-
-        if ((prop = Attributes.SpellDamage) != 0)
-        {
-            list.Add(1060483, prop); // spell damage increase ~1_val~%
-        }
-
-        if ((prop = Attributes.BonusStam) != 0)
-        {
-            list.Add(1060484, prop); // stamina increase ~1_val~
-        }
-
-        if ((prop = Attributes.BonusStr) != 0)
-        {
-            list.Add(1060485, prop); // strength bonus ~1_val~
-        }
-
-        if ((prop = Attributes.WeaponSpeed) != 0)
-        {
-            list.Add(1060486, prop); // swing speed increase ~1_val~%
-        }
-
-        if (Core.ML && (prop = Attributes.IncreasedKarmaLoss) != 0)
-        {
-            list.Add(1075210, prop); // Increased Karma Loss ~1val~%
-        }
+        Attributes.GetProperties(list);
 
         AddResistanceProperties(list);
 
@@ -404,6 +408,18 @@ public abstract partial class BaseJewel : Item, ICraftable, IAosItem
         _resistances.Deserialize(reader);
         _skillBonuses = new AosSkillBonuses(this);
         _skillBonuses.Deserialize(reader);
+    }
+
+    private void MigrateFrom(V4Content content)
+    {
+        _maxHitPoints = content.MaxHitPoints;
+        _hitPoints = content.HitPoints;
+        _resource = content.Resource;
+        _gemType = content.GemType;
+        _attributes = content.Attributes;
+        _resistances = content.Resistances;
+        _skillBonuses = content.SkillBonuses;
+        // _gemCount defaults to 0
     }
 
     [AfterDeserialization]

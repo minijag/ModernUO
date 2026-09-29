@@ -37,17 +37,17 @@ public partial class PlantItem : Item, ISecurable
 
     [SerializedIgnoreDupe]
     [SerializableField(0)]
+    [SaveFlag(nameof(ShouldSerializeSecureLevel))]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
     private SecureLevel _level;
 
-    [SerializableFieldSaveFlag(0)]
     private bool ShouldSerializeSecureLevel() => (int)_level != 0;
 
     [SerializedIgnoreDupe]
     [SerializableField(5, setter: "private")]
+    [SaveFlag(nameof(ShouldSerializePlantSystem))]
     private PlantSystem _plantSystem;
 
-    [SerializableFieldSaveFlag(5)]
     private bool ShouldSerializePlantSystem() => _plantStatus < PlantStatus.DecorativePlant;
 
     // For clients older than 7.0.12.0
@@ -73,7 +73,15 @@ public partial class PlantItem : Item, ISecurable
     {
         get
         {
-            InitializePropertyList(_oldClientPropertyList ??= new ObjectPropertyList(this));
+            // Build once, like Item.PropertyList. Initializing on every read appended another copy
+            // of every property to the same list. InvalidateProperties rebuilds it, Reset first.
+            if (_oldClientPropertyList == null)
+            {
+                var list = new ObjectPropertyList(this);
+                _oldClientPropertyList = list;
+                InitializePropertyList(list);
+            }
+
             return _oldClientPropertyList;
         }
     }
@@ -82,6 +90,7 @@ public partial class PlantItem : Item, ISecurable
 
     [CommandProperty(AccessLevel.GameMaster)]
     [SerializableProperty(1)]
+    [SaveFlag(nameof(ShouldSerializePlantStatus))]
     public PlantStatus PlantStatus
     {
         get => _plantStatus;
@@ -95,6 +104,7 @@ public partial class PlantItem : Item, ISecurable
             var ratio = PlantSystem != null ? (double)PlantSystem.Hits / PlantSystem.MaxHits : 1.0;
 
             _plantStatus = value;
+            this.MarkDirty();
 
             if (_plantStatus >= PlantStatus.DecorativePlant)
             {
@@ -120,53 +130,38 @@ public partial class PlantItem : Item, ISecurable
         }
     }
 
-    [SerializableFieldSaveFlag(1)]
     private bool ShouldSerializePlantStatus() => _plantStatus != PlantStatus.BowlOfDirt;
 
-    [SerializableProperty(2)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public PlantType PlantType
+    [SerializableField(2, fieldChanged: nameof(OnPlantTypeChanged))]
+    [SaveFlag(nameof(ShouldSerializePlantType))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private PlantType _plantType;
+
+    private void OnPlantTypeChanged(PlantType oldValue, PlantType newValue)
     {
-        get => _plantType;
-        set
-        {
-            _plantType = value;
-            Update();
-        }
+        Update();
     }
 
-    [SerializableFieldSaveFlag(2)]
     private bool ShouldSerializePlantType() => (int)_plantType != 0;
 
-    [SerializableProperty(3)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public PlantHue PlantHue
+    [SerializableField(3, fieldChanged: nameof(OnPlantHueChanged))]
+    [SaveFlag(nameof(ShouldSerializePlantHue))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    private PlantHue _plantHue;
+
+    private void OnPlantHueChanged(PlantHue oldValue, PlantHue newValue)
     {
-        get => _plantHue;
-        set
-        {
-            _plantHue = value;
-            Update();
-        }
+        Update();
     }
 
-    [SerializableFieldSaveFlag(3)]
     private bool ShouldSerializePlantHue() => _plantHue != PlantHue.None;
 
-    [SerializableProperty(4)]
-    [CommandProperty(AccessLevel.GameMaster)]
-    public bool ShowType
-    {
-        get => _showType;
-        set
-        {
-            _showType = value;
-            InvalidateProperties();
-            this.MarkDirty();
-        }
-    }
+    [SerializableField(4)]
+    [SaveFlag(nameof(ShouldSerializeShowType))]
+    [SerializedCommandProperty(AccessLevel.GameMaster)]
+    [InvalidateProperties]
+    private bool _showType;
 
-    [SerializableFieldSaveFlag(4)]
     private bool ShouldSerializeShowType() => _showType;
 
     [CommandProperty(AccessLevel.GameMaster)]
@@ -484,7 +479,7 @@ public partial class PlantItem : Item, ISecurable
             return;
         }
 
-        from.SendGump(new MainPlantGump(this));
+        MainPlantGump.DisplayTo(from, this);
     }
 
     public void PlantSeed(Mobile from, Seed seed)

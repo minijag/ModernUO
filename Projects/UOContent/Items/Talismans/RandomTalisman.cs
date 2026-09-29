@@ -1,11 +1,14 @@
+using ModernUO.Serialization;
+
 namespace Server.Items;
 
-public class RandomTalisman : BaseTalisman
+[SerializationGenerator(0, false)]
+public partial class RandomTalisman : BaseTalisman
 {
     [Constructible]
     public RandomTalisman() : base(GetRandomItemID())
     {
-        Summoner = GetRandomSummoner();
+        Summoner = GetRandomSummoner(this);
 
         if (Summoner.IsEmpty)
         {
@@ -33,29 +36,11 @@ public class RandomTalisman : BaseTalisman
 
         Blessed = GetRandomBlessed();
         Slayer = GetRandomSlayer();
-        Protection = GetRandomProtection();
-        Killer = GetRandomKiller();
+        Protection = GetRandomProtection(this);
+        Killer = GetRandomKiller(this);
         Skill = GetRandomSkill();
         ExceptionalBonus = GetRandomExceptional();
         SuccessBonus = GetRandomSuccessful();
         Charges = MaxCharges;
-    }
-
-    public RandomTalisman(Serial serial) : base(serial)
-    {
-    }
-
-    public override void Serialize(IGenericWriter writer)
-    {
-        base.Serialize(writer);
-
-        writer.Write(0); // version
-    }
-
-    public override void Deserialize(IGenericReader reader)
-    {
-        base.Deserialize(reader);
-
-        var version = reader.ReadInt();
     }
 }

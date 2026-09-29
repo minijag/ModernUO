@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using ModernUO.CodeGeneratedEvents;
-using Server.Collections;
 using Server.Logging;
 using Server.Mobiles;
 
@@ -99,7 +98,7 @@ public class VirtueSystem : GenericPersistence
         for (var i = 0; i < contextCount; i++)
         {
             var player = reader.ReadEntity<PlayerMobile>();
-            var virtues = new VirtueContext();
+            var virtues = new VirtueContext(player);
             virtues.Deserialize(reader);
 
             if (player != null && virtues.IsUsed())
@@ -119,10 +118,10 @@ public class VirtueSystem : GenericPersistence
             return null;
         }
 
-        ref VirtueContext context = ref CollectionsMarshal.GetValueRefOrAddDefault(_playerVirtues, from, out bool exists);
+        ref var context = ref CollectionsMarshal.GetValueRefOrAddDefault(_playerVirtues, from, out var exists);
         if (!exists)
         {
-            context = new VirtueContext();
+            context = new VirtueContext(from);
         }
 
         return context;
@@ -372,8 +371,6 @@ public class VirtueSystem : GenericPersistence
                 return;
             }
 
-            using var queue = PooledRefQueue<Mobile>.Create();
-
             // This is not particularly efficient. If it gets too slow, then use a different architecture.
             foreach (var (player, virtues) in _playerVirtues)
             {
@@ -381,13 +378,8 @@ public class VirtueSystem : GenericPersistence
 
                 if (!virtues.IsUsed())
                 {
-                    queue.Enqueue(player);
+                    _playerVirtues.Remove(player);
                 }
-            }
-
-            while (queue.Count > 0)
-            {
-                _playerVirtues.Remove((PlayerMobile)queue.Dequeue());
             }
         }
 

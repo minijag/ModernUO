@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2025 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: SpanWriter.cs                                                   *
  *                                                                       *
@@ -273,8 +273,7 @@ public ref struct SpanWriter
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteAscii(char chr) => Write((byte)chr);
 
-    public void WriteAscii(
-        ref RawInterpolatedStringHandler handler)
+    public void WriteAscii(ref RawInterpolatedStringHandler handler)
     {
         Write(handler.Text, Encoding.ASCII);
         handler.Clear();
@@ -289,9 +288,22 @@ public ref struct SpanWriter
         handler.Clear();
     }
 
-    public void Write(
-        Encoding encoding,
+    public void WriteLatin1(ref RawInterpolatedStringHandler handler)
+    {
+        Write(handler.Text, Encoding.Latin1);
+        handler.Clear();
+    }
+
+    public void WriteLatin1(
+        IFormatProvider? formatProvider,
+        [InterpolatedStringHandlerArgument("formatProvider")]
         ref RawInterpolatedStringHandler handler)
+    {
+        Write(handler.Text, Encoding.Latin1);
+        handler.Clear();
+    }
+
+    public void Write(Encoding encoding, ref RawInterpolatedStringHandler handler)
     {
         Write(handler.Text, encoding);
         handler.Clear();
@@ -340,53 +352,66 @@ public ref struct SpanWriter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteLittleUni(string value) => Write(value, TextEncoding.UnicodeLE);
+    public void WriteLittleUni(ReadOnlySpan<char> value) => Write(value, TextEncoding.UnicodeLE);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteLittleUniNull(string value)
+    public void WriteLittleUniNull(ReadOnlySpan<char> value)
     {
         Write(value, TextEncoding.UnicodeLE);
         Write((ushort)0);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteLittleUni(string value, int fixedLength) => Write(value, TextEncoding.UnicodeLE, fixedLength);
+    public void WriteLittleUni(ReadOnlySpan<char> value, int fixedLength) => Write(value, TextEncoding.UnicodeLE, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteBigUni(string value) => Write(value, TextEncoding.Unicode);
+    public void WriteBigUni(ReadOnlySpan<char> value) => Write(value, TextEncoding.Unicode);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteBigUniNull(string value)
+    public void WriteBigUniNull(ReadOnlySpan<char> value)
     {
         Write(value, TextEncoding.Unicode);
         Write((ushort)0); // '\0'
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteBigUni(string value, int fixedLength) => Write(value, TextEncoding.Unicode, fixedLength);
+    public void WriteBigUni(ReadOnlySpan<char> value, int fixedLength) => Write(value, TextEncoding.Unicode, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteUTF8(string value) => Write(value, TextEncoding.UTF8);
+    public void WriteUTF8(ReadOnlySpan<char> value) => Write(value, TextEncoding.UTF8);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteUTF8Null(string value)
+    public void WriteUTF8Null(ReadOnlySpan<char> value)
     {
         Write(value, TextEncoding.UTF8);
         Write((byte)0); // '\0'
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteAscii(string value) => Write(value, Encoding.ASCII);
+    public void WriteAscii(ReadOnlySpan<char> value) => Write(value, Encoding.ASCII);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteAsciiNull(string value)
+    public void WriteAsciiNull(ReadOnlySpan<char> value)
     {
         Write(value, Encoding.ASCII);
         Write((byte)0); // '\0'
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void WriteAscii(string value, int fixedLength) => Write(value, Encoding.ASCII, fixedLength);
+    public void WriteAscii(ReadOnlySpan<char> value, int fixedLength) => Write(value, Encoding.ASCII, fixedLength);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteLatin1(ReadOnlySpan<char> value) => Write(value, Encoding.Latin1);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteLatin1(ReadOnlySpan<char> value, int fixedLength) => Write(value, Encoding.Latin1, fixedLength);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteLatin1Null(ReadOnlySpan<char> value)
+    {
+        Write(value, Encoding.Latin1);
+        Write((byte)0); // '\0'
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear(int count)

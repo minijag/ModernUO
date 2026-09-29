@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2025 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: Map.ClientByDistanceEnumerator.cs                               *
  *                                                                       *
@@ -147,7 +147,7 @@ public partial class Map
                 throw new InvalidOperationException(CollectionThrowStrings.InvalidOperation_EnumFailedVersion);
             }
 
-            NetState current = _current;
+            var current = _current;
 
             while (true)
             {

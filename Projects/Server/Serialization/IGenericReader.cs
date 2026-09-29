@@ -1,6 +1,6 @@
 /*************************************************************************
  * ModernUO                                                              *
- * Copyright 2019-2024 - ModernUO Development Team                       *
+ * Copyright 2019-2026 - ModernUO Development Team                       *
  * Email: hi@modernuo.com                                                *
  * File: IGenericReader.cs                                               *
  *                                                                       *
@@ -43,6 +43,12 @@ public interface IGenericReader
     DateTime ReadDateTime() => new(ReadLong(), DateTimeKind.Utc);
     TimeSpan ReadTimeSpan() => new(ReadLong());
 
+    /// <summary>
+    /// Decodes a legacy delta-time value. Only for reading old-version payloads (version
+    /// fallbacks and migration replays) — current formats store anchored time and read it
+    /// with <see cref="ReadAnchoredTime" />. <see cref="IGenericWriter.WriteDeltaTime" /> is
+    /// obsolete: no current-version format may write delta time.
+    /// </summary>
     DateTime ReadDeltaTime()
     {
         return ReadLong() switch
@@ -51,6 +57,37 @@ public interface IGenericReader
             long.MaxValue => DateTime.MaxValue,
             var delta     => new DateTime(delta + DateTime.UtcNow.Ticks, DateTimeKind.Utc)
         };
+    }
+
+    /// <summary>
+    /// Elapsed time between the loaded save starting and this load, applied by
+    /// <see cref="ReadAnchoredTime" />. Zero when the source carries no anchor.
+    /// </summary>
+    TimeSpan AnchoredTimeShift => TimeSpan.Zero;
+
+    DateTime ReadAnchoredTime()
+    {
+        var value = ReadDateTime();
+
+        if (value == DateTime.MinValue || value == DateTime.MaxValue)
+        {
+            return value;
+        }
+
+        var shift = AnchoredTimeShift;
+        if (shift == TimeSpan.Zero)
+        {
+            return value;
+        }
+
+        var ticks = value.Ticks + shift.Ticks;
+
+        if (ticks >= DateTime.MaxValue.Ticks)
+        {
+            return DateTime.MaxValue;
+        }
+
+        return ticks <= 0 ? DateTime.MinValue : new DateTime(ticks, DateTimeKind.Utc);
     }
     decimal ReadDecimal() => new([ReadInt(), ReadInt(), ReadInt(), ReadInt()]);
     int ReadEncodedInt()
@@ -70,7 +107,7 @@ public interface IGenericReader
     }
     IPAddress ReadIPAddress()
     {
-        byte length = ReadByte();
+        var length = ReadByte();
         // Either 2 ushorts, or 8 ushorts
         Span<byte> integer = stackalloc byte[length];
         Read(integer);
@@ -120,8 +157,8 @@ public interface IGenericReader
 
     public BitArray ReadBitArray()
     {
-        int bitLength = ReadEncodedInt();
-        int byteLength = (bitLength + 7) / 8;
+        var bitLength = ReadEncodedInt();
+        var byteLength = (bitLength + 7) / 8;
 
         var buffer = ArrayPool<byte>.Shared.Rent(byteLength);
         try

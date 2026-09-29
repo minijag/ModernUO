@@ -191,7 +191,7 @@ namespace Server.Guilds
 
         public void TurnToMember(Guild g)
         {
-            if (g.Alliance != this || !m_PendingMembers.Contains(g) || m_Members.Contains(g))
+            if (g.Alliance != this || m_Members.Contains(g) || !m_PendingMembers.Remove(g))
             {
                 return;
             }
@@ -199,21 +199,16 @@ namespace Server.Guilds
             g.GuildMessage(1070760, Name);    // Your Guild has joined the ~1_ALLIANCENAME~ Alliance.
             AllianceMessage(1070761, g.Name); // A new Guild has joined your Alliance: ~1_GUILDNAME~
 
-            m_PendingMembers.Remove(g);
             m_Members.Add(g);
             g.Alliance.InvalidateMemberProperties();
         }
 
         public void RemoveGuild(Guild g)
         {
-            if (m_PendingMembers.Contains(g))
-            {
-                m_PendingMembers.Remove(g);
-            }
+            m_PendingMembers.Remove(g);
 
-            if (m_Members.Contains(g)) // Sanity, just incase someone with a custom script adds a character to BOTH arrays
+            if (m_Members.Remove(g)) // Sanity, just incase someone with a custom script adds a character to BOTH arrays
             {
-                m_Members.Remove(g);
                 g.InvalidateMemberProperties();
 
                 g.GuildMessage(1070763, Name);    // Your Guild has been removed from the ~1_ALLIANCENAME~ Alliance.
@@ -311,7 +306,7 @@ namespace Server.Guilds
 
         public void AllianceChat(Mobile from, int hue, string text)
         {
-            Span<byte> buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLength(text)].InitializePacket();
+            var buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLength(text)].InitializePacket();
 
             for (var i = 0; i < m_Members.Count; i++)
             {
@@ -351,8 +346,6 @@ namespace Server.Guilds
 
         public class AllianceRosterGump : GuildDiplomacyGump
         {
-            private readonly AllianceInfo m_Alliance;
-
             public AllianceRosterGump(PlayerMobile pm, Guild g, AllianceInfo alliance) : base(
                 pm,
                 g,
@@ -361,31 +354,11 @@ namespace Server.Guilds
                 0,
                 alliance.m_Members,
                 alliance.Name
-            ) =>
-                m_Alliance = alliance;
-
-            public AllianceRosterGump(
-                PlayerMobile pm, Guild g, AllianceInfo alliance, IComparer<Guild> currentComparer,
-                bool ascending, string filter, int startNumber
-            ) : base(
-                pm,
-                g,
-                currentComparer,
-                ascending,
-                filter,
-                startNumber,
-                alliance.m_Members,
-                alliance.Name
-            ) =>
-                m_Alliance = alliance;
+            )
+            {
+            }
 
             protected override bool AllowAdvancedSearch => false;
-
-            public override Gump GetResentGump(
-                PlayerMobile pm, Guild g, IComparer<Guild> comparer, bool ascending,
-                string filter, int startNumber
-            ) =>
-                new AllianceRosterGump(pm, g, m_Alliance, comparer, ascending, filter, startNumber);
 
             public override void OnResponse(NetState sender, in RelayInfo info)
             {
@@ -525,25 +498,22 @@ namespace Server.Guilds
         }
     }
 
-    public class WarTimer : Timer
+    public class GuildMaintenanceTimer : Timer
     {
-        public WarTimer() : base(TimeSpan.FromMinutes(1.0), TimeSpan.FromMinutes(1.0))
+        public GuildMaintenanceTimer() : base(TimeSpan.FromMinutes(1.0), TimeSpan.FromMinutes(1.0))
         {
         }
 
         public static void Initialize()
         {
-            if (Guild.NewGuildSystem)
-            {
-                new WarTimer().Start();
-            }
+            new GuildMaintenanceTimer().Start();
         }
 
         protected override void OnTick()
         {
             foreach (var g in World.Guilds.Values)
             {
-                (g as Guild)?.CheckExpiredWars();
+                (g as Guild)?.RunMaintenance();
             }
         }
     }
@@ -1115,7 +1085,7 @@ namespace Server.Guilds
 
         public static void Tidy(List<Guild> list)
         {
-            for (int i = list.Count - 1; i >= 0; i--)
+            for (var i = list.Count - 1; i >= 0; i--)
             {
                 var entry = list[i];
                 if (entry?.Disbanded != false)
@@ -1127,8 +1097,18 @@ namespace Server.Guilds
             list.TrimExcess();
         }
 
-        public override void Serialize(IGenericWriter writer)
+        /// <summary>
+        /// Periodic bookkeeping that used to ride on every world save: the daily fealty
+        /// recalculation, war expiry, and the alliance leadership check. Saves must be pure,
+        /// so this runs from <see cref="GuildMaintenanceTimer"/> instead.
+        /// </summary>
+        public void RunMaintenance()
         {
+            if (Disbanded)
+            {
+                return;
+            }
+
             if (LastFealty + TimeSpan.FromDays(1.0) < Core.Now)
             {
                 CalculateGuildmaster();
@@ -1137,7 +1117,10 @@ namespace Server.Guilds
             CheckExpiredWars();
 
             Alliance?.CheckLeader();
+        }
 
+        public override void Serialize(IGenericWriter writer)
+        {
             writer.Write(5); // version
 
             writer.Write(PendingWars.Count);
@@ -1468,7 +1451,7 @@ namespace Server.Guilds
 
         public void GuildChat(Mobile from, int hue, string text)
         {
-            Span<byte> buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLength(text)].InitializePacket();
+            var buffer = stackalloc byte[OutgoingMessagePackets.GetMaxMessageLength(text)].InitializePacket();
 
             for (var i = 0; i < Members.Count; i++)
             {

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Server.Tests.Tests.Maps;
+namespace Server.Tests.Maps;
 
 [Collection("Sequential Server Tests")]
 public class MobileEnumeratorTests
@@ -247,7 +247,7 @@ public class MobileEnumeratorTests
 
     private static Mobile CreateMobile(Map map, Point3D location)
     {
-        var mobile = new Mobile((Serial)Utility.RandomMinMax(0x100u, 0xFFFu));
+        var mobile = new Mobile(World.NewMobile);
         mobile.DefaultMobileInit();
         mobile.MoveToWorld(location, map);
         return mobile;

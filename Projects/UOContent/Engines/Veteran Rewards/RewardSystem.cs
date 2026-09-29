@@ -1,7 +1,6 @@
 using System;
 using ModernUO.CodeGeneratedEvents;
 using Server.Accounting;
-using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
 
@@ -595,7 +594,7 @@ namespace Server.Engines.VeteranRewards
 
             if (cur < max)
             {
-                pm.SendGump(new RewardNoticeGump(pm));
+                RewardNoticeGump.DisplayTo(pm);
             }
         }
     }
