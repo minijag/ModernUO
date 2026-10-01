@@ -1,1 +1,0 @@
-PASS: 280 decoded frames; frame counts, dimensions, anchors and alpha verified. Max RGB555 color error 7. Exactly 65 intended records changed; original MUL prefix intact; unrelated and empty slots untouched.

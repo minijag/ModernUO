@@ -35,8 +35,8 @@ namespace Server.Mobiles
             Karma = -20000;
         }
 
-        public override string CorpseName => "a tormented minotaur corpse";
-        public override string DefaultName => "Tormented Minotaur";
+        public override string CorpseName => "a minotaur corpse";
+        public override string DefaultName => "minotaur";
         public override Poison PoisonImmune => Poison.Deadly;
         public override int TreasureMapLevel => 3;
         public override WeaponAbility GetWeaponAbility() => WeaponAbility.Dismount;

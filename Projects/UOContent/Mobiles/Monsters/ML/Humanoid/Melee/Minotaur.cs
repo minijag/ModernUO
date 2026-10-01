@@ -42,9 +42,9 @@ namespace Server.Mobiles
             VirtualArmor = 28; // Don't know what it should be
         }
 
-        public override string CorpseName => "a minotaur corpse";
+        public override string CorpseName => "a bad mino corpse";
 
-        public override string DefaultName => "a minotaur";
+        public override string DefaultName => "bad mino";
 
         public override WeaponAbility GetWeaponAbility() => WeaponAbility.ParalyzingBlow;
 

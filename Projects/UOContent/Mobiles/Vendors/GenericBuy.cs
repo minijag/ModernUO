@@ -165,7 +165,7 @@ namespace Server.Mobiles
             return m_DisplayEntity;
         }
 
-        [SerializationGenerator(0, false)]
+        [SerializationGenerator(1, false)]
         private partial class DisplayCache : Container
         {
             private static DisplayCache _cache;
@@ -245,6 +245,13 @@ namespace Server.Mobiles
                 {
                     _cache = null;
                 }
+            }
+
+            private void Deserialize(IGenericReader reader, int version)
+            {
+                // Legacy v0 uses a fixed-width entity count, not the generated encoded count.
+                _mobiles = reader.ReadEntityList<Mobile>();
+                m_Table = new Dictionary<Type, IEntity>();
             }
 
             [AfterDeserialization]

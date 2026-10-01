@@ -1,4 +1,4 @@
-param([int]$ServerProcessId, [ValidateSet('save','shutdown')][string]$Command)
+param([int]$ServerProcessId, [ValidateSet('save','shutdown','y','n')][string]$Command)
 $ErrorActionPreference='Stop'
 Add-Type -TypeDefinition @'
 using System;

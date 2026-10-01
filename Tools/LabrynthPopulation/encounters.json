@@ -1,0 +1,3098 @@
+[
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 001 passage GiantSpider",
+    "guid": "c2bd9b17-2acb-5512-832e-ad899229364e",
+    "location": {
+      "x": 5263,
+      "y": 635,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 002 passage GiantSerpent",
+    "guid": "8541f8cc-b3ee-50fa-8e81-1bbc83c1ba21",
+    "location": {
+      "x": 5236,
+      "y": 636,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 003 passage Wraith",
+    "guid": "aea606bb-a3ed-5537-8e60-acf33004000c",
+    "location": {
+      "x": 5251,
+      "y": 636,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 004 passage StoneHarpy",
+    "guid": "9ac91919-0d87-50a9-8dde-205365351144",
+    "location": {
+      "x": 5181,
+      "y": 637,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 005 passage Gargoyle",
+    "guid": "229c023b-53bc-5971-beba-04e2fb5e91d2",
+    "location": {
+      "x": 5303,
+      "y": 638,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 006 passage TormentedMinotaur",
+    "guid": "18d31ac4-fca1-5df3-8256-5f19076edea3",
+    "location": {
+      "x": 5189,
+      "y": 640,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 007 passage Lich",
+    "guid": "6a4804ba-d748-5c48-b6bb-64a43a821624",
+    "location": {
+      "x": 5210,
+      "y": 640,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 008 passage Wraith",
+    "guid": "b1c6f9a2-c4fd-5721-a5ff-a45d9d3c72ec",
+    "location": {
+      "x": 5274,
+      "y": 640,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 009 passage GiantSpider",
+    "guid": "5f60ec9e-a589-54a3-932d-326032187bcd",
+    "location": {
+      "x": 5221,
+      "y": 641,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 010 passage GiantSerpent",
+    "guid": "e8b41821-a393-5350-af7b-9908c379c988",
+    "location": {
+      "x": 5230,
+      "y": 644,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 011 passage Wraith",
+    "guid": "6da9cc85-fd99-52e0-8598-2038c62f383e",
+    "location": {
+      "x": 5248,
+      "y": 645,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 012 passage StoneHarpy",
+    "guid": "a9755ac4-0cdd-5094-a95e-4b7bfa3eb3ba",
+    "location": {
+      "x": 5282,
+      "y": 645,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 013 passage Gargoyle",
+    "guid": "f9dc76b9-a9a8-5d3f-bcfa-525ef54c656a",
+    "location": {
+      "x": 5180,
+      "y": 646,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 014 small room Wraith",
+    "guid": "b8517930-3b01-5e42-8ff2-c8f367b91e2e",
+    "location": {
+      "x": 5193,
+      "y": 647,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 3,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 015 passage TormentedMinotaur",
+    "guid": "1ecc9612-57a1-5428-8f2d-2716abf479eb",
+    "location": {
+      "x": 5204,
+      "y": 647,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 016 passage Lich",
+    "guid": "89a36631-e09a-594b-a910-5ff9da240341",
+    "location": {
+      "x": 5294,
+      "y": 647,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 017 passage Wraith",
+    "guid": "60ff2f7d-3d48-5534-8e55-c85069b9dea1",
+    "location": {
+      "x": 5269,
+      "y": 649,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 018 passage GiantSpider",
+    "guid": "78dd04cc-22cf-5ced-a3ba-ae0eba9e0f8a",
+    "location": {
+      "x": 5257,
+      "y": 651,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 019 passage GiantSerpent",
+    "guid": "dc00035b-1325-50cc-a2ea-b181fadcf8ed",
+    "location": {
+      "x": 5229,
+      "y": 652,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 020 passage Wraith",
+    "guid": "553e6b42-28f4-553a-b696-74cb05422f39",
+    "location": {
+      "x": 5187,
+      "y": 654,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 021 passage StoneHarpy",
+    "guid": "292e97a2-8f97-57c2-a4d4-dcb8813b81c9",
+    "location": {
+      "x": 5294,
+      "y": 655,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 022 passage Gargoyle",
+    "guid": "e3067b1a-2277-52bd-b2fb-62d236ba26d3",
+    "location": {
+      "x": 5265,
+      "y": 656,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 023 passage TormentedMinotaur",
+    "guid": "dc1596dd-e5d0-521f-8831-42cf47e8b61a",
+    "location": {
+      "x": 5205,
+      "y": 657,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 024 passage Lich",
+    "guid": "4e05acf8-de90-54ad-9fc0-a7462ef1906d",
+    "location": {
+      "x": 5214,
+      "y": 657,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 025 passage Wraith",
+    "guid": "51946f20-deb6-58fd-944e-ef2c3591c07f",
+    "location": {
+      "x": 5245,
+      "y": 658,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 026 passage GiantSpider",
+    "guid": "045ee93e-755d-5903-82ae-1a08cfdc5f5b",
+    "location": {
+      "x": 5286,
+      "y": 658,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 027 passage GiantSerpent",
+    "guid": "5f829d36-7803-56ab-839d-81d00214b5e6",
+    "location": {
+      "x": 5232,
+      "y": 660,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 028 passage Wraith",
+    "guid": "c3c91cb9-8b3a-5eb5-b806-ad6e0c46f326",
+    "location": {
+      "x": 5257,
+      "y": 660,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 029 passage StoneHarpy",
+    "guid": "ba61faa0-2912-58b5-ba85-062d56fbde12",
+    "location": {
+      "x": 5298,
+      "y": 662,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 030 passage Gargoyle",
+    "guid": "5224db2e-cfef-5c16-a162-4a4f442d7480",
+    "location": {
+      "x": 5187,
+      "y": 663,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 031 passage TormentedMinotaur",
+    "guid": "fd9613d2-446c-5c79-bf36-441b127c97a0",
+    "location": {
+      "x": 5258,
+      "y": 668,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 032 passage Lich",
+    "guid": "f8f99df6-445c-59a2-a12e-c04329373c42",
+    "location": {
+      "x": 5201,
+      "y": 669,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 033 passage Wraith",
+    "guid": "d590f9cb-d25c-5d14-bc43-95bf2c87c353",
+    "location": {
+      "x": 5238,
+      "y": 670,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 034 passage GiantSpider",
+    "guid": "ea7c4e9f-1d32-5b22-8b57-93ce9d66bb64",
+    "location": {
+      "x": 5278,
+      "y": 670,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 035 passage GiantSerpent",
+    "guid": "3fc9b467-985e-5a5c-a5ad-ab0e09b4c273",
+    "location": {
+      "x": 5268,
+      "y": 671,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 036 passage Wraith",
+    "guid": "96eafb5f-0b95-50b1-9340-5335d320b3a3",
+    "location": {
+      "x": 5220,
+      "y": 672,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 037 passage StoneHarpy",
+    "guid": "1c1b36a7-fabb-5c5a-bac1-4c7cd61f9e36",
+    "location": {
+      "x": 5183,
+      "y": 673,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 038 great hall TormentedMinotaur",
+    "guid": "dbaae70d-3b0a-58de-89d2-b831ea8ddb62",
+    "location": {
+      "x": 5287,
+      "y": 673,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 039 passage Gargoyle",
+    "guid": "7bdb1cc6-6823-5bf0-97f3-1d9df9a8b5f6",
+    "location": {
+      "x": 5298,
+      "y": 674,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 040 passage TormentedMinotaur",
+    "guid": "0b77d514-e07d-5433-a9f7-8d112e8ed23f",
+    "location": {
+      "x": 5200,
+      "y": 677,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 041 passage Lich",
+    "guid": "c295b5a7-255b-5e74-b329-7c343e9a56d5",
+    "location": {
+      "x": 5192,
+      "y": 678,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 042 passage Wraith",
+    "guid": "5d922aee-a8ad-5773-84d5-6044dda2e1bf",
+    "location": {
+      "x": 5251,
+      "y": 679,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 043 great hall Lich",
+    "guid": "2542457c-0768-5f8a-b74b-9683444d58ac",
+    "location": {
+      "x": 5267,
+      "y": 679,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 5,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 5
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 044 passage GiantSpider",
+    "guid": "b517a5fa-dda4-5aff-9e22-51f8c92ea3dd",
+    "location": {
+      "x": 5241,
+      "y": 680,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 045 great hall Gargoyle",
+    "guid": "e180a1e3-8fe1-58ca-bc62-6d5ae74d80b9",
+    "location": {
+      "x": 5285,
+      "y": 681,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 5,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 5
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 046 great hall TormentedMinotaur",
+    "guid": "f94b3d95-202b-579f-8e30-67181fc22f7e",
+    "location": {
+      "x": 5275,
+      "y": 684,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 047 passage GiantSerpent",
+    "guid": "9180d8d5-7535-5947-a9d1-ef49f7da2081",
+    "location": {
+      "x": 5187,
+      "y": 685,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 048 great hall StoneHarpy",
+    "guid": "245fb555-f545-51b6-8049-803485fc99fd",
+    "location": {
+      "x": 5292,
+      "y": 685,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 5,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 5
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 049 passage Wraith",
+    "guid": "17b6f97f-2e0f-575d-b8a5-f8762516d707",
+    "location": {
+      "x": 5263,
+      "y": 686,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 050 passage StoneHarpy",
+    "guid": "69952307-8b74-5448-9ad0-5987b1bc26cf",
+    "location": {
+      "x": 5204,
+      "y": 688,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 051 passage Gargoyle",
+    "guid": "085a99b3-97ac-591b-9cf7-94afa0a22b70",
+    "location": {
+      "x": 5222,
+      "y": 688,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 052 passage TormentedMinotaur",
+    "guid": "12580b3b-c704-5d54-8c97-606741233bf0",
+    "location": {
+      "x": 5248,
+      "y": 688,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 053 passage Lich",
+    "guid": "35b65928-7d42-59f8-b51f-0a3e9bc549e5",
+    "location": {
+      "x": 5239,
+      "y": 690,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 054 great hall TormentedMinotaur",
+    "guid": "d6c19a88-0882-5460-8ca8-fbd6fd77b584",
+    "location": {
+      "x": 5283,
+      "y": 690,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 055 passage Wraith",
+    "guid": "c63ef161-9c9f-5ee5-818a-1d6f23944843",
+    "location": {
+      "x": 5255,
+      "y": 692,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 056 great hall Lich",
+    "guid": "534bf581-1370-57ef-a2d2-f654ba766d2b",
+    "location": {
+      "x": 5275,
+      "y": 692,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 5,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 5
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 057 passage GiantSpider",
+    "guid": "46bac03c-ae22-5787-bdae-5cb1d56c83e2",
+    "location": {
+      "x": 5196,
+      "y": 693,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 058 great hall Gargoyle",
+    "guid": "30e8cd8b-64ef-5b32-a846-a94d103b1be4",
+    "location": {
+      "x": 5267,
+      "y": 693,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 5,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 5
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 059 passage GiantSerpent",
+    "guid": "20ccff65-f7af-5f60-913a-4901cc5029b0",
+    "location": {
+      "x": 5294,
+      "y": 693,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 060 passage Wraith",
+    "guid": "58e82fb4-3dfc-578b-8e4f-8f50977a9288",
+    "location": {
+      "x": 5210,
+      "y": 695,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 061 passage StoneHarpy",
+    "guid": "46356088-6b54-5966-91a9-0d727e8b1d4f",
+    "location": {
+      "x": 5303,
+      "y": 695,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 062 passage Gargoyle",
+    "guid": "ef8bdc09-8d08-538e-bd98-fa86b784b814",
+    "location": {
+      "x": 5222,
+      "y": 697,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 063 passage TormentedMinotaur",
+    "guid": "f8c20130-ae1a-5ad0-8fa0-b822fe856654",
+    "location": {
+      "x": 5249,
+      "y": 698,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 064 chamber TormentedMinotaur",
+    "guid": "c18f12a2-c80e-5705-8bbd-577f94ded09a",
+    "location": {
+      "x": 5238,
+      "y": 701,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 065 great hall TormentedMinotaur",
+    "guid": "ac9e3e0d-8155-506e-bd71-d42af5a31e5f",
+    "location": {
+      "x": 5277,
+      "y": 701,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 066 passage Lich",
+    "guid": "2958c15a-2293-580a-8fdb-831d4464a245",
+    "location": {
+      "x": 5292,
+      "y": 701,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 067 passage Wraith",
+    "guid": "6738ef1c-ea5a-5ea7-af07-17a7bbcfe279",
+    "location": {
+      "x": 5191,
+      "y": 703,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 068 passage GiantSpider",
+    "guid": "f1ea06a5-9313-594a-af79-59ab8fd38fc5",
+    "location": {
+      "x": 5207,
+      "y": 704,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 069 passage GiantSerpent",
+    "guid": "0fcae659-2668-5018-824a-a261d63ce919",
+    "location": {
+      "x": 5180,
+      "y": 705,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 070 passage Wraith",
+    "guid": "740e93ec-997f-514c-acc3-dbf6c13bb7f2",
+    "location": {
+      "x": 5264,
+      "y": 705,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 071 passage StoneHarpy",
+    "guid": "7ac62ffc-f813-501b-b6fd-b89dd658619c",
+    "location": {
+      "x": 5252,
+      "y": 707,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 072 chamber Lich",
+    "guid": "f4cd02c1-4f61-5b8f-9989-3d2ca656c81c",
+    "location": {
+      "x": 5234,
+      "y": 708,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 4,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 4
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 073 passage Gargoyle",
+    "guid": "66e52d21-4339-5e62-822b-e4dc29775a34",
+    "location": {
+      "x": 5300,
+      "y": 708,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 074 great hall StoneHarpy",
+    "guid": "7154b999-cd36-5883-8357-173143e4f7fb",
+    "location": {
+      "x": 5276,
+      "y": 709,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 5,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 5,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 5
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 075 passage TormentedMinotaur",
+    "guid": "706c3961-434a-5398-8db0-8a2aa663d4a5",
+    "location": {
+      "x": 5285,
+      "y": 709,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 076 passage Lich",
+    "guid": "b7a55bb9-a4e4-5ee1-a59f-67a704195726",
+    "location": {
+      "x": 5225,
+      "y": 710,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 077 passage Wraith",
+    "guid": "74d305c9-1816-50d5-a5f6-684d3cf351f9",
+    "location": {
+      "x": 5188,
+      "y": 712,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 078 passage GiantSpider",
+    "guid": "57621515-9a5f-553e-bb01-b32ffe079a0e",
+    "location": {
+      "x": 5245,
+      "y": 712,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 079 passage GiantSerpent",
+    "guid": "ed29384f-8f11-5d32-b6e6-060bcc79ecae",
+    "location": {
+      "x": 5199,
+      "y": 713,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 080 passage Wraith",
+    "guid": "3fd7e109-da08-5e58-b384-206ed07f45f8",
+    "location": {
+      "x": 5265,
+      "y": 713,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 081 passage StoneHarpy",
+    "guid": "9d8a8ec7-49e2-53dc-b00a-d6ba4af914d6",
+    "location": {
+      "x": 5208,
+      "y": 716,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 082 passage Gargoyle",
+    "guid": "b297f843-772f-579e-9d5a-8e05a764a536",
+    "location": {
+      "x": 5218,
+      "y": 716,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 083 passage TormentedMinotaur",
+    "guid": "425b688f-f82e-5053-8c69-7d342fa8e376",
+    "location": {
+      "x": 5281,
+      "y": 716,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 084 passage Lich",
+    "guid": "9bbebf86-c9b9-5719-9218-eaa02957eb07",
+    "location": {
+      "x": 5273,
+      "y": 717,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 085 passage Wraith",
+    "guid": "ee1c197e-2dec-5925-9a99-ad3803ad9124",
+    "location": {
+      "x": 5236,
+      "y": 718,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 086 passage GiantSpider",
+    "guid": "099533c4-c54e-5cd9-9280-8d0b1ea7cddf",
+    "location": {
+      "x": 5227,
+      "y": 721,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 087 passage GiantSerpent",
+    "guid": "b5aba971-a23a-5c2a-886b-2cc8f3fbf9e3",
+    "location": {
+      "x": 5245,
+      "y": 721,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 088 passage Wraith",
+    "guid": "965b4a9e-1c6c-50fb-8d23-178c5ae9803a",
+    "location": {
+      "x": 5300,
+      "y": 721,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 089 passage StoneHarpy",
+    "guid": "4bf28ad3-be41-51e3-adbf-9a0092fc528e",
+    "location": {
+      "x": 5183,
+      "y": 722,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 090 passage Gargoyle",
+    "guid": "2c6a11d0-5688-5ba8-ac79-0b9b27d559bf",
+    "location": {
+      "x": 5200,
+      "y": 722,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 091 passage TormentedMinotaur",
+    "guid": "705341bb-8e71-5217-a5d1-711b4355e8f3",
+    "location": {
+      "x": 5265,
+      "y": 722,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 092 passage Lich",
+    "guid": "3996911b-ba7f-5764-a313-7b9529216614",
+    "location": {
+      "x": 5281,
+      "y": 724,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 093 passage Wraith",
+    "guid": "22774484-0c36-561a-bf5c-3e24a1f20180",
+    "location": {
+      "x": 5239,
+      "y": 727,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 094 passage GiantSpider",
+    "guid": "d8b02ac2-9774-5bb0-b72c-b1b04faec37e",
+    "location": {
+      "x": 5190,
+      "y": 728,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 095 passage GiantSerpent",
+    "guid": "93db6477-5f53-5807-870d-2c2d256de7c6",
+    "location": {
+      "x": 5259,
+      "y": 728,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 096 passage Wraith",
+    "guid": "3ef75f06-0373-555d-add5-aa4eb6bad89e",
+    "location": {
+      "x": 5270,
+      "y": 729,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 097 passage StoneHarpy",
+    "guid": "bd179a1f-24f9-5ce7-ad40-38c051bead45",
+    "location": {
+      "x": 5230,
+      "y": 730,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 098 passage Gargoyle",
+    "guid": "9f5454c1-d25b-5985-9342-11e1e957519b",
+    "location": {
+      "x": 5217,
+      "y": 731,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 099 passage TormentedMinotaur",
+    "guid": "cb378416-fcee-5c80-a040-a0ca7dd16e0f",
+    "location": {
+      "x": 5292,
+      "y": 731,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 100 passage Lich",
+    "guid": "9694b9a4-accb-545e-92ca-9fcdb08c8800",
+    "location": {
+      "x": 5203,
+      "y": 732,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 101 passage Wraith",
+    "guid": "abc57293-dd46-5908-9bb4-a9767d6d52fb",
+    "location": {
+      "x": 5302,
+      "y": 732,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 102 passage GiantSpider",
+    "guid": "9dfdce29-98b6-5b2a-b574-187ee9bfb33d",
+    "location": {
+      "x": 5243,
+      "y": 735,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 103 small room Gargoyle",
+    "guid": "2989ff57-88fd-54fa-8e7e-a223bb5ab464",
+    "location": {
+      "x": 5211,
+      "y": 737,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 3,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 104 passage GiantSerpent",
+    "guid": "d0e9e915-89d2-522c-8099-37c6438bb1bc",
+    "location": {
+      "x": 5225,
+      "y": 738,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 105 passage Wraith",
+    "guid": "337bd712-9dda-5164-a33c-91d012f09e8e",
+    "location": {
+      "x": 5260,
+      "y": 738,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 106 passage StoneHarpy",
+    "guid": "b8c1a0e5-ae29-5941-9f7a-fa7ebfb6d2f7",
+    "location": {
+      "x": 5279,
+      "y": 738,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 107 passage Gargoyle",
+    "guid": "d0a48c61-7a87-512f-a6b2-913e600180be",
+    "location": {
+      "x": 5192,
+      "y": 739,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 108 passage TormentedMinotaur",
+    "guid": "7e2ff1cd-413f-59be-9ad7-12ef7b24a662",
+    "location": {
+      "x": 5271,
+      "y": 739,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 109 passage Lich",
+    "guid": "c316699e-6441-5060-be32-d2cb1dd517a4",
+    "location": {
+      "x": 5298,
+      "y": 739,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 110 passage Wraith",
+    "guid": "67298c89-1644-5e76-a582-b5ccb9528f43",
+    "location": {
+      "x": 5249,
+      "y": 741,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 111 passage GiantSpider",
+    "guid": "1daa2e0f-34f9-51e8-b277-4ea6dd0b1476",
+    "location": {
+      "x": 5235,
+      "y": 743,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 112 passage GiantSerpent",
+    "guid": "56b999b9-de41-5ed8-bcc7-d5b5fed1fa8b",
+    "location": {
+      "x": 5180,
+      "y": 744,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 113 small room StoneHarpy",
+    "guid": "42d90cc1-1092-52d4-a93d-6cc1f899b781",
+    "location": {
+      "x": 5212,
+      "y": 745,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 3,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 3
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 114 passage Wraith",
+    "guid": "0a76d58e-21a4-5299-96d2-833a0da039ca",
+    "location": {
+      "x": 5289,
+      "y": 745,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 115 passage StoneHarpy",
+    "guid": "4473324d-e9b4-5516-87b8-a78768363781",
+    "location": {
+      "x": 5278,
+      "y": 746,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 116 passage Gargoyle",
+    "guid": "537f1189-d308-5d59-9ccf-8a4dcbcb3426",
+    "location": {
+      "x": 5188,
+      "y": 747,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 117 passage TormentedMinotaur",
+    "guid": "2638b6dd-6214-54c9-a7d1-68d931879a1f",
+    "location": {
+      "x": 5196,
+      "y": 747,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 118 passage Lich",
+    "guid": "e81ef2ea-5aa9-5d79-96b4-f8aa2f525671",
+    "location": {
+      "x": 5204,
+      "y": 747,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 119 passage Wraith",
+    "guid": "6a44cb30-8598-5ae2-9aaa-25fa0dd62f1f",
+    "location": {
+      "x": 5221,
+      "y": 747,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 120 passage GiantSpider",
+    "guid": "f1b1488b-776d-589b-a28a-09d3909e6cd2",
+    "location": {
+      "x": 5268,
+      "y": 747,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 121 passage GiantSerpent",
+    "guid": "ce1895cb-db89-545d-ac93-1249d9e0b925",
+    "location": {
+      "x": 5260,
+      "y": 748,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 122 passage Wraith",
+    "guid": "07239c08-ecc1-5925-8665-62e22e5ef682",
+    "location": {
+      "x": 5183,
+      "y": 754,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 123 passage StoneHarpy",
+    "guid": "7799b90d-2a17-53ea-b4ad-5af746b86773",
+    "location": {
+      "x": 5289,
+      "y": 754,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "StoneHarpy",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 124 passage Gargoyle",
+    "guid": "b36abd3b-fe8d-5229-a089-8c5e6abf5cc1",
+    "location": {
+      "x": 5298,
+      "y": 754,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Gargoyle",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 125 passage TormentedMinotaur",
+    "guid": "6c5ac5f3-8307-531f-aef0-c4e39e8f76a0",
+    "location": {
+      "x": 5233,
+      "y": 755,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 1,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "TormentedMinotaur",
+        "probability": 100,
+        "maxCount": 1
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 126 passage Lich",
+    "guid": "0975fdb3-3879-52f9-8f9a-1b4ad72ed742",
+    "location": {
+      "x": 5223,
+      "y": 756,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Lich",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 127 passage Wraith",
+    "guid": "62acc3a1-33f0-594d-806a-1acabf20492d",
+    "location": {
+      "x": 5214,
+      "y": 759,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "Wraith",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 128 passage GiantSpider",
+    "guid": "6bd08919-567f-5aac-999e-61c769a64c2d",
+    "location": {
+      "x": 5262,
+      "y": 760,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSpider",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  },
+  {
+    "type": "Spawner",
+    "name": "Labrynth Dungeon - 129 passage GiantSerpent",
+    "guid": "2446be02-f2a3-5eac-a56a-ff669574f7f6",
+    "location": {
+      "x": 5249,
+      "y": 763,
+      "z": 0
+    },
+    "map": "Felucca",
+    "count": 2,
+    "minDelay": "00:05:00",
+    "maxDelay": "00:08:00",
+    "team": 0,
+    "homeRange": 1,
+    "walkingRange": 3,
+    "entries": [
+      {
+        "name": "GiantSerpent",
+        "probability": 100,
+        "maxCount": 2
+      }
+    ]
+  }
+]

@@ -58,6 +58,8 @@
 .DS_Store
 
 /packages/*
+# Disposable build/test output and exported previews; not project source.
+/artifacts/
 /Distribution/Configuration/server-access.json
 
 # Rebuildable client animation archives and Python caches
@@ -65,5 +67,17 @@
 /Tools/MinotaurArt/**/*.idx
 __pycache__/
 *.pyc
+# Rebuildable minotaur import, alignment, and verification output.
+/Tools/MinotaurArt/import-*/install-frames/
+/Tools/MinotaurArt/import-*/packed/
+/Tools/MinotaurArt/import-*/repaired-packed/
+/Tools/MinotaurArt/import-*/*.png
+/Tools/MinotaurArt/import-*/*preview.gif
+/Tools/MinotaurArt/import-*/aligned-*.gif
+/Tools/MinotaurArt/attack*-alignment/frames/
+/Tools/MinotaurArt/attack*-alignment/packed/
+/Tools/MinotaurArt/attack*-alignment/*.png
+/Tools/MinotaurArt/attack*-alignment/*.gif
+/Tools/MinotaurArt/attack2-from-attack3/packed/
 # BuildTool native binaries; keep Zodiac's Tools source directories visible on Windows.
 /tools/ModernUO.BuildTool*

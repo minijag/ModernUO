@@ -9,8 +9,15 @@
   {
     "Username": "minijag",
     "AccessLevel": "Owner",
+    "Characters": 2,
+    "LastLogin": "2026-09-30T16:56:02.7389394Z",
+    "Banned": false
+  },
+  {
+    "Username": "minijag22",
+    "AccessLevel": "Player",
     "Characters": 1,
-    "LastLogin": "2026-08-29T01:06:27.1957348Z",
+    "LastLogin": "2026-09-29T03:22:12.7613551Z",
     "Banned": false
   },
   {

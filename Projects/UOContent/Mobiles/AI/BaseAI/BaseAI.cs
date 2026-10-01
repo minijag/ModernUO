@@ -1044,7 +1044,7 @@ public abstract partial class BaseAI
 
     private bool IsInvalidTarget(Mobile m, bool bPlayerOnly) =>
         m.Deleted || m.Blessed || m == Mobile || m is BaseFamiliar || !m.Alive || m.IsDeadBondedPet ||
-        m.AccessLevel > AccessLevel.Player || bPlayerOnly && !m.Player || !Mobile.CanSee(m);
+        bPlayerOnly && !m.Player || !Mobile.CanSee(m);
 
     private bool IsInvalidSummonTarget(Mobile m, BaseCreature bc)
     {
