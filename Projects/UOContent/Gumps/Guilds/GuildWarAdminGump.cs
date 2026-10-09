@@ -9,7 +9,7 @@ namespace Server.Gumps
 
         public override bool Singleton => true;
 
-        private GuildWarAdminGump(Guild guild) : base(20, 30) => _guild = guild;
+        private GuildWarAdminGump(Guild guild) : base(40, 50) => _guild = guild;
 
         public static void DisplayTo(Mobile from, Guild guild)
         {
@@ -24,52 +24,49 @@ namespace Server.Gumps
 
         protected override void BuildLayout(ref DynamicGumpBuilder builder)
         {
-            builder.SetNoMove();
-
             builder.AddPage();
-            builder.AddBackground(0, 0, 550, 440, 5054);
-            builder.AddBackground(10, 10, 530, 420, 3000);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 550, 440, "WAR MANAGEMENT");
 
-            builder.AddHtmlLocalized(20, 10, 510, 35, 1011105); // <center>WAR FUNCTIONS</center>
+            builder.AddHtmlLocalized(20, 10, 510, 35, 1011105, CustomGumpStyle.LocalizedTextColor); // <center>WAR FUNCTIONS</center>
 
             builder.AddButton(20, 40, 4005, 4007, 1);
-            builder.AddHtmlLocalized(55, 40, 400, 30, 1011099); // Declare war through guild name search.
+            builder.AddHtmlLocalized(55, 40, 400, 30, 1011099, CustomGumpStyle.LocalizedTextColor); // Declare war through guild name search.
 
             if (_guild.Enemies.Count > 0)
             {
                 builder.AddButton(20, 160 + 30, 4005, 4007, 2);
-                builder.AddHtmlLocalized(55, 160, 400, 30, 1011103); // Declare peace.
+                builder.AddHtmlLocalized(55, 160, 400, 30, 1011103, CustomGumpStyle.LocalizedTextColor); // Declare peace.
             }
             else
             {
-                builder.AddHtmlLocalized(20, 160, 400, 30, 1013033); // No current wars
+                builder.AddHtmlLocalized(20, 160, 400, 30, 1013033, CustomGumpStyle.LocalizedTextColor); // No current wars
             }
 
             if (_guild.WarInvitations.Count > 0)
             {
                 builder.AddButton(20, 190, 4005, 4007, 3);
-                builder.AddHtmlLocalized(55, 190, 400, 30, 1011100); // Accept war invitations.
+                builder.AddHtmlLocalized(55, 190, 400, 30, 1011100, CustomGumpStyle.LocalizedTextColor); // Accept war invitations.
 
                 builder.AddButton(20, 190, 4005, 4007, 4);
-                builder.AddHtmlLocalized(55, 190, 400, 30, 1011101); // Reject war invitations.
+                builder.AddHtmlLocalized(55, 190, 400, 30, 1011101, CustomGumpStyle.LocalizedTextColor); // Reject war invitations.
             }
             else
             {
-                builder.AddHtmlLocalized(20, 190, 400, 30, 1018012); // No current invitations received for war.
+                builder.AddHtmlLocalized(20, 190, 400, 30, 1018012, CustomGumpStyle.LocalizedTextColor); // No current invitations received for war.
             }
 
             if (_guild.WarDeclarations.Count > 0)
             {
                 builder.AddButton(20, 220, 4005, 4007, 5);
-                builder.AddHtmlLocalized(55, 220, 400, 30, 1011102); // Rescind your war declarations.
+                builder.AddHtmlLocalized(55, 220, 400, 30, 1011102, CustomGumpStyle.LocalizedTextColor); // Rescind your war declarations.
             }
             else
             {
-                builder.AddHtmlLocalized(20, 220, 400, 30, 1013055); // No current war declarations
+                builder.AddHtmlLocalized(20, 220, 400, 30, 1013055, CustomGumpStyle.LocalizedTextColor); // No current war declarations
             }
 
             builder.AddButton(20, 400, 4005, 4007, 6);
-            builder.AddHtmlLocalized(55, 400, 400, 35, 1011104); // Return to the previous menu.
+            builder.AddHtmlLocalized(55, 400, 400, 35, 1011104, CustomGumpStyle.LocalizedTextColor); // Return to the previous menu.
         }
 
         public override void OnResponse(NetState state, in RelayInfo info)

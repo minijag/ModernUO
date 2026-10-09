@@ -39,7 +39,7 @@ namespace Server.Commands
             Register("Sound", AccessLevel.GameMaster, Sound_OnCommand);
             Register("ViewEquip", AccessLevel.GameMaster, ViewEquip_OnCommand);
             Register("Light", AccessLevel.Counselor, Light_OnCommand);
-            Register("Stats", AccessLevel.Counselor, Stats_OnCommand);
+            Register("ServerStats", AccessLevel.Counselor, Stats_OnCommand);
             Register("SpeedBoost", AccessLevel.Counselor, SpeedBoost_OnCommand);
         }
 
@@ -736,7 +736,7 @@ namespace Server.Commands
             e.Mobile.LightLevel = e.GetInt32(0);
         }
 
-        [Usage("Stats")]
+        [Usage("ServerStats")]
         [Description("View some stats about the server.")]
         public static void Stats_OnCommand(CommandEventArgs e)
         {

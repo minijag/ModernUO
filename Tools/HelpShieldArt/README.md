@@ -1,7 +1,0 @@
-# Help shield artwork
-
-Blue enamel shields with steel rims for stuck (64032/64033), harassment (64034/64035), and bug report (64036/64037). Each pair is normal/pressed, 44 x 52 pixels. Existing reply IDs are unchanged.
-
-Source: Assets/blue-shield-source.png, generated with the built-in image tool. Build.cs crops transparent margins, scales proportionally, adds small action symbols, creates a darker pressed state, and appends classic RGB555/RLE gumps to staged copies. It does not modify other index records. Never run against live files as the output directory.
-
-Generation prompt: Create one game UI sprite: a front-facing, symmetric compact medieval shield button for Ultima Online. Single shield centered on genuinely transparent background. Flat straight horizontal top, nearly vertical upper sides, rounded lower sides tapering to a subtle rounded point at bottom. Deep navy blue enamel interior with delicate texture, narrow cool silver/steel double beveled rim, tiny blue highlight on upper left. Restrained old-school late-1990s hand-painted pixel-game UI style, crisp silhouette. No text, no emblem, no heraldry, no gem, no rope, no scenery, no drop shadow outside shield. Width to height about 0.88. Fill 85% of square canvas height. Must remain legible scaled to 44x50 pixels, so keep shapes simple and details minimal. This is a production UI button background, not a photo or ornate illustration.

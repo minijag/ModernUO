@@ -23,13 +23,13 @@ namespace Server.Gumps
 
         protected override void BuildHeader(ref DynamicGumpBuilder builder)
         {
-            builder.AddHtmlLocalized(20, 10, 400, 35, 1013075); // Accept or Refuse candidates for membership
+            builder.AddHtmlLocalized(20, 10, 400, 35, 1013075, CustomGumpStyle.LocalizedTextColor); // Accept or Refuse candidates for membership
 
             builder.AddButton(20, 400, 4005, 4007, 1);
-            builder.AddHtmlLocalized(55, 400, 245, 30, 1013076); // Accept
+            builder.AddHtmlLocalized(55, 400, 245, 30, 1013076, CustomGumpStyle.LocalizedTextColor); // Accept
 
             builder.AddButton(300, 400, 4005, 4007, 2);
-            builder.AddHtmlLocalized(335, 400, 100, 35, 1013077); // Refuse
+            builder.AddHtmlLocalized(335, 400, 100, 35, 1013077, CustomGumpStyle.LocalizedTextColor); // Refuse
         }
 
         public override void OnResponse(NetState state, in RelayInfo info)

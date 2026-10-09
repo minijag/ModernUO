@@ -203,11 +203,13 @@ namespace Server.Mobiles
 
             m_GameTime = TimeSpan.Zero;
             m_GuildRank = RankDefinition.Lowest;
+            Engines.Custom.LeaderboardService.RegisterPlayer(this);
         }
 
         public PlayerMobile(Serial s) : base(s)
         {
             VisibilityList = new List<Mobile>();
+            Engines.Custom.LeaderboardService.RegisterPlayer(this);
         }
 
         public int StepsMax => 16;
@@ -3299,6 +3301,7 @@ namespace Server.Mobiles
         public override void OnAfterDelete()
         {
             base.OnAfterDelete();
+            Engines.Custom.LeaderboardService.RemovePlayer(this);
 
             var faction = Faction.Find(this);
             faction?.RemoveMember(this);

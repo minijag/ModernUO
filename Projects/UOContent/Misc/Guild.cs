@@ -810,6 +810,7 @@ namespace Server.Guilds
         {
             m_Leader = null;
 
+            Engines.Custom.GuildProgressService.RemoveGuild(this);
             World.RemoveGuild(this);
 
             foreach (var m in Members)
@@ -886,8 +887,22 @@ namespace Server.Guilds
 
         public static void GuildGumpRequest(Mobile m)
         {
-            if (!NewGuildSystem || m is not PlayerMobile pm)
+            if (m is not PlayerMobile pm || pm.NetState == null)
             {
+                return;
+            }
+
+            if (!NewGuildSystem)
+            {
+                if (pm.Guild is Guild guild && !GuildGump.BadMember(pm, guild))
+                {
+                    GuildGump.DisplayTo(pm, guild);
+                }
+                else
+                {
+                    pm.SendMessage("You must belong to a guild to open its menu. Use a guild deed in your own house to create one.");
+                }
+
                 return;
             }
 

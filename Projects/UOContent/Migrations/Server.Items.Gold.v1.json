@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "type": "Server.Items.Gold",
+  "properties": [
+    {
+      "name": "UncreditedLootGold",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "LootFarmer",
+      "type": "Server.Mobiles.PlayerMobile",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "LootSource",
+      "type": "Server.Item",
+      "rule": "SerializableInterfaceMigrationRule"
+    }
+  ]
+}

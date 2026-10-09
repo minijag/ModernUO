@@ -1,77 +1,187 @@
+using System.Collections.Generic;
+using System.Net;
 using Server.Gumps;
 using Server.Mobiles;
 using Server.Network;
-using Server.Text;
 
 namespace Server.Engines.Custom;
 
 public sealed class LeaderboardGump : DynamicGump
 {
+    internal const int RowsPerPage = 10;
+    internal const int PreviousPageButton = 100;
+    internal const int NextPageButton = 101;
+    internal const int ShowMyRankingButton = 102;
+
+    private static readonly LeaderboardStat[] _visibleStats =
+    [
+        LeaderboardStat.OreMined,
+        LeaderboardStat.LumberHarvested,
+        LeaderboardStat.LeatherGathered,
+        LeaderboardStat.TreasureMapsCompleted,
+        LeaderboardStat.GoldFarmed,
+        LeaderboardStat.MonstersKilled
+    ];
+
     private readonly PlayerMobile _from;
     private readonly LeaderboardStat _stat;
+    private readonly LeaderboardPage _page;
+
     public override bool Singleton => true;
 
-    public LeaderboardGump(PlayerMobile from, LeaderboardStat stat = LeaderboardStat.OreMined) : base(0, 0)
+    private LeaderboardGump(PlayerMobile from, LeaderboardStat stat, in LeaderboardPage page) : base(50, 50)
     {
         _from = from;
         _stat = stat;
+        _page = page;
     }
 
-    protected override void BuildLayout(ref DynamicGumpBuilder builder)
+    public static void DisplayTo(
+        Mobile from, LeaderboardStat stat = LeaderboardStat.OreMined, int pageIndex = 0, bool showMyRanking = false
+    )
     {
-        const int x = 50, y = 25, width = 540, height = 430;
-        const string gold = "#F4D27A", cream = "#F2F0E8";
-        builder.AddPage(0);
-        CustomGumpStyle.AddWalnutSteelPanel(ref builder, x, y, width, height);
-        builder.AddHtml(x + 20, y + 18, width - 40, 24, "LEADERBOARDS", gold, 5, align: TextAlignment.Center);
-
-        AddTab(ref builder, x + 25, y + 52, "GATHERING", 1, _stat is LeaderboardStat.OreMined or LeaderboardStat.LumberHarvested or LeaderboardStat.LeatherGathered);
-        AddTab(ref builder, x + 135, y + 52, "COMBAT", 2, _stat is LeaderboardStat.MonstersKilled);
-        AddTab(ref builder, x + 225, y + 52, "WEALTH", 3, _stat is LeaderboardStat.MonsterGoldGenerated);
-        AddTab(ref builder, x + 315, y + 52, "CRAFTING", 4, _stat is LeaderboardStat.BoardsUsed or LeaderboardStat.LeatherUsed or LeaderboardStat.IngotsUsed);
-        AddTab(ref builder, x + 415, y + 52, "MAPS", 5, _stat is LeaderboardStat.TreasureMapsCompleted);
-        builder.AddHtml(x + 20, y + 88, width - 40, 18, GetName(_stat), gold, 3, align: TextAlignment.Center);
-        builder.AddHtml(x + 34, y + 112, 80, 16, "RANKING", gold, 1);
-        builder.AddHtml(x + 140, y + 112, 220, 16, "PLAYER NAME", gold, 1);
-        builder.AddHtml(x + 385, y + 112, 115, 16, "TOTAL", gold, 1, align: TextAlignment.Right);
-
-        var rows = LeaderboardService.GetTop(_stat, 10);
-        for (var i = 0; i < 10; i++)
+        if (from is PlayerMobile { Deleted: false, NetState: not null } player && GetName(stat) != null)
         {
-            var rowY = y + 134 + i * 22;
-            if (i < rows.Count)
+            var page = LeaderboardService.GetPage(stat, pageIndex, RowsPerPage, player, showMyRanking);
+            if (showMyRanking && page.OwnRank == null)
             {
-                builder.AddHtml(x + 40, rowY, 60, 16, (i + 1).ToString(), gold, 1);
-                builder.AddHtml(x + 140, rowY, 220, 16, rows[i].PlayerName, cream, 1);
-                builder.AddHtml(x + 385, rowY, 115, 16, rows[i].Total.ToString("N0"), cream, 1, align: TextAlignment.Right);
+                player.SendMessage("You have not earned a ranking in this category yet.");
             }
+
+            player.SendGump(new LeaderboardGump(player, stat, page));
         }
-        builder.AddHtml(x + 34, y + 366, 310, 18, $"YOUR RANKING: {_from.GetLeaderboardStat(_stat):N0}", gold, 1);
-        builder.AddButton(x + width - 120, y + height - 48, 4005, 4007, 0, GumpButtonType.Reply, 0);
-        builder.AddHtml(x + width - 90, y + height - 48, 65, 18, "CLOSE", gold, 1);
     }
 
-    private static void AddTab(ref DynamicGumpBuilder builder, int x, int y, string label, int id, bool selected)
+    protected override void BuildLayout(ref DynamicGumpBuilder builder) =>
+        BuildBoard(ref builder, _stat, _page);
+
+    internal static void BuildBoard(ref DynamicGumpBuilder builder, LeaderboardStat stat, in LeaderboardPage page)
     {
-        builder.AddButton(x, y, selected ? 4005 : 4007, selected ? 4007 : 4005, id, GumpButtonType.Reply, 0);
-        builder.AddHtml(x + 20, y, 72, 18, label, selected ? "#F4D27A" : "#F2F0E8", 1, align: TextAlignment.Center);
+        const string gold = CustomGumpStyle.TitleColor;
+        const string white = CustomGumpStyle.WhiteTextColor;
+        const int font = CustomGumpStyle.StandardFontSize;
+
+        builder.AddPage();
+        CustomGumpStyle.AddPanel(ref builder, 0, 0, 700, 540, "LEADERBOARDS");
+        builder.AddHtml(28, 54, 220, 24, "CATEGORIES", gold, font);
+        for (var i = 0; i < _visibleStats.Length; i++)
+        {
+            var category = _visibleStats[i];
+            var y = 102 + i * 50;
+            builder.AddButton(28, y + 1, 4005, 4007, i + 1);
+            AddCategoryIcon(ref builder, category, 84, y + 20);
+            var labelY = category == LeaderboardStat.TreasureMapsCompleted ? y : y + 8;
+            builder.AddHtml(114, labelY, 142, 40, GetName(category), category == stat ? gold : white, font);
+        }
+
+        AddCategoryIcon(ref builder, stat, 308, 76);
+        builder.AddHtml(344, 66, 328, 24, GetName(stat), gold, font, align: TextAlignment.Center);
+        builder.AddHtml(278, 112, 56, 24, "RANK", gold, font);
+        builder.AddHtml(338, 112, 193, 24, "PLAYER NAME", gold, font);
+        builder.AddHtml(542, 112, 130, 24, "TOTAL", gold, font, align: TextAlignment.Right);
+
+        for (var i = 0; i < RowsPerPage && i < page.Entries.Count; i++)
+        {
+            var row = page.Entries[i];
+            var rank = page.PageIndex * RowsPerPage + i + 1;
+            var color = rank == page.OwnRank ? gold : white;
+            var y = 148 + i * 29;
+            builder.AddHtml(278, y, 56, 24, $"{rank:N0}", color, font);
+            builder.AddHtml(338, y, 193, 24, WebUtility.HtmlEncode(row.PlayerName), color, font);
+            builder.AddHtml(542, y, 130, 24, $"{row.Total:N0}", color, font, align: TextAlignment.Right);
+        }
+
+        if (page.Entries.Count == 0)
+        {
+            builder.AddHtml(278, 164, 394, 48, "No totals recorded yet.", white, font, align: TextAlignment.Center);
+        }
+
+        if (page.PageIndex > 0)
+        {
+            builder.AddButton(278, 446, 4023, 4025, PreviousPageButton);
+        }
+
+        builder.AddHtml(314, 445, 314, 24, $"PAGE {page.PageIndex + 1:N0} / {page.PageCount:N0}", gold, font,
+            align: TextAlignment.Center);
+        if (page.PageIndex + 1 < page.PageCount)
+        {
+            builder.AddButton(640, 446, 4005, 4007, NextPageButton);
+        }
+
+        builder.AddHtml(278, 473, 250, 24, $"YOUR TOTAL: {page.OwnTotal:N0}", white, font);
+        if (page.OwnRank is { } ownRank)
+        {
+            builder.AddHtml(532, 473, 140, 24, $"YOUR RANK: {ownRank:N0}", gold, font, align: TextAlignment.Right);
+        }
+        else
+        {
+            builder.AddHtml(532, 473, 140, 24, "UNRANKED", white, font, align: TextAlignment.Right);
+        }
+
+        builder.AddButton(278, 504, 4005, 4007, ShowMyRankingButton);
+        builder.AddHtml(310, 503, 210, 24, "SHOW MY RANKING", CustomGumpStyle.ActionColor, font);
+        builder.AddButton(560, 504, 4005, 4007, 0);
+        builder.AddHtml(595, 503, 77, 24, "CLOSE", white, font);
     }
 
-    private static string GetName(LeaderboardStat stat) => stat switch
+    private static void AddCategoryIcon(ref DynamicGumpBuilder builder, LeaderboardStat stat, int centerX, int centerY)
     {
-        LeaderboardStat.OreMined => "ORE MINED", LeaderboardStat.LumberHarvested => "LUMBER HARVESTED",
-        LeaderboardStat.MonsterGoldGenerated => "MONSTER GOLD", LeaderboardStat.MonstersKilled => "MONSTERS KILLED",
-        LeaderboardStat.TreasureMapsCompleted => "TREASURE MAPS", LeaderboardStat.LeatherGathered => "LEATHER GATHERED",
-        LeaderboardStat.BoardsUsed => "BOARDS USED", LeaderboardStat.LeatherUsed => "LEATHER USED", _ => "INGOTS USED"
+        var (itemId, offsetX, offsetY) = GetIcon(stat);
+        builder.AddItem(centerX - offsetX, centerY - offsetY, itemId);
+    }
+
+    internal static int GetIconItemId(LeaderboardStat stat) => GetIcon(stat).ItemId;
+
+    // Native item art includes transparent padding; center its visible pixels in the icon slot.
+    private static (int ItemId, int CenterOffsetX, int CenterOffsetY) GetIcon(LeaderboardStat stat) => stat switch
+    {
+        LeaderboardStat.OreMined => (0x19B8, 20, 12),
+        LeaderboardStat.LumberHarvested => (0x1BDD, 26, 11),
+        LeaderboardStat.LeatherGathered => (0x1081, 25, 18),
+        LeaderboardStat.TreasureMapsCompleted => (0x14EB, 21, 15),
+        LeaderboardStat.GoldFarmed => (0xEEF, 23, 13),
+        LeaderboardStat.MonstersKilled => (0x2203, 11, 13),
+        _ => default
+    };
+
+    internal static LeaderboardStat? GetStatFromButton(int buttonId) =>
+        buttonId > 0 && buttonId <= _visibleStats.Length ? _visibleStats[buttonId - 1] : null;
+
+    internal static string GetName(LeaderboardStat stat) => stat switch
+    {
+        LeaderboardStat.OreMined => "Ore Mined",
+        LeaderboardStat.LumberHarvested => "Lumber Chopped",
+        LeaderboardStat.LeatherGathered => "Leather Skinned",
+        LeaderboardStat.TreasureMapsCompleted => "Treasure Maps Completed",
+        LeaderboardStat.GoldFarmed => "Gold Farmed",
+        LeaderboardStat.MonstersKilled => "Monsters Killed",
+        _ => null
     };
 
     public override void OnResponse(NetState state, in RelayInfo info)
     {
-        var stat = info.ButtonID switch
+        if (state == null || state != _from.NetState || state.Mobile != _from || _from.Deleted)
         {
-            1 => LeaderboardStat.OreMined, 2 => LeaderboardStat.MonstersKilled, 3 => LeaderboardStat.MonsterGoldGenerated,
-            4 => LeaderboardStat.IngotsUsed, 5 => LeaderboardStat.TreasureMapsCompleted, _ => _stat
-        };
-        if (info.ButtonID != 0) state.Mobile.SendGump(new LeaderboardGump(_from, stat));
+            return;
+        }
+
+        if (GetStatFromButton(info.ButtonID) is { } stat)
+        {
+            DisplayTo(_from, stat);
+            return;
+        }
+
+        switch (info.ButtonID)
+        {
+            case PreviousPageButton when _page.PageIndex > 0:
+                DisplayTo(_from, _stat, _page.PageIndex - 1);
+                break;
+            case NextPageButton when _page.PageIndex + 1 < _page.PageCount:
+                DisplayTo(_from, _stat, _page.PageIndex + 1);
+                break;
+            case ShowMyRankingButton:
+                DisplayTo(_from, _stat, _page.PageIndex, showMyRanking: true);
+                break;
+        }
     }
 }

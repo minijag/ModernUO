@@ -12,7 +12,7 @@ namespace Server.Gumps
 
         public override bool Singleton => true;
 
-        protected GuildMobileListGump(Guild guild, bool radio, List<Mobile> list) : base(20, 30)
+        protected GuildMobileListGump(Guild guild, bool radio, List<Mobile> list) : base(40, 50)
         {
             _guild = guild;
             _radio = radio;
@@ -21,11 +21,8 @@ namespace Server.Gumps
 
         protected override void BuildLayout(ref DynamicGumpBuilder builder)
         {
-            builder.SetNoMove();
-
             builder.AddPage();
-            builder.AddBackground(0, 0, 550, 440, 5054);
-            builder.AddBackground(10, 10, 530, 420, 3000);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 550, 440, "GUILD MEMBERS");
 
             BuildHeader(ref builder);
 
@@ -36,7 +33,7 @@ namespace Server.Gumps
                     if (i != 0)
                     {
                         builder.AddButton(300, 370, 4005, 4007, 0, GumpButtonType.Page, i / 11 + 1);
-                        builder.AddHtmlLocalized(335, 370, 300, 35, 1011066); // Next page
+                        builder.AddHtmlLocalized(335, 370, 300, 35, 1011066, CustomGumpStyle.LocalizedTextColor); // Next page
                     }
 
                     builder.AddPage(i / 11 + 1);
@@ -44,7 +41,7 @@ namespace Server.Gumps
                     if (i != 0)
                     {
                         builder.AddButton(20, 370, 4014, 4016, 0, GumpButtonType.Page, i / 11);
-                        builder.AddHtmlLocalized(55, 370, 300, 35, 1011067); // Previous page
+                        builder.AddHtmlLocalized(55, 370, 300, 35, 1011067, CustomGumpStyle.LocalizedTextColor); // Previous page
                     }
                 }
 
@@ -56,7 +53,7 @@ namespace Server.Gumps
                 var m = _list[i];
 
                 var name = m.Name;
-                builder.AddLabel(_radio ? 55 : 20, 35 + i % 11 * 30, 0, name != null ? name.AsSpan().Trim() : "(empty)");
+                builder.AddLabel(_radio ? 55 : 20, 35 + i % 11 * 30, CustomGumpStyle.TextHue, name != null ? name.AsSpan().Trim() : "(empty)");
             }
         }
 

@@ -33,12 +33,12 @@ namespace Server.Gumps
 
     public class HouseGumpAOS : DynamicGump
     {
-        private const int LabelColor = 0x7FFF;
+        private const int LabelColor = CustomGumpStyle.LocalizedTextColor;
         private const int SelectedColor = 0x421F;
         private const int DisabledColor = 0x4210;
         private const int WarningColor = 0x7E10;
 
-        private const int LabelHue = 0x481;
+        private const int LabelHue = CustomGumpStyle.TextHue;
         private const int HighlightedLabelHue = 0x64;
 
         private static readonly int[] _hangerNumbers =
@@ -132,7 +132,7 @@ namespace Server.Gumps
 
         public override bool Singleton => true;
 
-        private HouseGumpAOS(HouseGumpPageAOS page, Mobile from, BaseHouse house) : base(50, 40)
+        private HouseGumpAOS(HouseGumpPageAOS page, Mobile from, BaseHouse house) : base(50, 50)
         {
             _house = house;
             _page = page;
@@ -164,19 +164,12 @@ namespace Server.Gumps
 
             builder.AddPage();
 
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 420,
+                isFriend ? (_page == HouseGumpPageAOS.Vendors ? 420 : 440)
+                    : (_page == HouseGumpPageAOS.Vendors ? 420 : 120), "HOUSE MANAGEMENT");
+
             if (isFriend || _page == HouseGumpPageAOS.Vendors)
             {
-                builder.AddBackground(0, 0, 420, _page != HouseGumpPageAOS.Vendors ? 440 : 420, 5054);
-
-                builder.AddImageTiled(10, 10, 400, 100, 2624);
-                builder.AddAlphaRegion(10, 10, 400, 100);
-
-                builder.AddImageTiled(10, 120, 400, 260, 2624);
-                builder.AddAlphaRegion(10, 120, 400, 260);
-
-                builder.AddImageTiled(10, 390, 400, _page != HouseGumpPageAOS.Vendors ? 40 : 20, 2624);
-                builder.AddAlphaRegion(10, 390, 400, _page != HouseGumpPageAOS.Vendors ? 40 : 20);
-
                 AddButtonLabeled(ref builder, 250, _page != HouseGumpPageAOS.Vendors ? 410 : 390, 0, 1060675); // CLOSE
             }
 

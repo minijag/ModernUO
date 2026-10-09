@@ -2104,25 +2104,29 @@ namespace Server.Mobiles
                                     1073555
                                 ); // You skin it and place the cut-up hides in your backpack.
                             }
+
+                            Engines.Custom.LeaderboardService.Record(
+                                from, Engines.Custom.LeaderboardStat.LeatherGathered, hides
+                            );
                         }
                     }
                     else
                     {
-                        if (HideType == HideType.Regular)
+                        var carvedHides = HideType switch
                         {
-                            corpse.DropItem(new Hides(hides));
-                        }
-                        else if (HideType == HideType.Spined)
+                            HideType.Regular => (Item)new Hides(hides),
+                            HideType.Spined  => new SpinedHides(hides),
+                            HideType.Horned  => new HornedHides(hides),
+                            HideType.Barbed  => new BarbedHides(hides),
+                            _                => null
+                        };
+
+                        if (carvedHides != null)
                         {
-                            corpse.DropItem(new SpinedHides(hides));
-                        }
-                        else if (HideType == HideType.Horned)
-                        {
-                            corpse.DropItem(new HornedHides(hides));
-                        }
-                        else if (HideType == HideType.Barbed)
-                        {
-                            corpse.DropItem(new BarbedHides(hides));
+                            corpse.DropItem(carvedHides);
+                            Engines.Custom.LeaderboardService.Record(
+                                from, Engines.Custom.LeaderboardStat.LeatherGathered, hides
+                            );
                         }
 
                         from.SendLocalizedMessage(500471); // You skin it, and the hides are now in the corpse.
@@ -3692,8 +3696,9 @@ namespace Server.Mobiles
                         leaderboardKillCredited = true;
                         Engines.Custom.LeaderboardService.Record(leaderboardPlayer, Engines.Custom.LeaderboardStat.MonstersKilled, 1);
                         Engines.Custom.LeaderboardService.Record(
-                            leaderboardPlayer, Engines.Custom.LeaderboardStat.MonsterGoldGenerated, _leaderboardGoldGenerated
+                            leaderboardPlayer, Engines.Custom.LeaderboardStat.GoldFarmed, _leaderboardGoldGenerated
                         );
+                        Engines.Custom.GuildProgressService.RecordBossKill(leaderboardPlayer, this);
                     }
 
                     if (!givenFactionKill)

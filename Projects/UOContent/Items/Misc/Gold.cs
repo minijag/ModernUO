@@ -4,7 +4,7 @@ using Server.Accounting;
 
 namespace Server.Items;
 
-[SerializationGenerator(0, false)]
+[SerializationGenerator(2, false)]
 public partial class Gold : Item
 {
     [Constructible]
@@ -20,6 +20,15 @@ public partial class Gold : Item
     }
 
     public override double DefaultWeight => Core.ML ? 0.02 / 3 : 0.02;
+
+    private void MigrateFrom(V0Content content)
+    {
+    }
+
+    private void MigrateFrom(V1Content content)
+    {
+        // Physical gold does not contribute to kill-based earnings.
+    }
 
     public override int GetDropSound()
     {

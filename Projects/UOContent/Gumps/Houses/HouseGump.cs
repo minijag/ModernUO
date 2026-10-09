@@ -13,7 +13,7 @@ namespace Server.Gumps
         private readonly List<Mobile> _list;
         private readonly int _number;
 
-        public HouseListGump(int number, List<Mobile> list, BaseHouse house, bool accountOf) : base(20, 30)
+        public HouseListGump(int number, List<Mobile> list, BaseHouse house, bool accountOf) : base(40, 50)
         {
             _accountOf = accountOf;
             _list = list;
@@ -25,13 +25,12 @@ namespace Server.Gumps
         {
             builder.AddPage();
 
-            builder.AddBackground(0, 0, 420, 430, 5054);
-            builder.AddBackground(10, 10, 400, 410, 3000);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 420, 430, "HOUSE ACCESS");
 
             builder.AddButton(20, 388, 4005, 4007, 0);
-            builder.AddHtmlLocalized(55, 388, 300, 20, 1011104); // Return to previous menu
+            builder.AddHtmlLocalized(55, 388, 300, 20, 1011104, CustomGumpStyle.LocalizedTextColor); // Return to previous menu
 
-            builder.AddHtmlLocalized(20, 20, 350, 20, _number);
+            builder.AddHtmlLocalized(20, 20, 350, 20, _number, CustomGumpStyle.LocalizedTextColor);
 
             if (_list == null)
             {
@@ -67,7 +66,7 @@ namespace Server.Gumps
                 builder.AddLabel(
                     55,
                     55 + i % 16 * 20,
-                    0,
+                    CustomGumpStyle.TextHue,
                     _accountOf && m.Player && m.Account != null
                         ? $"Account of {name}"
                         : name
@@ -96,7 +95,7 @@ namespace Server.Gumps
         private readonly List<Mobile> _list;
         private readonly int _number;
 
-        public HouseRemoveGump(int number, List<Mobile> list, BaseHouse house, bool accountOf) : base(20, 30)
+        public HouseRemoveGump(int number, List<Mobile> list, BaseHouse house, bool accountOf) : base(40, 50)
         {
             if (house.Deleted)
             {
@@ -118,16 +117,15 @@ namespace Server.Gumps
         {
             builder.AddPage();
 
-            builder.AddBackground(0, 0, 420, 430, 5054);
-            builder.AddBackground(10, 10, 400, 410, 3000);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 420, 430, "HOUSE ACCESS");
 
             builder.AddButton(20, 388, 4005, 4007, 0);
-            builder.AddHtmlLocalized(55, 388, 300, 20, 1011104); // Return to previous menu
+            builder.AddHtmlLocalized(55, 388, 300, 20, 1011104, CustomGumpStyle.LocalizedTextColor); // Return to previous menu
 
             builder.AddButton(20, 365, 4005, 4007, 1);
-            builder.AddHtmlLocalized(55, 365, 300, 20, 1011270); // Remove now!
+            builder.AddHtmlLocalized(55, 365, 300, 20, 1011270, CustomGumpStyle.LocalizedTextColor); // Remove now!
 
-            builder.AddHtmlLocalized(20, 20, 350, 20, _number);
+            builder.AddHtmlLocalized(20, 20, 350, 20, _number, CustomGumpStyle.LocalizedTextColor);
 
             if (_list == null)
             {
@@ -164,7 +162,7 @@ namespace Server.Gumps
                 builder.AddLabel(
                     55,
                     52 + i % 15 * 20,
-                    0,
+                    CustomGumpStyle.TextHue,
                     _accountOf && m.Player && m.Account != null
                         ? $"Account of {name}"
                         : name
@@ -221,7 +219,7 @@ namespace Server.Gumps
 
         public override bool Singleton => true;
 
-        private HouseGump(Mobile from, BaseHouse house) : base(20, 30)
+        private HouseGump(Mobile from, BaseHouse house) : base(40, 50)
         {
             _from = from;
             _house = house;
@@ -257,11 +255,7 @@ namespace Server.Gumps
 
             builder.AddPage();
 
-            if (isFriend)
-            {
-                builder.AddBackground(0, 0, 420, 430, 5054);
-                builder.AddBackground(10, 10, 400, 410, 3000);
-            }
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 420, isFriend ? 430 : 120, "HOUSE MANAGEMENT");
 
             builder.AddImage(130, 0, 100);
 
@@ -282,100 +276,94 @@ namespace Server.Gumps
                 return;
             }
 
-            builder.AddHtmlLocalized(55, 103, 75, 20, 1011233); // INFO
+            builder.AddHtmlLocalized(55, 103, 75, 20, 1011233, CustomGumpStyle.LocalizedTextColor); // INFO
             builder.AddButton(20, 103, 4005, 4007, 0, GumpButtonType.Page, 1);
 
-            builder.AddHtmlLocalized(170, 103, 75, 20, 1011234); // FRIENDS
+            builder.AddHtmlLocalized(170, 103, 75, 20, 1011234, CustomGumpStyle.LocalizedTextColor); // FRIENDS
             builder.AddButton(135, 103, 4005, 4007, 0, GumpButtonType.Page, 2);
 
-            builder.AddHtmlLocalized(295, 103, 75, 20, 1011235); // OPTIONS
+            builder.AddHtmlLocalized(295, 103, 75, 20, 1011235, CustomGumpStyle.LocalizedTextColor); // OPTIONS
             builder.AddButton(260, 103, 4005, 4007, 0, GumpButtonType.Page, 3);
 
-            builder.AddHtmlLocalized(295, 390, 75, 20, 1011441); // EXIT
+            builder.AddHtmlLocalized(295, 390, 75, 20, 1011441, CustomGumpStyle.LocalizedTextColor); // EXIT
             builder.AddButton(260, 390, 4005, 4007, 0);
 
-            builder.AddHtmlLocalized(55, 390, 200, 20, 1011236); // Change this house's name!
+            builder.AddHtmlLocalized(55, 390, 200, 20, 1011236, CustomGumpStyle.LocalizedTextColor); // Change this house's name!
             builder.AddButton(20, 390, 4005, 4007, 1);
 
             // Info page
             builder.AddPage(1);
 
-            builder.AddHtmlLocalized(20, 135, 100, 20, 1011242); // Owned by:
-            builder.AddHtml(120, 135, 100, 20, GetOwnerName());
+            builder.AddHtmlLocalized(20, 135, 100, 20, 1011242, CustomGumpStyle.LocalizedTextColor); // Owned by:
+            builder.AddHtml(120, 135, 100, 20, GetOwnerName(), CustomGumpStyle.TextColor);
 
-            builder.AddHtmlLocalized(20, 170, 275, 20, 1011237); // Number of locked down items:
-            builder.AddHtml(320, 170, 50, 20, $"{_house.LockDownCount}");
+            builder.AddHtml(20, 170, 240, 20, "Locked down items:", CustomGumpStyle.TextColor);
+            builder.AddHtml(270, 170, 130, 20, $"{_house.LockDownCount} / {_house.MaxLockDowns}", CustomGumpStyle.TextColor);
 
-            builder.AddHtmlLocalized(20, 190, 275, 20, 1011238); // Maximum locked down items:
-            builder.AddHtml(320, 190, 50, 20, $"{_house.MaxLockDowns}");
+            builder.AddHtml(20, 190, 240, 20, "Secured Containers:", CustomGumpStyle.TextColor);
+            builder.AddHtml(270, 190, 130, 20, $"{_house.SecureCount} / {_house.MaxSecures}", CustomGumpStyle.TextColor);
 
-            builder.AddHtmlLocalized(20, 210, 275, 20, 1011239); // Number of secure containers:
-            builder.AddHtml(320, 210, 50, 20, $"{_house.SecureCount}");
-
-            builder.AddHtmlLocalized(20, 230, 275, 20, 1011240); // Maximum number of secure containers:
-            builder.AddHtml(320, 230, 50, 20, $"{_house.MaxSecures}");
-
-            builder.AddHtmlLocalized(20, 260, 400, 20, 1018032); // This house is properly placed.
-            builder.AddHtmlLocalized(20, 280, 400, 20, 1018035); // This house is of modern design.
+            builder.AddHtmlLocalized(20, 260, 400, 20, 1018032, CustomGumpStyle.LocalizedTextColor); // This house is properly placed.
+            builder.AddHtmlLocalized(20, 280, 400, 20, 1018035, CustomGumpStyle.LocalizedTextColor); // This house is of modern design.
 
             if (_house.Public)
             {
                 // TODO: Validate exact placement
-                builder.AddHtmlLocalized(20, 305, 275, 20, 1011241); // Number of visits this building has had
-                builder.AddHtml(320, 305, 50, 20, $"{_house.Visits}");
+                builder.AddHtmlLocalized(20, 305, 275, 20, 1011241, CustomGumpStyle.LocalizedTextColor); // Number of visits this building has had
+                builder.AddHtml(320, 305, 50, 20, $"{_house.Visits}", CustomGumpStyle.TextColor);
             }
 
             // Friends page
             builder.AddPage(2);
 
-            builder.AddHtmlLocalized(45, 130, 150, 20, 1011266); // List of co-owners
+            builder.AddHtmlLocalized(45, 130, 150, 20, 1011266, CustomGumpStyle.LocalizedTextColor); // List of co-owners
             builder.AddButton(20, 130, 2714, 2715, 2);
 
-            builder.AddHtmlLocalized(45, 150, 150, 20, 1011267); // Add a co-owner
+            builder.AddHtmlLocalized(45, 150, 150, 20, 1011267, CustomGumpStyle.LocalizedTextColor); // Add a co-owner
             builder.AddButton(20, 150, 2714, 2715, 3);
 
-            builder.AddHtmlLocalized(45, 170, 150, 20, 1018036); // Remove a co-owner
+            builder.AddHtmlLocalized(45, 170, 150, 20, 1018036, CustomGumpStyle.LocalizedTextColor); // Remove a co-owner
             builder.AddButton(20, 170, 2714, 2715, 4);
 
-            builder.AddHtmlLocalized(45, 190, 150, 20, 1011268); // Clear co-owner list
+            builder.AddHtmlLocalized(45, 190, 150, 20, 1011268, CustomGumpStyle.LocalizedTextColor); // Clear co-owner list
             builder.AddButton(20, 190, 2714, 2715, 5);
 
-            builder.AddHtmlLocalized(225, 130, 155, 20, 1011243); // List of Friends
+            builder.AddHtmlLocalized(225, 130, 155, 20, 1011243, CustomGumpStyle.LocalizedTextColor); // List of Friends
             builder.AddButton(200, 130, 2714, 2715, 6);
 
-            builder.AddHtmlLocalized(225, 150, 155, 20, 1011244); // Add a Friend
+            builder.AddHtmlLocalized(225, 150, 155, 20, 1011244, CustomGumpStyle.LocalizedTextColor); // Add a Friend
             builder.AddButton(200, 150, 2714, 2715, 7);
 
-            builder.AddHtmlLocalized(225, 170, 155, 20, 1018037); // Remove a Friend
+            builder.AddHtmlLocalized(225, 170, 155, 20, 1018037, CustomGumpStyle.LocalizedTextColor); // Remove a Friend
             builder.AddButton(200, 170, 2714, 2715, 8);
 
-            builder.AddHtmlLocalized(225, 190, 155, 20, 1011245); // Clear Friends list
+            builder.AddHtmlLocalized(225, 190, 155, 20, 1011245, CustomGumpStyle.LocalizedTextColor); // Clear Friends list
             builder.AddButton(200, 190, 2714, 2715, 9);
 
-            builder.AddHtmlLocalized(120, 215, 280, 20, 1011258); // Ban someone from the house
+            builder.AddHtmlLocalized(120, 215, 280, 20, 1011258, CustomGumpStyle.LocalizedTextColor); // Ban someone from the house
             builder.AddButton(95, 215, 2714, 2715, 10);
 
-            builder.AddHtmlLocalized(120, 235, 280, 20, 1011259); // Eject someone from the house
+            builder.AddHtmlLocalized(120, 235, 280, 20, 1011259, CustomGumpStyle.LocalizedTextColor); // Eject someone from the house
             builder.AddButton(95, 235, 2714, 2715, 11);
 
-            builder.AddHtmlLocalized(120, 255, 280, 20, 1011260); // View a list of banned people
+            builder.AddHtmlLocalized(120, 255, 280, 20, 1011260, CustomGumpStyle.LocalizedTextColor); // View a list of banned people
             builder.AddButton(95, 255, 2714, 2715, 12);
 
-            builder.AddHtmlLocalized(120, 275, 280, 20, 1011261); // Lift a ban
+            builder.AddHtmlLocalized(120, 275, 280, 20, 1011261, CustomGumpStyle.LocalizedTextColor); // Lift a ban
             builder.AddButton(95, 275, 2714, 2715, 13);
 
             // Options page
             builder.AddPage(3);
 
-            builder.AddHtmlLocalized(45, 150, 355, 30, 1011248); // Transfer ownership of the house
+            builder.AddHtmlLocalized(45, 150, 355, 30, 1011248, CustomGumpStyle.LocalizedTextColor); // Transfer ownership of the house
             builder.AddButton(20, 150, 2714, 2715, 14);
 
-            builder.AddHtmlLocalized(45, 180, 355, 30, 1011249); // Demolish house and get deed back
+            builder.AddHtmlLocalized(45, 180, 355, 30, 1011249, CustomGumpStyle.LocalizedTextColor); // Demolish house and get deed back
             builder.AddButton(20, 180, 2714, 2715, 15);
 
             if (!_house.Public)
             {
-                builder.AddHtmlLocalized(45, 210, 355, 30, 1011247); // Change the house locks
+                builder.AddHtmlLocalized(45, 210, 355, 30, 1011247, CustomGumpStyle.LocalizedTextColor); // Change the house locks
                 builder.AddButton(20, 210, 2714, 2715, 16);
 
                 builder.AddHtmlLocalized(
@@ -383,17 +371,18 @@ namespace Server.Gumps
                     240,
                     350,
                     90,
-                    1011253
+                    1011253,
+                    CustomGumpStyle.LocalizedTextColor
                 ); // Declare this building to be public. This will make your front door unlockable.
                 builder.AddButton(20, 240, 2714, 2715, 17);
             }
             else
             {
                 // AddHtmlLocalized( 45, 280, 350, 30, 1011250, false, false ); // Change the sign type
-                builder.AddHtmlLocalized(45, 210, 350, 30, 1011250); // Change the sign type
+                builder.AddHtmlLocalized(45, 210, 350, 30, 1011250, CustomGumpStyle.LocalizedTextColor); // Change the sign type
                 builder.AddButton(20, 210, 2714, 2715, 0, GumpButtonType.Page, 4);
 
-                builder.AddHtmlLocalized(45, 240, 350, 30, 1011252); // Declare this building to be private.
+                builder.AddHtmlLocalized(45, 240, 350, 30, 1011252, CustomGumpStyle.LocalizedTextColor); // Declare this building to be private.
                 builder.AddButton(20, 240, 2714, 2715, 17);
 
                 // Change the sign type
@@ -405,10 +394,10 @@ namespace Server.Gumps
                     builder.AddItem(60 + i / 4 * 50, 130 + i % 4 * 35, 2980 + i * 2);
                 }
 
-                builder.AddHtmlLocalized(200, 305, 129, 20, 1011254); // Guild sign choices
+                builder.AddHtmlLocalized(200, 305, 129, 20, 1011254, CustomGumpStyle.LocalizedTextColor); // Guild sign choices
                 builder.AddButton(350, 305, 252, 253, 0, GumpButtonType.Page, 5);
 
-                builder.AddHtmlLocalized(200, 340, 355, 30, 1011277); // Okay that is fine.
+                builder.AddHtmlLocalized(200, 340, 355, 30, 1011277, CustomGumpStyle.LocalizedTextColor); // Okay that is fine.
                 builder.AddButton(350, 340, 4005, 4007, 18);
 
                 builder.AddPage(5);
@@ -419,10 +408,10 @@ namespace Server.Gumps
                     builder.AddItem(60 + i / 5 * 50, 130 + i % 5 * 35, 3028 + i * 2);
                 }
 
-                builder.AddHtmlLocalized(200, 305, 129, 20, 1011255); // Shop sign choices
+                builder.AddHtmlLocalized(200, 305, 129, 20, 1011255, CustomGumpStyle.LocalizedTextColor); // Shop sign choices
                 builder.AddButton(350, 305, 250, 251, 0, GumpButtonType.Page, 4);
 
-                builder.AddHtmlLocalized(200, 340, 355, 30, 1011277); // Okay that is fine.
+                builder.AddHtmlLocalized(200, 340, 355, 30, 1011277, CustomGumpStyle.LocalizedTextColor); // Okay that is fine.
                 builder.AddButton(350, 340, 4005, 4007, 18);
             }
         }

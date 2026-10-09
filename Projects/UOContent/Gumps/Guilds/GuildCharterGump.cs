@@ -11,7 +11,7 @@ namespace Server.Gumps
 
         public override bool Singleton => true;
 
-        private GuildCharterGump(Guild guild) : base(20, 30) => _guild = guild;
+        private GuildCharterGump(Guild guild) : base(40, 50) => _guild = guild;
 
         public static void DisplayTo(Mobile from, Guild guild)
         {
@@ -26,28 +26,25 @@ namespace Server.Gumps
 
         protected override void BuildLayout(ref DynamicGumpBuilder builder)
         {
-            builder.SetNoMove();
-
             builder.AddPage();
-            builder.AddBackground(0, 0, 550, 400, 5054);
-            builder.AddBackground(10, 10, 530, 380, 3000);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 550, 400, "GUILD CHARTER");
 
             builder.AddButton(20, 360, 4005, 4007, 1);
-            builder.AddHtmlLocalized(55, 360, 300, 35, 1011120); // Return to the main menu.
+            builder.AddHtmlLocalized(55, 360, 300, 35, 1011120, CustomGumpStyle.LocalizedTextColor); // Return to the main menu.
 
             string charter;
 
             if ((charter = _guild.Charter) == null || (charter = charter.Trim()).Length <= 0)
             {
-                builder.AddHtmlLocalized(20, 20, 400, 35, 1013032); // No charter has been defined.
+                builder.AddHtmlLocalized(20, 20, 400, 35, 1013032, CustomGumpStyle.LocalizedTextColor); // No charter has been defined.
             }
             else
             {
-                builder.AddHtml(20, 20, 510, 75, charter, background: true, scrollbar: true);
+                builder.AddHtml(20, 20, 510, 75, charter, CustomGumpStyle.WhiteTextColor, scrollbar: true);
             }
 
             builder.AddButton(20, 200, 4005, 4007, 2);
-            builder.AddHtmlLocalized(55, 200, 300, 20, 1011122); // Visit the guild website :
+            builder.AddHtmlLocalized(55, 200, 300, 20, 1011122, CustomGumpStyle.LocalizedTextColor); // Visit the guild website :
 
             var website = _guild.Website != null ? _guild.Website.AsSpan().Trim() : "";
             if (website.Length <= 0)
@@ -55,7 +52,7 @@ namespace Server.Gumps
                 website = DefaultWebsite;
             }
 
-            builder.AddHtml(55, 220, 300, 20, website);
+            builder.AddHtml(55, 220, 300, 20, website, CustomGumpStyle.WhiteTextColor);
         }
 
         public override void OnResponse(NetState state, in RelayInfo info)

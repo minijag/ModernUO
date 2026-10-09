@@ -57,7 +57,7 @@ public class ContainedMenu : QuestionMenu
 public sealed class HelpGumpCustom : DynamicGump
 {
     // ClassicUO maps HTML size 4 to Unicode font 1 (the classic compact, heavy UI font).
-    private const int HelpFontSize = 4;
+    private const int HelpFontSize = CustomGumpStyle.StandardFontSize;
 
     public enum GumpFontColor
     {
@@ -101,13 +101,10 @@ public sealed class HelpGumpCustom : DynamicGump
         const int width = 540;
         const int height = 430;
 
-        const string titleColor = "#F4D27A";
-        const string actionColor = "#FFE8A6";
-        const string bodyColor = "#F2F0E8";
+        const string actionColor = CustomGumpStyle.ActionColor;
+        const string bodyColor = CustomGumpStyle.TextColor;
         builder.AddPage(0);
-        CustomGumpStyle.AddWalnutSteelPanel(ref builder, x, y, width, height);
-
-        builder.AddHtml(x + 22, y + 19, width - 44, 22, "HELP MENU", titleColor, HelpFontSize, align: TextAlignment.Center);
+        CustomGumpStyle.AddPanel(ref builder, x, y, width, height, "IN-GAME HELP");
         builder.AddHtml(
             x + 22, y + 40, width - 44, 22, "Choose the kind of help you need.", bodyColor, HelpFontSize, align: TextAlignment.Center
         );
@@ -125,6 +122,8 @@ public sealed class HelpGumpCustom : DynamicGump
             "Send a bug report to help improve Zodiac.", actionColor, bodyColor
         );
 
+        builder.AddButton(x + 28, y + height - 50, 4023, 4025, 10);
+        builder.AddHtml(x + 62, y + height - 50, 160, 22, "HELP MENU", CustomGumpStyle.WhiteTextColor, HelpFontSize);
         builder.AddButton(x + width - 130, y + height - 50, 4005, 4007, 0, GumpButtonType.Reply, 0);
         builder.AddHtml(x + width - 100, y + height - 50, 70, 22, "CLOSE", actionColor, HelpFontSize);
     }
@@ -134,11 +133,9 @@ public sealed class HelpGumpCustom : DynamicGump
         string titleColor, string bodyColor
     )
     {
-        // Dedicated blue shield artwork; each action has its own normal/pressed pair.
-        var shieldArt = buttonId switch { 2 => 64032, 7 => 64034, 3 => 64036, _ => throw new ArgumentOutOfRangeException(nameof(buttonId)) };
-        builder.AddButton(x + 10, y + 7, shieldArt, shieldArt + 1, buttonId, GumpButtonType.Reply, 0);
-        builder.AddHtml(x + 68, y + 11, width - 84, 22, title, titleColor, HelpFontSize);
-        builder.AddHtml(x + 68, y + 36, width - 84, 22, description, bodyColor, HelpFontSize);
+        builder.AddButton(x + 10, y + 11, 4005, 4007, buttonId, GumpButtonType.Reply, 0);
+        builder.AddHtml(x + 44, y + 11, width - 60, 22, title, titleColor, HelpFontSize);
+        builder.AddHtml(x + 44, y + 36, width - 60, 22, description, bodyColor, HelpFontSize);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -164,9 +161,11 @@ public sealed class HelpGumpCustom : DynamicGump
         );
     }
 
-    public static void HelpRequest(Mobile m)
+    public static void HelpRequest(Mobile m) => HelpMenuGump.DisplayTo(m);
+
+    public static void RequestInGameHelp(Mobile m)
     {
-        if (m.HasGump<HelpGumpCustom>())
+        if (m is not { Deleted: false, NetState: not null } || m.HasGump<HelpGumpCustom>())
         {
             return;
         }
@@ -211,6 +210,9 @@ public sealed class HelpGumpCustom : DynamicGump
 
         switch (info.ButtonID)
         {
+            case 10:
+                HelpMenuGump.DisplayTo(from);
+                return;
             case 0: // Close/Cancel
                 {
                     from.SendLocalizedMessage(501235, "", 0x35); // Help request aborted.

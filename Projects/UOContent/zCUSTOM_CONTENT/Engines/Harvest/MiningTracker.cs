@@ -8,7 +8,7 @@ namespace Server.Engines.Harvest.Custom
     {
         public static void OnOreMined(Mobile from, Item ore, int amount)
         {
-            if (from is PlayerMobile pm && ore is not BaseGranite)
+            if (from is PlayerMobile pm && ore is BaseOre)
             {
                 pm.IncrementOreMined(amount);
             }

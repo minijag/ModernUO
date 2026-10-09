@@ -11,7 +11,7 @@ namespace Server.Gumps
 
         public override bool Singleton => true;
 
-        private GuildChangeTypeGump(Guild guild) : base(20, 30) => _guild = guild;
+        private GuildChangeTypeGump(Guild guild) : base(40, 50) => _guild = guild;
 
         public static void DisplayTo(Mobile from, Guild guild)
         {
@@ -26,29 +26,26 @@ namespace Server.Gumps
 
         protected override void BuildLayout(ref StaticGumpBuilder builder)
         {
-            builder.SetNoMove();
-
             builder.AddPage();
-            builder.AddBackground(0, 0, 550, 400, 5054);
-            builder.AddBackground(10, 10, 530, 380, 3000);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 550, 400, "GUILD TYPE");
 
-            builder.AddHtmlLocalized(20, 15, 510, 30, 1013062); // <center>Change Guild Type Menu</center>
+            builder.AddHtmlLocalized(20, 15, 510, 30, 1013062, CustomGumpStyle.LocalizedTextColor); // <center>Change Guild Type Menu</center>
 
-            builder.AddHtmlLocalized(50, 50, 450, 30, 1013066); // Please select the type of guild you would like to change to
+            builder.AddHtmlLocalized(50, 50, 450, 30, 1013066, CustomGumpStyle.LocalizedTextColor); // Please select the type of guild you would like to change to
 
             builder.AddButton(20, 100, 4005, 4007, 1);
-            builder.AddHtmlLocalized(85, 100, 300, 30, 1013063); // Standard guild
+            builder.AddHtmlLocalized(85, 100, 300, 30, 1013063, CustomGumpStyle.LocalizedTextColor); // Standard guild
 
             builder.AddButton(20, 150, 4005, 4007, 2);
             builder.AddItem(50, 143, 7109);
-            builder.AddHtmlLocalized(85, 150, 300, 300, 1013064); // Order guild
+            builder.AddHtmlLocalized(85, 150, 300, 300, 1013064, CustomGumpStyle.LocalizedTextColor); // Order guild
 
             builder.AddButton(20, 200, 4005, 4007, 3);
             builder.AddItem(45, 200, 7107);
-            builder.AddHtmlLocalized(85, 200, 300, 300, 1013065); // Chaos guild
+            builder.AddHtmlLocalized(85, 200, 300, 300, 1013065, CustomGumpStyle.LocalizedTextColor); // Chaos guild
 
             builder.AddButton(300, 360, 4005, 4007, 4);
-            builder.AddHtmlLocalized(335, 360, 150, 30, 1011012); // CANCEL
+            builder.AddHtmlLocalized(335, 360, 150, 30, 1011012, CustomGumpStyle.LocalizedTextColor); // CANCEL
         }
 
         public override void OnResponse(NetState state, in RelayInfo info)

@@ -22,13 +22,13 @@ namespace Server.Gumps
 
         protected override void BuildHeader(ref DynamicGumpBuilder builder)
         {
-            builder.AddHtmlLocalized(20, 10, 400, 35, 1011097); // Declare your fealty
+            builder.AddHtmlLocalized(20, 10, 400, 35, 1011097, CustomGumpStyle.LocalizedTextColor); // Declare your fealty
 
             builder.AddButton(20, 400, 4005, 4007, 1);
-            builder.AddHtmlLocalized(55, 400, 250, 35, 1011098); // I have selected my new lord.
+            builder.AddHtmlLocalized(55, 400, 250, 35, 1011098, CustomGumpStyle.LocalizedTextColor); // I have selected my new lord.
 
             builder.AddButton(300, 400, 4005, 4007, 0);
-            builder.AddHtmlLocalized(335, 400, 100, 35, 1011012); // CANCEL
+            builder.AddHtmlLocalized(335, 400, 100, 35, 1011012, CustomGumpStyle.LocalizedTextColor); // CANCEL
         }
 
         public override void OnResponse(NetState state, in RelayInfo info)

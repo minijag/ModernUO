@@ -22,13 +22,13 @@ namespace Server.Gumps
 
         protected override void BuildHeader(ref DynamicGumpBuilder builder)
         {
-            builder.AddHtmlLocalized(20, 10, 400, 35, 1011148); // Select the guild to reject their invitations:
+            builder.AddHtmlLocalized(20, 10, 400, 35, 1011148, CustomGumpStyle.LocalizedTextColor); // Select the guild to reject their invitations:
 
             builder.AddButton(20, 400, 4005, 4007, 1);
-            builder.AddHtmlLocalized(55, 400, 245, 30, 1011101); // Reject war invitations.
+            builder.AddHtmlLocalized(55, 400, 245, 30, 1011101, CustomGumpStyle.LocalizedTextColor); // Reject war invitations.
 
             builder.AddButton(300, 400, 4005, 4007, 2);
-            builder.AddHtmlLocalized(335, 400, 100, 35, 1011012); // CANCEL
+            builder.AddHtmlLocalized(335, 400, 100, 35, 1011012, CustomGumpStyle.LocalizedTextColor); // CANCEL
         }
 
         public override void OnResponse(NetState state, in RelayInfo info)

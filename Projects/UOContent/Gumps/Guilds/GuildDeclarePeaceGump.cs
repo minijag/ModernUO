@@ -22,13 +22,13 @@ namespace Server.Gumps
 
         protected override void BuildHeader(ref DynamicGumpBuilder builder)
         {
-            builder.AddHtmlLocalized(20, 10, 400, 35, 1011137); // Select the guild you wish to declare peace with.
+            builder.AddHtmlLocalized(20, 10, 400, 35, 1011137, CustomGumpStyle.LocalizedTextColor); // Select the guild you wish to declare peace with.
 
             builder.AddButton(20, 400, 4005, 4007, 1);
-            builder.AddHtmlLocalized(55, 400, 245, 30, 1011138); // Send the olive branch.
+            builder.AddHtmlLocalized(55, 400, 245, 30, 1011138, CustomGumpStyle.LocalizedTextColor); // Send the olive branch.
 
             builder.AddButton(300, 400, 4005, 4007, 2);
-            builder.AddHtmlLocalized(335, 400, 100, 35, 1011012); // CANCEL
+            builder.AddHtmlLocalized(335, 400, 100, 35, 1011012, CustomGumpStyle.LocalizedTextColor); // CANCEL
         }
 
         public override void OnResponse(NetState state, in RelayInfo info)
