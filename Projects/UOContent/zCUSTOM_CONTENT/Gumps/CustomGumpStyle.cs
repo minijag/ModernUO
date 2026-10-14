@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 
 namespace Server.Gumps;
 
@@ -26,6 +27,10 @@ public static class CustomGumpStyle
     public const int MenuButtonPressedGumpId = 64043;
     public const int MenuButtonSize = 56;
     public const int MenuButtonLabelWidth = 132;
+    public const int OptionButtonNormalGumpId = 9721;
+    public const int OptionButtonPressedGumpId = 2151;
+    public const int OptionButtonSelectedGumpId = 2154;
+    public const int OptionButtonSize = 29;
     public const string BannerTitleColor = "#24180F";
     // Center the visible font-4 glyphs on the cloth, rather than their HTML line box.
     private const int TitleTextOffsetY = 1;
@@ -43,6 +48,28 @@ public static class CustomGumpStyle
     private const int BottomGumpId = 60008;
     private const int BottomRightGumpId = 60009;
 
+    internal static void AddPanel(ref SpanWriter writer, int x, int y, int width, int height)
+    {
+        ValidateSize(width, height);
+        var innerWidth = width - CornerSize * 2;
+        var innerHeight = height - CornerSize * 2;
+        var panelWidth = width - PanelInset * 2;
+        var panelHeight = height - PanelInset * 2;
+        writer.WriteAscii($"{{ gumppictiled {x + PanelInset} {y + PanelInset} {panelWidth} {panelHeight} 2624 }}");
+        for (var i = 0; i < 3; i++)
+        {
+            writer.WriteAscii($"{{ checkertrans {x + PanelInset} {y + PanelInset} {panelWidth} {panelHeight} }}");
+        }
+        writer.WriteAscii($"{{ gumppic {x} {y} {TopLeftGumpId} }}");
+        writer.WriteAscii($"{{ gumppictiled {x + CornerSize} {y} {innerWidth} {CornerSize} {TopGumpId} }}");
+        writer.WriteAscii($"{{ gumppic {x + width - CornerSize} {y} {TopRightGumpId} }}");
+        writer.WriteAscii($"{{ gumppictiled {x} {y + CornerSize} {CornerSize} {innerHeight} {LeftGumpId} }}");
+        writer.WriteAscii($"{{ gumppictiled {x + width - CornerSize} {y + CornerSize} {CornerSize} {innerHeight} {RightGumpId} }}");
+        writer.WriteAscii($"{{ gumppic {x} {y + height - CornerSize} {BottomLeftGumpId} }}");
+        writer.WriteAscii($"{{ gumppictiled {x + CornerSize} {y + height - CornerSize} {innerWidth} {CornerSize} {BottomGumpId} }}");
+        writer.WriteAscii($"{{ gumppic {x + width - CornerSize} {y + height - CornerSize} {BottomRightGumpId} }}");
+    }
+
     /// <summary>Places a reusable button beneath its separate, centered label.</summary>
     public static void AddMenuButton(ref DynamicGumpBuilder builder, int centerX, int labelY, int buttonId, string label)
     {
@@ -59,6 +86,15 @@ public static class CustomGumpStyle
         builder.AddButton(centerX - MenuButtonSize / 2, labelY + 28,
             MenuButtonNormalGumpId, MenuButtonPressedGumpId, buttonId);
     }
+
+    /// <summary>Uses gray idle, blue pressed, and checked blue for a persistent selected option.</summary>
+    public static void AddOptionButton(ref DynamicGumpBuilder builder, int x, int y, int buttonId, bool selected = false) =>
+        builder.AddButton(x, y, selected ? OptionButtonSelectedGumpId : OptionButtonNormalGumpId,
+            OptionButtonPressedGumpId, buttonId);
+
+    public static void AddOptionButton(ref StaticGumpBuilder builder, int x, int y, int buttonId, bool selected = false) =>
+        builder.AddButton(x, y, selected ? OptionButtonSelectedGumpId : OptionButtonNormalGumpId,
+            OptionButtonPressedGumpId, buttonId);
 
     public static void AddWalnutSteelPanel(ref DynamicGumpBuilder builder, int x, int y, int width, int height) =>
         AddPanel(ref builder, x, y, width, height);

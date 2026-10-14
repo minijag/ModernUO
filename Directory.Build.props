@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
     <PropertyGroup>
+        <UseArtifactsOutput>true</UseArtifactsOutput>
+        <ArtifactsPath>$(MSBuildThisFileDirectory)..\Build</ArtifactsPath>
         <Authors>Kamron Batman</Authors>
         <Company>ModernUO</Company>
         <Copyright>2019-2026</Copyright>

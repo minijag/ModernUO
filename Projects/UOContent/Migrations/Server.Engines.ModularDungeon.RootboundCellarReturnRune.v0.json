@@ -1,0 +1,14 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.RootboundCellarReturnRune",
+  "properties": [
+    {
+      "name": "HatchOrigin",
+      "type": "Server.Point3D",
+      "rule": "PrimitiveUOTypeMigrationRule",
+      "ruleArguments": [
+        "Point3D"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": 0,
+  "type": "Server.Engines.TownStruggle.TownStruggleCorpse",
+  "properties": [
+    {
+      "name": "Controller",
+      "type": "Server.Engines.TownStruggle.TownStruggleController",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "RoundNumber",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.ExtractionEventGate",
+  "properties": [
+    {
+      "name": "Controller",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventController",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "Kind",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventGateKind",
+      "rule": "EnumMigrationRule"
+    }
+  ]
+}

@@ -57,7 +57,7 @@ namespace Server.Gumps
                 ? _vi.Description
                 : Localization.GetText(1019072) ?? "an item without a description";
 
-            builder.SetHtmlText("description", description);
+            builder.SetHtmlText("description", description, CustomGumpStyle.TextColor);
 
             builder.SetStringSlot("price", $"{_vi.Price}");
         }

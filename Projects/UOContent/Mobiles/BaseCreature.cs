@@ -9,6 +9,7 @@ using Server.Engines.MLQuests;
 using Server.Engines.Quests.Doom;
 using Server.Engines.Quests.Haven;
 using Server.Engines.Spawners;
+using Server.Engines.TownStruggle;
 using Server.Engines.Virtues;
 using Server.Ethics;
 using Server.Factions;
@@ -1849,6 +1850,11 @@ namespace Server.Mobiles
 
         public override void Damage(int amount, Mobile from = null, bool informMount = true, bool ignoreEvilOmen = false)
         {
+            if (ProtectedRegion.PreventsPlayerHarm(from, this))
+            {
+                return;
+            }
+
             var oldHits = Hits;
 
             // Blood oath reflects the original damage the attacker dealt, before other modifiers.
@@ -2888,6 +2894,11 @@ namespace Server.Mobiles
 
         public override bool OnMoveOver(Mobile m)
         {
+            if (TownStruggleCombat.IgnoreCollision(this, m))
+            {
+                return true;
+            }
+
             if (m is BaseCreature creature && !creature.Controlled)
             {
                 return !Alive || !creature.Alive || IsDeadBondedPet || creature.IsDeadBondedPet ||
@@ -3836,6 +3847,12 @@ namespace Server.Mobiles
 
         public bool SetControlMaster(Mobile m)
         {
+            if (m != null && TownStruggleRuntime.IsEnrolled(m))
+            {
+                m.SendMessage("Pets cannot be acquired during Town Struggle.");
+                return false;
+            }
+
             if (m == null)
             {
                 // An uncontrolled summon keeps its caster.

@@ -1,8 +1,16 @@
 # Shared gump template
 
-Use `CustomGumpStyle` for the walnut-and-steel border and black backing. It supports
-both `DynamicGumpBuilder` and `StaticGumpBuilder`. Client gump art 60002–60009 must
-be installed; these are the same assets used by Help and the leaderboard.
+The walnut-and-metal border and black backing are the default foundation for
+all server-created gumps. Static, dynamic, and legacy compilation passes through
+`StandardGumpStyle`, using the same `CustomGumpStyle` artwork as Help and the
+leaderboard. Ordinary window backdrops are replaced automatically; specialized
+foreground artwork, input fields, page navigation, and reply identifiers stay
+intact. Already themed layouts are recognized and do not get a second frame.
+Native client windows such as the paperdoll are not server-created gumps.
+
+Use `CustomGumpStyle` directly when designing a layout or adding a title banner.
+It supports both `DynamicGumpBuilder` and `StaticGumpBuilder`. Client gump art
+60002–60009 must be installed.
 
 For a new layout, specify the **outer** bounds and keep controls at least
 `CustomGumpStyle.ContentPadding` (24 pixels) inside them:
@@ -35,7 +43,7 @@ Use a screen Y of at least 30 with `AddContentPanel` (our menus use 50), or at
 least 6 with `AddPanel`. Titled frames must be at least 340 pixels wide.
 Titles use centered espresso text (`BannerTitleColor`, #24180F); keep them short
 enough for the 230-pixel text area. Body text colors are unchanged.
-Artwork source and reproducible staging tool are in `Tools/GumpBanner`.
+Artwork source and reproducible staging tool are in `../../AI/Tools/Server/GumpBanner`.
 
 Use `TextColor` for HTML, `LocalizedTextColor` for localized HTML, and `TextHue`
 for labels. These APIs use different color formats; do not interchange them.
@@ -59,8 +67,12 @@ corners/rails are drawn afterward. Rails tile at their native size so the rivets
 are not stretched. The backing retains Help's three alpha commands; actual
 transparency is client-dependent, not an exact configurable 90% opacity.
 
-This helper does not alter navigation, permissions, responses, or server-side
-gump lifecycle. Other gumps must opt in by calling it; it is not a global skin.
+The shared foundation does not alter navigation, permissions, responses, or
+server-side gump lifecycle. Gumps inherit it without opting in. Explicit calls
+to the helper control precise frame bounds and the optional title banner.
+Unformatted HTML uses light text on the black backing; text on retained native
+artwork or input fields keeps its native contrast. HTML placeholders should use
+`SetHtmlText` with an explicit appropriate color, not raw `SetStringSlot`.
 
 ## Help menu
 
@@ -84,11 +96,11 @@ for both static and dynamic gumps. Its text is a separate centered label above
 the artwork, never baked into the button. Pass the horizontal center, label Y,
 reply ID, and label. Labels are 132 x 24 pixels; the 56 x 56 button starts 28
 pixels below the label. Native art 64042/64043 supplies normal/pressed states.
-Artwork and the reproducible native packer live in `Tools/MenuButtonArt`.
+Artwork and the reproducible native packer live in `../../AI/Tools/Server/MenuButtonArt`.
 
 ## Leaderboards
 
-`[leaderboard` and Help -> Rankings open the same 700 x 540 leaderboard. Native
+`[leaderboard` and Help -> Rankings open the same 700 x 580 leaderboard. Native
 ore, log, leather, map, gold, and skull item art identify its six categories;
 no custom shield artwork is required. Ten players appear per page, with global
 ranking numbers and Previous/Next controls when more players are ranked.
@@ -96,9 +108,32 @@ Show My Ranking jumps to the requesting player's page and highlights their row.
 Players with no positive total are unranked. Each navigation action refreshes
 the scores; opening or paging through the board never awards progress.
 
+Leaderboard controls use the existing 29 x 29 gold-bordered diamond artwork:
+gray idle (9721), blue pressed (2151), and checked blue (2154) for the selected
+category. Only the active category stays checked; paging, Show My Ranking and
+Close remain gray until pressed. Previous/Next captions identify paging without
+arrow artwork. `CustomGumpStyle.AddOptionButton` supplies these states for dynamic
+or static layouts without changing the round Help-menu buttons or other gumps.
+
 Gold Farmed is the configured average gold value credited by monster kills,
 not physical gold looted or held. New kill earnings credit the member's current
 guild; historical personal totals are not replayed into a guild.
+
+## PvP events
+
+`[PvpEvents`, `[TownStruggle`, and the lobby's existing Town Struggle stone open
+the shared 720 x 600 PvP Events board. It switches between Extraction and Town
+Struggle, with Previous Event, Seasonal Stats, and Lifetime Stats views. Seasons
+are UTC calendar quarters. Eight ranked players appear per page, and Show My Row
+finds and highlights the requesting character. The standard gray/pressed-blue/
+checked-blue diamond buttons indicate the selected event and view.
+
+Previous Event contains only finalized recorded results. Town Struggle's final
+team scores, rewards, K/A credits, deaths and abandonment penalties are retained;
+its Battle Controls button preserves signup, deployment, leave and MVP voting.
+Extraction ranks successful escapes and shows participant deaths and PvP kills.
+No historical scores are fabricated. See `../../AI/Tools/Server/TownStruggle/PVP-EVENT-STATS.md`
+for persistence paths, quarterly boundaries and finalization timing.
 
 ## Character sheet
 
@@ -109,6 +144,8 @@ the Counselor-only server diagnostics formerly registered as `[stats`.
 The bottom Melee / Spells controls use native sword/spellbook item art and
 standard UO buttons. The selected tab is highlighted in gold;
 Refresh preserves the selected tab. Both views share the 720 x 600 frame.
+Refresh, Melee, modifier pagination, Spells, and Close share one footer row;
+the complete artwork and text bounds stay inside the frame's content padding.
 
 The combat overview shows weapon damage, swing interval,
 nominal swings/minute, armor rating, and total damage/swing-rate gains. The lower

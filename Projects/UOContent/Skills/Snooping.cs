@@ -14,6 +14,11 @@ public static class Snooping
 
     public static bool CheckSnoopAllowed(Mobile from, Mobile to)
     {
+        if (ProtectedRegion.ProtectsInteraction(from, to, ProtectedInteraction.Snooping))
+        {
+            return false;
+        }
+
         var map = from.Map;
 
         if (to.Player)

@@ -190,6 +190,12 @@ public class ResurrectGump : DynamicGump
 
         var from = state.Mobile;
 
+        if (Server.Engines.TownStruggle.TownStruggleRuntime.IsEnrolled(from))
+        {
+            from.SendMessage("Use the Town Struggle menu to respawn; outside resurrection is unavailable while enrolled.");
+            return;
+        }
+
         if (from.Map?.CanFit(from.Location, 16, false, false) != true)
         {
             from.SendLocalizedMessage(502391); // Thou can not be resurrected there!

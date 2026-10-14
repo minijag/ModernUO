@@ -1,1 +1,0 @@
-26 spawners, 13 portals, 3 books installed. World save confirmed 2026-09-28 13:34:28 local in Backups/ArborMazeV2-20260928/install2.stdout.log. Installation request retired after confirmation.

@@ -1,0 +1,48 @@
+{
+  "version": 2,
+  "type": "Server.Engines.ModularDungeon.ExtractionEventShrine",
+  "properties": [
+    {
+      "name": "Controller",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventController",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "SummonedRound",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "HasSummoned",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "Portal",
+      "type": "Server.Engines.ModularDungeon.ExtractionShrinePortal",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "RuneMask",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "RuneRound",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

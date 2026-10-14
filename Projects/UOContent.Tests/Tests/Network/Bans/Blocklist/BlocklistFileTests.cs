@@ -51,7 +51,7 @@ public class BlocklistFileTests
         Assert.False(snap.IsBanned(IPAddress.Parse("1.2.3.4")));
     }
 
-    // Pins the exact line tools/Export-IpBlocklist.ps1 emits: the producer adds informational tokens the
+    // Pins the exact line ../../humanTools/ServerAdministration/Source/Export-IpBlocklist.ps1 emits: the producer adds informational tokens the
     // reader doesn't know about, and the reload detector breaks silently if generated= stops being read.
     [Fact]
     public void Reads_generator_header_with_extra_tokens()

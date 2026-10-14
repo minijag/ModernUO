@@ -73,7 +73,7 @@ See [dev-docs/server-requirements.md](dev-docs/server-requirements.md) for more 
 Run `./publish.cmd` (Windows) or `./publish.sh` (Linux/macOS) with no arguments to launch the guided build tool. It will:
 - Check prerequisites (.NET SDK, native libraries)
 - Walk you through configuration and platform selection
-- Build and publish the server to the `Distribution` directory
+- Build and publish the server to `../Distribution/Build` (never the live runtime)
 - Show deployment instructions for cross-compiled builds
 
 #### Command Line
@@ -126,9 +126,10 @@ brew install icu4c libdeflate argon2
 ```
 
 ## Running the Server
-- Follow the [publish](https://github.com/modernuo/ModernUO#buildingpublishing) instructions
-- The `Distribution` directory is portable — copy it to your production server for deployment
-- Run `ModernUO.exe` or `dotnet ModernUO.dll` from the `Distribution` directory
+- Build with `Build.ps1`, or use `publish.ps1` / `publish.sh` from this source checkout
+- New binaries go to `../Distribution/Build`; review deployment before replacing live files
+- The existing runtime, configuration, accounts and saves are in `../Distribution/Live`
+- Start that runtime with `../Start-Server.ps1`; do not run a second server from build output
 - On first run, the server will prompt you to configure game data file locations
 
 ## Troubleshooting / FAQ

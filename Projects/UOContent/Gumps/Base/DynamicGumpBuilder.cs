@@ -83,6 +83,10 @@ public ref struct DynamicGumpBuilder
         TextAlignment align = TextAlignment.Left, bool background = false, bool scrollbar = false
     )
     {
+        if (color.IsEmpty && !background)
+        {
+            color = StandardGumpStyle.GetDefaultHtmlColor(_gumpBuilder.LayoutData, x, y, width, height);
+        }
         if (color.Length > 0 || size != -1 || fontStyle != 0 || align != TextAlignment.Left)
         {
             var arr = STArrayPool<char>.Shared.Rent(Html.BuildCharCount(text, color));

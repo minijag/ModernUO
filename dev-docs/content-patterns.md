@@ -310,7 +310,7 @@ All "speed" values are **delays in seconds** (smaller = faster). A creature runs
   inheriting); `CurrentMoveSpeed` is the resolved pace. Any value is legal — steps are
   scheduled independently of think ticks, so the two need not divide evenly.
 
-Speeds normally come from `Distribution/Data/npc-speeds.json` (via `SpeedClass` or type
+Speeds normally come from `../Distribution/Live/Data/npc-speeds.json` (via `SpeedClass` or type
 lists); `activeMove`/`passiveMove` are optional per bucket. Prefer data over code:
 
 ```csharp

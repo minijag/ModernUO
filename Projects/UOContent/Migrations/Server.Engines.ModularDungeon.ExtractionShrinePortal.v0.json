@@ -1,0 +1,19 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.ExtractionShrinePortal",
+  "properties": [
+    {
+      "name": "Shrine",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventShrine",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "RoundNumber",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

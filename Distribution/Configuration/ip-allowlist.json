@@ -1,7 +1,0 @@
-{
-  "enabled": false,
-  "files": [
-    "Configuration/ip-allowlist*.txt"
-  ],
-  "reloadInterval": "00:01:00"
-}

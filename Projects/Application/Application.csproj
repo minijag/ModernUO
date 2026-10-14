@@ -6,21 +6,22 @@
         <AssemblyName>ModernUO</AssemblyName>
         <Win32Resource />
         <Product>ModernUO Server</Product>
-        <OutDir>..\..\Distribution</OutDir>
+        <OutDir>..\..\..\Distribution\Build</OutDir>
+        <PublishDir>..\..\..\Distribution\Build</PublishDir>
         <Version>0.0.0</Version>
         <Configurations>Debug;Release;Analyze</Configurations>
         <RootNamespace>Server</RootNamespace>
     </PropertyGroup>
     <Target Name="CleanPub" AfterTargets="Clean">
         <Message Text="Application: Removing distribution files..." />
-        <Delete Files="..\..\Distribution\$(AssemblyName)" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).deps.json" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).dll.config" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).exe" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).pdb" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).runtimeconfig.dev.json" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).runtimeconfig.json" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName)" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).deps.json" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).dll.config" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).exe" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).pdb" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).runtimeconfig.dev.json" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).runtimeconfig.json" ContinueOnError="true" />
     </Target>
     <ItemGroup>
         <ProjectReference Include="..\Server\Server.csproj" />

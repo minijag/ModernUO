@@ -79,34 +79,24 @@ public class ReportMurdererGump : StaticGump<ReportMurdererGump>
         builder.SetNoClose();
         builder.SetNoResize();
 
-        builder.AddBackground(265, 205, 320, 290, 5054);
-
         builder.AddPage();
-
-        builder.AddImageTiled(225, 175, 50, 45, 0xCE);  // Top left corner
-        builder.AddImageTiled(267, 175, 315, 44, 0xC9); // Top bar
-        builder.AddImageTiled(582, 175, 43, 45, 0xCF);  // Top right corner
-        builder.AddImageTiled(225, 219, 44, 270, 0xCA); // Left side
-        builder.AddImageTiled(582, 219, 44, 270, 0xCB); // Right side
-        builder.AddImageTiled(225, 489, 44, 43, 0xCC);  // Lower left corner
-        builder.AddImageTiled(267, 489, 315, 43, 0xE9); // Lower Bar
-        builder.AddImageTiled(582, 489, 43, 43, 0xCD);  // Lower right corner
+        CustomGumpStyle.AddContentPanel(ref builder, 225, 205, 475, 290, "REPORT MURDER");
 
         builder.AddPage(1);
 
         builder.AddHtmlPlaceholder(260, 234, 300, 140, "killerName"); // Player's Name
-        builder.AddHtmlLocalized(260, 254, 300, 140, 1049066);    // Would you like to report...
+        builder.AddHtmlLocalized(260, 254, 300, 140, 1049066, CustomGumpStyle.LocalizedTextColor); // Would you like to report...
 
         builder.AddButton(260, 300, 0xFA5, 0xFA7, 1);
-        builder.AddHtmlLocalized(300, 300, 300, 50, 1046362); // Yes
+        builder.AddHtmlLocalized(300, 300, 300, 50, 1046362, CustomGumpStyle.LocalizedTextColor); // Yes
 
         builder.AddButton(360, 300, 0xFA5, 0xFA7, 2);
-        builder.AddHtmlLocalized(400, 300, 300, 50, 1046363); // No
+        builder.AddHtmlLocalized(400, 300, 300, 50, 1046363, CustomGumpStyle.LocalizedTextColor); // No
     }
 
     protected override void BuildStrings(ref GumpStringsBuilder builder)
     {
-        builder.SetStringSlot("killerName", _killers[_idx].Name);
+        builder.SetHtmlText("killerName", _killers[_idx].Name, CustomGumpStyle.TextColor);
     }
 
     public override void OnResponse(NetState state, in RelayInfo info)

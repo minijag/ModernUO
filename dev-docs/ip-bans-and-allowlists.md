@@ -52,13 +52,13 @@ attacker's included.
 
 ```bash
 # In the reputation blocklist?
-grep -x "203.0.113.42" Distribution/Configuration/ip-blocklist.txt
+grep -x "203.0.113.42" ../Distribution/Live/Configuration/ip-blocklist.txt
 
 # A live external decision? (this is what survives a restart)
 cscli decisions list --ip 203.0.113.42
 
 # Admin-curated?
-grep 203.0.113.42 Distribution/Configuration/firewall.json
+grep 203.0.113.42 ../Distribution/Live/Configuration/firewall.json
 ```
 
 If none of those match, they may be inside a **CIDR** in the blocklist, or held by the in-memory
@@ -70,7 +70,7 @@ Set `"enabled": true` in `Configuration/ip-allowlist.json` first — it is off b
 has never written a carve-out does not poll for one. The shard logs a warning at startup if allowlist files
 are present while the flag is off.
 
-Then one entry per line in `Distribution/Configuration/ip-allowlist.txt` — a bare address or a CIDR. This
+Then one entry per line in `../Distribution/Live/Configuration/ip-allowlist.txt` — a bare address or a CIDR. This
 file is yours; the generator creates it once and never rewrites it.
 
 ```
@@ -233,4 +233,4 @@ A shard fronted by an upstream proxy can disable all of it and register nothing.
 | `Projects/UOContent/Network/AutoDenylist/AutoDenylist.cs` | Short-lived local hold |
 | `Projects/UOContent/Network/CrowdSec/CrowdSecReporter.cs` | LAPI contribution sink |
 | `Projects/UOContent/Network/Firewall/Firewall.cs` | Admin-curated firewall set |
-| `tools/Export-IpBlocklist.ps1` | Blocklist generator + allowlist subtraction |
+| `../../humanTools/ServerAdministration/Source/Export-IpBlocklist.ps1` | Blocklist generator + allowlist subtraction; run examples from its folder |

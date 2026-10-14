@@ -1,0 +1,27 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.EventDungeonHiddenHatch",
+  "properties": [
+    {
+      "name": "CoverBox",
+      "type": "Server.Item",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "CoverOrigin",
+      "type": "Server.Point3D",
+      "rule": "PrimitiveUOTypeMigrationRule",
+      "ruleArguments": [
+        "Point3D"
+      ]
+    },
+    {
+      "name": "CoverMap",
+      "type": "Server.Map",
+      "rule": "PrimitiveUOTypeMigrationRule",
+      "ruleArguments": [
+        "Map"
+      ]
+    }
+  ]
+}

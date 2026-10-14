@@ -8,6 +8,8 @@ namespace Server.Gumps;
 
 public sealed class CharacterStatsGump : DynamicGump
 {
+    internal const int FooterY = 536;
+    internal const int FooterTextY = 535;
     private readonly PlayerMobile _player;
     private readonly bool _showSpells;
     public override bool Singleton => true;
@@ -52,11 +54,7 @@ public sealed class CharacterStatsGump : DynamicGump
         Text(ref builder, 28, modifierTitleY + 30, 180, "Effect");
         Text(ref builder, 212, modifierTitleY + 30, 110, "Amount");
         Text(ref builder, 336, modifierTitleY + 30, 356, "Source");
-        BuildTabs(ref builder);
-        builder.AddButton(28, 568, 4005, 4007, 1);
-        Text(ref builder, 63, 568, 125, "REFRESH");
-        builder.AddButton(582, 568, 4005, 4007, 0);
-        Text(ref builder, 617, 568, 75, "CLOSE");
+        BuildFooter(ref builder, _showSpells);
 
         var rowsPerPage = _showSpells ? 5 : 8;
         var pages = Math.Max(1, (modifiers.Count + rowsPerPage - 1) / rowsPerPage);
@@ -77,16 +75,7 @@ public sealed class CharacterStatsGump : DynamicGump
                 Text(ref builder, 28, modifierTitleY + 58, 664, "No active modifiers to display.");
             }
 
-            if (page > 0)
-            {
-                builder.AddButton(245, 568, 4014, 4016, 0, GumpButtonType.Page, page);
-            }
-
-            Text(ref builder, 282, 568, 130, $"{page + 1} / {pages}", align: TextAlignment.Center);
-            if (page + 1 < pages)
-            {
-                builder.AddButton(430, 568, 4005, 4007, 0, GumpButtonType.Page, page + 2);
-            }
+            BuildModifierNavigation(ref builder, page, pages);
         }
     }
 
@@ -134,16 +123,38 @@ public sealed class CharacterStatsGump : DynamicGump
         }
     }
 
-    private void BuildTabs(ref DynamicGumpBuilder builder)
+    internal static void BuildFooter(ref DynamicGumpBuilder builder, bool showSpells)
     {
-        Text(ref builder, 236, 496, 112, "MELEE", _showSpells ? CustomGumpStyle.WhiteTextColor : CustomGumpStyle.TitleColor,
-            TextAlignment.Center);
-        Text(ref builder, 396, 496, 112, "SPELLS", _showSpells ? CustomGumpStyle.TitleColor : CustomGumpStyle.WhiteTextColor,
-            TextAlignment.Center);
-        builder.AddItem(246, 524, 0x13B9);
-        builder.AddItem(406, 524, 0xEFA);
-        builder.AddButton(294, 524, 4005, 4007, 2);
-        builder.AddButton(454, 524, 4005, 4007, 3);
+        builder.AddButton(28, FooterY, 4005, 4007, 1);
+        Text(ref builder, 63, FooterTextY, 90, "REFRESH");
+
+        // Native item art has asymmetric transparent margins; align its visible pixels with the buttons.
+        builder.AddItem(142, FooterY - 2, 0x13B9);
+        builder.AddButton(190, FooterY, 4005, 4007, 2);
+        Text(ref builder, 226, FooterTextY, 70, "MELEE",
+            showSpells ? CustomGumpStyle.WhiteTextColor : CustomGumpStyle.TitleColor);
+
+        builder.AddItem(450, FooterY - 1, 0xEFA);
+        builder.AddButton(490, FooterY, 4005, 4007, 3);
+        Text(ref builder, 526, FooterTextY, 70, "SPELLS",
+            showSpells ? CustomGumpStyle.TitleColor : CustomGumpStyle.WhiteTextColor);
+
+        builder.AddButton(603, FooterY, 4005, 4007, 0);
+        Text(ref builder, 639, FooterTextY, 57, "CLOSE");
+    }
+
+    internal static void BuildModifierNavigation(ref DynamicGumpBuilder builder, int page, int pages)
+    {
+        if (page > 0)
+        {
+            builder.AddButton(308, FooterY, 4014, 4016, 0, GumpButtonType.Page, page);
+        }
+
+        Text(ref builder, 342, FooterTextY, 70, $"{page + 1} / {pages}", align: TextAlignment.Center);
+        if (page + 1 < pages)
+        {
+            builder.AddButton(416, FooterY, 4005, 4007, 0, GumpButtonType.Page, page + 2);
+        }
     }
 
     internal static double GetSwingsPerMinute(double seconds) =>

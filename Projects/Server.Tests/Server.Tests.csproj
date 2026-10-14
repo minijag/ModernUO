@@ -13,7 +13,7 @@
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <ProjectReference Include="..\Application\Application.csproj" />
-        <DataFiles Include="$(SolutionDir)\Distribution\Data\**" />
+        <DataFiles Include="$(MSBuildThisFileDirectory)..\..\..\Distribution\Live\Data\**" />
         <ProjectReference Include="..\UOContent\UOContent.csproj" />
     </ItemGroup>
     <!-- Copy native ioring.dll for tests -->

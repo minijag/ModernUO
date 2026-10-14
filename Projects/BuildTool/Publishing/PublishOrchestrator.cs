@@ -162,15 +162,15 @@ public static class PublishOrchestrator
 
         if (isCrossCompile)
         {
-            rows.Add(new Markup($"Copy the [rgb(213,191,116)]Distribution[/] folder to your [rgb(213,191,116)]{rid}[/] server, then run:"));
+            rows.Add(new Markup($"Copy the [rgb(213,191,116)]../Distribution/Build[/] folder to your [rgb(213,191,116)]{rid}[/] server, then run:"));
         }
         else
         {
-            rows.Add(new Markup("Run the server from the [rgb(213,191,116)]Distribution[/] directory:"));
+            rows.Add(new Markup("Run the server from the [rgb(213,191,116)]../Distribution/Build[/] directory:"));
         }
 
         rows.Add(new Markup(""));
-        rows.Add(new Markup("  [white on grey23] cd Distribution [/]"));
+        rows.Add(new Markup("  [white on grey23] cd ../Distribution/Build [/]"));
         rows.Add(new Markup($"  [white on grey23] {runCommand} [/]"));
 
         AnsiConsole.Write(new Panel(new Rows(rows))

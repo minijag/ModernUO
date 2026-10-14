@@ -297,7 +297,7 @@ public class Gump : BaseGump
         writer.Write(Y);
 
         layoutWriter.Write((byte)0); // Layout text terminator
-        OutgoingGumpPackets.WritePacked(layoutWriter.Span, ref writer);
+        StandardGumpStyle.WriteLayout(layoutWriter.Span, ref writer, HasVisualElements, stringsWriter.Span);
 
         writer.Write(_stringsList.Count);
         OutgoingGumpPackets.WritePacked(stringsWriter.Span, ref writer);

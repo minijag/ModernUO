@@ -116,7 +116,7 @@ public static class GuidedMode
             if (platform.DistroName is not null)
             {
                 table.AddRow(
-                    new Text("Distribution", Branding.DimGoldStyle),
+                    new Text("../Distribution/Build", Branding.DimGoldStyle),
                     new Markup($"[white]{Markup.Escape(platform.DistroName)}[/]")
                 );
             }
@@ -329,7 +329,7 @@ public static class GuidedMode
 
         rows.Add(new Markup(""));
         rows.Add(new Markup(""));
-        rows.Add(new Markup("[grey]Install these on the target machine, then copy the [/][rgb(213,191,116)]Distribution[/] [grey]folder to the server and run it.[/]"));
+        rows.Add(new Markup("[grey]Install these on the target machine, then copy the [/][rgb(213,191,116)]../Distribution/Build[/] [grey]folder to the server and run it.[/]"));
 
         AnsiConsole.Write(new Panel(new Rows(rows))
             .Border(BoxBorder.Rounded)
@@ -340,7 +340,7 @@ public static class GuidedMode
 
     private static void CheckFirstTimeSetup(string repoRoot)
     {
-        var configPath = Path.Combine(repoRoot, "Distribution", "Configuration", "modernuo.json");
+        var configPath = Path.Combine(repoRoot, "..", "Distribution", "Live", "Configuration", "modernuo.json");
         if (!File.Exists(configPath))
         {
             AnsiConsole.WriteLine();

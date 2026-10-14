@@ -8,6 +8,7 @@ public static class RegionJsonRegistration
         RegionJsonSerializer.Register<TownRegion>();
         RegionJsonSerializer.Register<DungeonRegion>();
         RegionJsonSerializer.Register<GuardedRegion>();
+        RegionJsonSerializer.Register<ProtectedRegion>();
 
         // Travel registricted regions
         RegionJsonSerializer.Register<GreenAcresRegion>();

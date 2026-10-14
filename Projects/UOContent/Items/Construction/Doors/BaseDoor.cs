@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ModernUO.Serialization;
+using Server.Mobiles;
 using Server.Targeting;
 using CalcMoves = Server.Movement.Movement;
 
@@ -90,17 +91,19 @@ public abstract partial class BaseDoor : Item, ILockable, ITelekinesisable
             Location = new Point3D(X - _offset.X, Y - _offset.Y, Z - _offset.Z);
         }
         Effects.PlaySound(this, _open ? OpenedSound : ClosedSound);
-        if (_open)
+        if (_open && AutoClose)
         {
             _timer ??= new InternalTimer(this);
             _timer.Start();
         }
         else
         {
-            _timer.Stop();
+            _timer?.Stop();
             _timer = null;
         }
     }
+
+    public virtual bool AutoClose => true;
 
     public virtual bool UseChainedFunctionality => false;
 
@@ -214,7 +217,7 @@ public abstract partial class BaseDoor : Item, ILockable, ITelekinesisable
 
     public static void OpenDoorMacroUsed(Mobile m)
     {
-        if (m.Map == null || !m.CheckAlive())
+        if ((m is PlayerMobile player && !player.TryDoorMacroRequest()) || m.Map == null || !m.CheckAlive())
         {
             return;
         }
@@ -227,14 +230,19 @@ public abstract partial class BaseDoor : Item, ILockable, ITelekinesisable
         foreach (var item in m.Map.GetItemsAt(x, y))
         {
             if (item.Z + item.ItemData.Height > m.Z &&
-                m.Z + 16 > item.Z && item is BaseDoor && m.CanSee(item) && m.InLOS(item))
+                m.Z + 16 > item.Z && item is BaseDoor door && m.CanSee(item) && m.InLOS(item))
             {
-                m.SendLocalizedMessage(500024); // Opening door...
-                item.OnDoubleClick(m);
+                door.OnOpenDoorMacro(m);
 
                 break;
             }
         }
+    }
+
+    public virtual void OnOpenDoorMacro(Mobile from)
+    {
+        from.SendLocalizedMessage(500024); // Opening door...
+        OnDoubleClick(from);
     }
 
     public static Point3D GetOffset(DoorFacing facing) => m_Offsets[(int)facing];
@@ -421,7 +429,7 @@ public abstract partial class BaseDoor : Item, ILockable, ITelekinesisable
     [AfterDeserialization]
     private void AfterDeserialization()
     {
-        if (_open)
+        if (_open && AutoClose)
         {
             _timer = new InternalTimer(this);
             _timer.Start();

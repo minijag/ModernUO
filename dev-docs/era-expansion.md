@@ -155,14 +155,14 @@ LootPack.SuperBoss
 
 ## Configuration
 
-Expansion is set in `Distribution/Configuration/expansion.json`:
+Expansion is set in `../Distribution/Live/Configuration/expansion.json`:
 ```json
 {
   "expansion": "ML"
 }
 ```
 
-Full expansion metadata is in `Distribution/Data/expansions.json`, containing:
+Full expansion metadata is in `../Distribution/Live/Data/expansions.json`, containing:
 - Required client version
 - Supported feature flags
 - Character list flags
@@ -182,7 +182,7 @@ Full expansion metadata is in `Distribution/Data/expansions.json`, containing:
 ## Key File References
 - Expansion enum: `Projects/Server/ExpansionInfo.cs`
 - Core properties: `Projects/Server/Core.cs`
-- Expansion data: `Distribution/Data/expansions.json`
+- Expansion data: `../Distribution/Live/Data/expansions.json`
 - Loot packs: `Projects/UOContent/Misc/LootPack.cs`
 - Spell circles: `Projects/UOContent/Spells/Base/MagerySpell.cs`
 - Skill check: `Projects/UOContent/Skills/SkillCheck.cs`

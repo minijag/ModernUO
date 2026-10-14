@@ -23,6 +23,8 @@ public enum TeleporterFlags
 [SerializationGenerator(5, false)]
 public partial class Teleporter : Item
 {
+    private Mobile _confirmedTraveller;
+    private Dictionary<Mobile, TimerExecutionToken> _confirmationTimers;
     [InvalidateProperties]
     [SerializableField(0)]
     [SerializedCommandProperty(AccessLevel.GameMaster)]
@@ -207,6 +209,11 @@ public partial class Teleporter : Item
 
     public virtual void StartTeleport(Mobile m)
     {
+        if (m.Player && HasMoongateAppearance())
+        {
+            RequestMoongateConfirmation(m, true);
+            return;
+        }
         if (_delay == TimeSpan.Zero)
         {
             DoTeleport(m);
@@ -219,6 +226,11 @@ public partial class Teleporter : Item
 
     public virtual void DoTeleport(Mobile m)
     {
+        if (m.Player && _confirmedTraveller != m && HasMoongateAppearance())
+        {
+            RequestMoongateConfirmation(m, false);
+            return;
+        }
         var map = _mapDest;
 
         if (map == null || map == Map.Internal)
@@ -257,6 +269,11 @@ public partial class Teleporter : Item
 
     public override bool OnMoveOver(Mobile m)
     {
+        if (Active && m.Player && HasMoongateAppearance())
+        {
+            StartTeleport(m);
+            return false;
+        }
         if (Active && CanTeleport(m))
         {
             StartTeleport(m);
@@ -264,6 +281,104 @@ public partial class Teleporter : Item
         }
 
         return true;
+    }
+
+    public override void OnDoubleClick(Mobile from)
+    {
+        if (from.Player && Active && HasMoongateAppearance() && MoongateTravelConfirmation.IsInRange(from, this))
+        {
+            StartTeleport(from);
+        }
+        else
+        {
+            base.OnDoubleClick(from);
+        }
+    }
+
+    internal bool HasMoongateAppearance()
+    {
+        if (MoongateAppearance.IsMoongate(ItemID))
+        {
+            return true;
+        }
+        if (Deleted || Parent != null || Map == null || Map == Map.Internal)
+        {
+            return false;
+        }
+        foreach (var item in Map.GetItemsInRange<Item>(Location, 0))
+        {
+            if (!item.Deleted && MoongateAppearance.IsMoongate(item.ItemID) && Math.Abs(item.Z - Z) < 16)
+            {
+                return true;
+            }
+        }
+        foreach (var tile in Map.Tiles.GetStaticAndMultiTiles(X, Y))
+        {
+            if (MoongateAppearance.IsMoongate(tile.ID) && Math.Abs(tile.Z - Z) < 16)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void RequestMoongateConfirmation(Mobile from, bool applyDelay)
+    {
+        var target = PointDest;
+        var targetMap = MapDest;
+        var source = Location;
+        var sourceMap = Map;
+        var flags = Flags;
+        var delay = Delay;
+        bool Validate(Mobile mobile) => Active && PointDest == target && MapDest == targetMap && Flags == flags && Delay == delay &&
+            Location == source && Map == sourceMap && MoongateTravelConfirmation.IsInRange(mobile, this) && HasMoongateAppearance();
+        void Travel(Mobile mobile)
+        {
+            _confirmationTimers?.Remove(mobile);
+            if (!Validate(mobile) || !CanTeleport(mobile))
+            {
+                return;
+            }
+            _confirmedTraveller = mobile;
+            try
+            {
+                DoTeleport(mobile);
+            }
+            finally
+            {
+                _confirmedTraveller = null;
+            }
+        }
+        MoongateTravelConfirmation.DisplayTo(from, this, Validate, mobile =>
+        {
+            if (_confirmationTimers != null && _confirmationTimers.Remove(mobile, out var previous))
+            {
+                previous.Cancel();
+            }
+            if (applyDelay && delay != TimeSpan.Zero)
+            {
+                Timer.StartTimer(delay, () => Travel(mobile), out var token);
+                (_confirmationTimers ??= new Dictionary<Mobile, TimerExecutionToken>())[mobile] = token;
+            }
+            else
+            {
+                Travel(mobile);
+            }
+        });
+    }
+
+    public override void OnAfterDelete()
+    {
+        if (_confirmationTimers != null)
+        {
+            foreach (var token in _confirmationTimers.Values)
+            {
+                token.Cancel();
+            }
+            _confirmationTimers = null;
+        }
+        _confirmedTraveller = null;
+        base.OnAfterDelete();
     }
 
     private void Deserialize(IGenericReader reader, int version)

@@ -1,0 +1,57 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.ExtractionEventInstallation",
+  "properties": [
+    {
+      "name": "Controller",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventController",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "Doors",
+      "type": "System.Collections.Generic.List\u003CServer.Engines.ModularDungeon.EventDungeonDoor\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "Server.Engines.ModularDungeon.EventDungeonDoor",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "Chests",
+      "type": "System.Collections.Generic.List\u003CServer.Engines.ModularDungeon.EventDungeonChest\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "Server.Engines.ModularDungeon.EventDungeonChest",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "Cover",
+      "type": "Server.Item",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "Hatch",
+      "type": "Server.Engines.ModularDungeon.EventDungeonHiddenHatch",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "ReturnRune",
+      "type": "Server.Engines.ModularDungeon.RootboundCellarReturnRune",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "Lich",
+      "type": "Server.Engines.ModularDungeon.RootboundCellarLich",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "LobbyComplete",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

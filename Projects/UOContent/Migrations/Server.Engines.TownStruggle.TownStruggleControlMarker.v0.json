@@ -1,0 +1,27 @@
+{
+  "version": 0,
+  "type": "Server.Engines.TownStruggle.TownStruggleControlMarker",
+  "properties": [
+    {
+      "name": "Controller",
+      "type": "Server.Engines.TownStruggle.TownStruggleController",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "Zone",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "Corner",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

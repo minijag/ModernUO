@@ -282,6 +282,12 @@ public abstract partial class BaseMount : BaseCreature, IMount
 
     public static bool CheckMountAllowed(Mobile mob)
     {
+        if (Server.Engines.TownStruggle.TownStruggleRuntime.IsEnrolled(mob))
+        {
+            mob.SendMessage("Mounts cannot be used during Town Struggle.");
+            return false;
+        }
+
         var result = true;
 
         if (mob is PlayerMobile mobile)

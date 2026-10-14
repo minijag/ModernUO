@@ -1,4 +1,0 @@
-System.IO.IOException: The requested operation cannot be performed on a file with a user-mapped section open. : 'C:\workspace\Ultima_online\ModernUO\Distribution\Data\AccountKeeper\bridge-status.txt'.
-   at System.IO.File.WriteToFile(String path, FileMode mode, ReadOnlySpan`1 contents, Encoding encoding)
-   at System.IO.File.WriteAllText(String path, String contents)
-   at Server.Engines.AccountKeeper.AccountKeeperBridge.PublishAccounts() in C:\workspace\Ultima_online\ModernUO\Projects\UOContent\zCUSTOM_CONTENT\Engines\AccountKeeper\AccountKeeperBridge.cs:line 66

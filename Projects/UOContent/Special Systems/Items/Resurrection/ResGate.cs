@@ -7,7 +7,7 @@ namespace Server.Items;
 public partial class ResGate : Item
 {
     [Constructible]
-    public ResGate() : base(0xF6C)
+    public ResGate() : base(MoongateAppearance.Blue)
     {
         Movable = false;
         Hue = 0x2D1;

@@ -1,0 +1,76 @@
+{
+  "version": 0,
+  "type": "Server.Engines.TownStruggle.PvpEventRotationController",
+  "properties": [
+    {
+      "name": "Extraction",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventController",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "Town",
+      "type": "Server.Engines.TownStruggle.TownStruggleController",
+      "rule": "SerializableInterfaceMigrationRule"
+    },
+    {
+      "name": "Enabled",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "NextEvent",
+      "type": "Server.Engines.TownStruggle.PvpRotatingEvent",
+      "rule": "EnumMigrationRule"
+    },
+    {
+      "name": "ActiveEvent",
+      "type": "Server.Engines.TownStruggle.PvpRotatingEvent",
+      "rule": "EnumMigrationRule"
+    },
+    {
+      "name": "NextDeadline",
+      "type": "System.DateTime",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        "AnchoredTime"
+      ]
+    },
+    {
+      "name": "Interval",
+      "type": "System.TimeSpan",
+      "rule": "PrimitiveTypeMigrationRule"
+    },
+    {
+      "name": "PreviousAutomaticRounds",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "PreviousWaitingInterval",
+      "type": "System.TimeSpan",
+      "rule": "PrimitiveTypeMigrationRule"
+    },
+    {
+      "name": "FaultMessage",
+      "type": "string",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "CompletedSlots",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

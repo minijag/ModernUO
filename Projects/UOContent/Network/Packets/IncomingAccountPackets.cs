@@ -89,6 +89,11 @@ public static class IncomingAccountPackets
 
     public static void CreateCharacter(NetState state, SpanReader reader)
     {
+        if (!ClientPatchAdmission.Require(state))
+        {
+            return;
+        }
+
         reader.Seek(9, SeekOrigin.Current);
         /*
         var unk1 = reader.ReadInt32();
@@ -216,6 +221,11 @@ public static class IncomingAccountPackets
 
     public static void DeleteCharacter(NetState state, SpanReader reader)
     {
+        if (!ClientPatchAdmission.Require(state))
+        {
+            return;
+        }
+
         reader.Seek(30, SeekOrigin.Current);
         var index = reader.ReadInt32();
 
@@ -247,6 +257,11 @@ public static class IncomingAccountPackets
 
     public static void PlayCharacter(NetState state, SpanReader reader)
     {
+        if (!ClientPatchAdmission.Require(state))
+        {
+            return;
+        }
+
         reader.Seek(36, SeekOrigin.Current); // 4 = 0xEDEDEDED, 30 = Name, 2 = unknown
         var flags = reader.ReadInt32();
         reader.Seek(24, SeekOrigin.Current);
@@ -432,6 +447,11 @@ public static class IncomingAccountPackets
 
     public static void GameLogin(NetState state, SpanReader reader)
     {
+        if (!ClientPatchAdmission.Require(state, gameLogin: true))
+        {
+            return;
+        }
+
         if (state.SentFirstPacket)
         {
             state.Disconnect("Duplicate game login packet received.");
@@ -492,6 +512,11 @@ public static class IncomingAccountPackets
 
     public static void PlayServer(NetState state, SpanReader reader)
     {
+        if (!ClientPatchAdmission.Require(state))
+        {
+            return;
+        }
+
         // A server is picked once per connection. Picking again hands back an id this connection may
         // already have spent on a game login, which the client could never redeem.
         if (state.AuthId != 0)
@@ -549,6 +574,11 @@ public static class IncomingAccountPackets
 
     public static void AccountLogin(NetState state, SpanReader reader)
     {
+        if (!ClientPatchAdmission.Require(state))
+        {
+            return;
+        }
+
         if (state.SentFirstPacket)
         {
             state.Disconnect("Duplicate account login packet sent.");
@@ -579,6 +609,11 @@ public static class IncomingAccountPackets
     /// </summary>
     internal static void CompleteAccountLogin(NetState state, bool accepted, ALRReason rejectReason)
     {
+        if (!ClientPatchAdmission.Require(state))
+        {
+            return;
+        }
+
         if (accepted)
         {
             var serverListEventArgs = new GatewayServer.ServerListEventArgs(state, state.Account);

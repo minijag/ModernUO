@@ -31,7 +31,7 @@ public partial class Moongate : Item
     }
 
     [Constructible]
-    public Moongate(Point3D target, Map targetMap = null, bool dispellable = true) : base(0xF6C)
+    public Moongate(Point3D target, Map targetMap = null, bool dispellable = true) : base(MoongateAppearance.Blue)
     {
         Movable = false;
         Light = LightType.Circle300;
@@ -40,6 +40,8 @@ public partial class Moongate : Item
         TargetMap = targetMap;
         Dispellable = dispellable;
     }
+
+    public override int LabelNumber => MoongateAppearance.IsReplacement(ItemID) ? MoongateAppearance.LegacyLabelNumber(ItemID) : base.LabelNumber;
 
     public virtual bool ShowFeluccaWarning => false;
 
@@ -134,7 +136,7 @@ public partial class Moongate : Item
             return false;
         }
 
-        if (from.Map != Map || !from.InRange(this, 1))
+        if (!MoongateTravelConfirmation.IsInRange(from, this))
         {
             if (message)
             {
@@ -161,9 +163,18 @@ public partial class Moongate : Item
         }
         else
         {
-            EndConfirmation(from);
+            MoongateTravelConfirmation.DisplayTo(from, this, CaptureConfirmationValidation(), EndConfirmation);
         }
     }
+
+    protected virtual Func<Mobile, bool> CaptureConfirmationValidation()
+    {
+        var target = Target;
+        var map = TargetMap;
+        return from => Target == target && TargetMap == map && ValidateUse(from, true);
+    }
+
+    internal Func<Mobile, bool> GetConfirmationValidation() => CaptureConfirmationValidation();
 
     public virtual void EndConfirmation(Mobile from)
     {
@@ -264,6 +275,11 @@ public partial class ConfirmationMoongate : Moongate
     {
         if (GumpWidth > 0 && GumpHeight > 0 && TitleNumber > 0 && Message?.IsEmpty == false)
         {
+            var request = MoongateTravelConfirmation.CreateRequest(from, this, CaptureConfirmationValidation(), m => Warning_Callback(m, true));
+            if (request == null)
+            {
+                return;
+            }
             from.SendGump(
                 new WarningGump(
                     TitleNumber,
@@ -272,7 +288,7 @@ public partial class ConfirmationMoongate : Moongate
                     MessageColor,
                     GumpWidth,
                     GumpHeight,
-                    okay => Warning_Callback(from, okay)
+                    okay => request.Respond(from, okay)
                 ),
                 true
             );
@@ -305,13 +321,15 @@ public class MoongateConfirmGump : DynamicGump
 {
     private readonly Mobile _from;
     private readonly Moongate _gate;
+    private readonly MoongateTravelConfirmation.Request _request;
 
     public override bool Singleton => true;
 
-    private MoongateConfirmGump(Mobile from, Moongate gate) : base(Core.AOS ? 110 : 20, Core.AOS ? 100 : 30)
+    private MoongateConfirmGump(Mobile from, Moongate gate, MoongateTravelConfirmation.Request request) : base(Core.AOS ? 110 : 50, Core.AOS ? 100 : 50)
     {
         _from = from;
         _gate = gate;
+        _request = request;
     }
 
     public static void DisplayTo(Mobile from, Moongate gate)
@@ -321,7 +339,11 @@ public class MoongateConfirmGump : DynamicGump
             return;
         }
 
-        from.SendGump(new MoongateConfirmGump(from, gate));
+        var request = MoongateTravelConfirmation.CreateRequest(from, gate, gate.GetConfirmationValidation(), gate.EndConfirmation);
+        if (request != null)
+        {
+            from.SendGump(new MoongateConfirmGump(from, gate, request));
+        }
     }
 
     protected override void BuildLayout(ref DynamicGumpBuilder builder)
@@ -332,57 +354,47 @@ public class MoongateConfirmGump : DynamicGump
         {
             builder.SetNoClose();
 
-            builder.AddBackground(0, 0, 420, 280, 5054);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 420, 280, "MOONGATE");
 
-            builder.AddImageTiled(10, 10, 400, 20, 2624);
-            builder.AddAlphaRegion(10, 10, 400, 20);
-
-            builder.AddHtmlLocalized(10, 10, 400, 20, 1062051, 30720); // Gate Warning
-
-            builder.AddImageTiled(10, 40, 400, 200, 2624);
-            builder.AddAlphaRegion(10, 40, 400, 200);
+            builder.AddHtmlLocalized(10, 10, 400, 20, 1062051, CustomGumpStyle.LocalizedTextColor); // Gate Warning
 
             if (_from.Map != Map.Felucca && _gate.TargetMap == Map.Felucca && _gate.ShowFeluccaWarning)
             {
                 // This Gate goes to Felucca... Continue to enter the gate, Cancel to stay here
-                builder.AddHtmlLocalized(10, 40, 400, 200, 1062050, 32512, false, true);
+                builder.AddHtmlLocalized(10, 40, 400, 200, 1062050, CustomGumpStyle.LocalizedTextColor, false, true);
             }
             else
             {
                 // Dost thou wish to step into the moongate? Continue to enter the gate, Cancel to stay here
-                builder.AddHtmlLocalized(10, 40, 400, 200, 1062049, 32512, false, true);
+                builder.AddHtmlLocalized(10, 40, 400, 200, 1062049, CustomGumpStyle.LocalizedTextColor, false, true);
             }
 
-            builder.AddImageTiled(10, 250, 400, 20, 2624);
-            builder.AddAlphaRegion(10, 250, 400, 20);
-
             builder.AddButton(10, 250, 4005, 4007, 1);
-            builder.AddHtmlLocalized(40, 250, 170, 20, 1011036, 32767); // OKAY
+            builder.AddHtmlLocalized(40, 250, 170, 20, 1011036, CustomGumpStyle.LocalizedTextColor); // OKAY
 
             builder.AddButton(210, 250, 4005, 4007, 0);
-            builder.AddHtmlLocalized(240, 250, 170, 20, 1011012, 32767); // CANCEL
+            builder.AddHtmlLocalized(240, 250, 170, 20, 1011012, CustomGumpStyle.LocalizedTextColor); // CANCEL
         }
         else
         {
-            builder.AddBackground(0, 0, 420, 400, 5054);
-            builder.AddBackground(10, 10, 400, 380, 3000);
+            CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 420, 400, "MOONGATE");
 
             // Dost thou wish to step into the moongate? Continue to enter the gate, Cancel to stay here
-            builder.AddHtmlLocalized(20, 40, 380, 60, 1062049);
+            builder.AddHtmlLocalized(20, 40, 380, 60, 1062049, CustomGumpStyle.LocalizedTextColor);
 
-            builder.AddHtmlLocalized(55, 110, 290, 20, 1011012); // CANCEL
+            builder.AddHtmlLocalized(55, 110, 290, 20, 1011012, CustomGumpStyle.LocalizedTextColor); // CANCEL
             builder.AddButton(20, 110, 4005, 4007, 0);
 
-            builder.AddHtmlLocalized(55, 140, 290, 40, 1011011); // CONTINUE
+            builder.AddHtmlLocalized(55, 140, 290, 40, 1011011, CustomGumpStyle.LocalizedTextColor); // CONTINUE
             builder.AddButton(20, 140, 4005, 4007, 1);
         }
     }
 
     public override void OnResponse(NetState state, in RelayInfo info)
     {
-        if (info.ButtonID == 1)
+        if (state?.Mobile?.NetState == state)
         {
-            _gate.EndConfirmation(_from);
+            _request.Respond(state?.Mobile, info.ButtonID == 1);
         }
     }
 }

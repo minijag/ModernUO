@@ -68,7 +68,7 @@ public record BlocklistSettings
     /// <summary>
     /// Path to the blocklist. A relative path resolves against <see cref="Core.BaseDirectory"/>; an
     /// absolute path is used as-is (handy when several shards share one generated list). Set to
-    /// <c>""</c> to disable the gate entirely. Produce the file with <c>tools/Export-IpBlocklist.ps1</c>.
+    /// <c>""</c> to disable the gate entirely. Produce the file with <c>../../humanTools/ServerAdministration/Source/Export-IpBlocklist.ps1</c>.
     /// </summary>
     [JsonPropertyName("file")]
     public string File { get; set; } = "Configuration/ip-blocklist.txt";

@@ -6,6 +6,7 @@ using Server.Guilds;
 using Server.Items;
 using Server.Mobiles;
 using Server.Multis;
+using Server.Regions;
 using Server.SkillHandlers;
 using Server.Spells.Seventh;
 
@@ -57,6 +58,11 @@ namespace Server.Misc
 
         public static bool Mobile_AllowBeneficial(Mobile from, Mobile target)
         {
+            if (Server.Engines.TownStruggle.TownStruggleCombat.TryAllowBeneficial(from, target, out var townAllowed))
+            {
+                return townAllowed;
+            }
+
             if (from == null || target == null || from.AccessLevel > AccessLevel.Player ||
                 target.AccessLevel > AccessLevel.Player)
             {
@@ -153,10 +159,20 @@ namespace Server.Misc
 
         public static bool Mobile_AllowHarmful(Mobile from, Mobile target)
         {
+            if (Server.Engines.TownStruggle.TownStruggleCombat.TryAllowHarmful(from, target, out var townAllowed))
+            {
+                return townAllowed;
+            }
+
             if (from == null || target == null || from.AccessLevel > AccessLevel.Player ||
                 target.AccessLevel > AccessLevel.Player)
             {
                 return true;
+            }
+
+            if (ProtectedRegion.PreventsPlayerHarm(from, target))
+            {
+                return false;
             }
 
             if (from.Region.IsPartOf<SafeZone>() || target.Region.IsPartOf<SafeZone>())
@@ -382,6 +398,16 @@ namespace Server.Misc
         /* Must be thread-safe */
         public static int MobileNotoriety(Mobile source, Mobile target)
         {
+            if (Server.Engines.TownStruggle.TownStruggleCombat.TryGetNotoriety(source, target, out var townNotoriety))
+            {
+                return townNotoriety;
+            }
+
+            if (Server.Engines.ModularDungeon.ExtractionEventCombat.IsEventCombat(source, target))
+            {
+                return Notoriety.CanBeAttacked;
+            }
+
             var bcTarg = target as BaseCreature;
 
             if (Core.AOS && (target.Blessed || bcTarg?.IsInvulnerable == true || target is PlayerVendor or TownCrier))

@@ -15,7 +15,7 @@
         <ProjectReference Include="..\Server\Server.csproj" />
         <ProjectReference Include="..\UOContent\UOContent.csproj" />
         <ProjectReference Include="..\Server.Tests\Server.Tests.csproj" />
-        <DataFiles Include="$(SolutionDir)\Distribution\Data\**" />
+        <DataFiles Include="$(MSBuildThisFileDirectory)..\..\..\Distribution\Live\Data\**" />
     </ItemGroup>
     <ItemGroup>
         <None Include="Tests/Engines/Spawners/Fixtures/*.bin" CopyToOutputDirectory="PreserveNewest" />

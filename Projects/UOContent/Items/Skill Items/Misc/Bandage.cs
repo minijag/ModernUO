@@ -196,6 +196,12 @@ public class BandageContext : Timer
     {
         StopHeal();
 
+        if (Server.Engines.TownStruggle.TownStruggleCombat.TryAllowBeneficial(Healer, Patient, out var townAllowed) && !townAllowed)
+        {
+            Healer.SendMessage("That bandage cannot affect a player on the other side of Town Struggle's participation rules.");
+            return;
+        }
+
         int healerNumber;
         int patientNumber;
         var playSound = true;

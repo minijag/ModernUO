@@ -42,22 +42,22 @@ jobs:
           global-json-file: global.json
 
       - name: Publish NativeAOT
-        run: dotnet publish Projects/BuildTool/BuildTool.csproj -c Release -r ${{ matrix.rid }} -o publish/
+        run: dotnet publish Projects/BuildTool/BuildTool.csproj -c Release -r ${{ matrix.rid }} -o ../Distribution/Tools/BuildTool/
 
       - name: Rename artifact (Unix)
         if: runner.os != 'Windows'
-        run: mv publish/build-tool publish/${{ matrix.artifact }}
+        run: mv ../Distribution/Tools/BuildTool/build-tool ../Distribution/Tools/BuildTool/${{ matrix.artifact }}
 
       - name: Rename artifact (Windows)
         if: runner.os == 'Windows'
-        run: mv publish/build-tool.exe publish/${{ matrix.artifact }}
+        run: mv ../Distribution/Tools/BuildTool/build-tool.exe ../Distribution/Tools/BuildTool/${{ matrix.artifact }}
         shell: bash
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact }}
-          path: publish/${{ matrix.artifact }}
+          path: ../Distribution/Tools/BuildTool/${{ matrix.artifact }}
 
   sign:
     needs: build
@@ -79,14 +79,14 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: ${{ matrix.artifact }}
-          path: unsigned/
+          path: ../Build/Signing/Unsigned/
 
       - name: Upload for signing
         id: upload-for-signing
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact }}-unsigned
-          path: unsigned/${{ matrix.artifact }}
+          path: ../Build/Signing/Unsigned/${{ matrix.artifact }}
 
       - name: Submit signing request
         id: submit
@@ -99,13 +99,13 @@ jobs:
           artifact-configuration-slug: 'build-tool'
           github-artifact-id: '${{ steps.upload-for-signing.outputs.artifact-id }}'
           wait-for-completion: true
-          output-artifact-directory: signed/
+          output-artifact-directory: ../Build/Signing/Signed/
 
       - name: Upload signed artifact
         uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.artifact }}-signed
-          path: signed/${{ matrix.artifact }}
+          path: ../Build/Signing/Signed/${{ matrix.artifact }}
 
   release:
     needs: [build, sign]
@@ -126,26 +126,26 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           pattern: '*-signed'
-          path: artifacts/
+          path: ../Build/ReleaseArtifacts/
           merge-multiple: true
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v8
         with:
           pattern: 'build-tool-osx-*'
-          path: artifacts/
+          path: ../Build/ReleaseArtifacts/
           merge-multiple: true
 
       - name: Download Linux artifacts
         uses: actions/download-artifact@v8
         with:
           pattern: 'build-tool-linux-*'
-          path: artifacts/
+          path: ../Build/ReleaseArtifacts/
           merge-multiple: true
 
       - name: Generate checksums
         run: |
-          cd artifacts
+          cd ../Build/ReleaseArtifacts
           sha256sum build-tool-* > checksums-sha256.txt
 
       - name: Create or update release
@@ -155,9 +155,9 @@ jobs:
           name: Build Tool (Latest)
           body: |
             Latest NativeAOT-compiled build tool binaries.
-            These are automatically downloaded by `publish.cmd` / `publish.sh`.
+            Local publish entry points compile the checked-out build tool; these binaries are standalone release artifacts.
           prerelease: true
           files: |
-            artifacts/build-tool-*
-            artifacts/checksums-sha256.txt
+            ../Build/ReleaseArtifacts/build-tool-*
+            ../Build/ReleaseArtifacts/checksums-sha256.txt
           make_latest: false

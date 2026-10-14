@@ -13,7 +13,7 @@ public partial class HarrowerGate : Moongate
         _harrower = harrower;
 
         Dispellable = false;
-        ItemID = 0x1FD4;
+        ItemID = MoongateAppearance.Dark;
         Light = LightType.Circle300;
 
         MoveToWorld(loc, map);

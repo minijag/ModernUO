@@ -34,7 +34,7 @@ public partial class StarRoomGate : Moongate
     public StarRoomGate(bool decays = false) : base(new Point3D(5143, 1774, 0), Map.Felucca)
     {
         Dispellable = false;
-        ItemID = 0x1FD4;
+        ItemID = MoongateAppearance.Dark;
 
         if (decays)
         {

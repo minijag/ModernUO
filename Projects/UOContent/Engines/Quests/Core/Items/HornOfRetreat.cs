@@ -117,11 +117,6 @@ public partial class HornOfRetreatMoongate : Moongate
 
     public override bool SkipSerialization => true;
 
-    public override void BeginConfirmation(Mobile from)
-    {
-        EndConfirmation(from);
-    }
-
     public override void UseGate(Mobile m)
     {
         if (m.Region.IsPartOf<JailRegion>())

@@ -51,7 +51,7 @@ public abstract class DynamicGump : BaseGump
         _switches = gumpBuilder.Switches;
         _textEntries = gumpBuilder.TextEntries;
 
-        OutgoingGumpPackets.WritePacked(gumpBuilder.LayoutData, ref writer);
+        StandardGumpStyle.WriteLayout(gumpBuilder.LayoutData, ref writer, HasVisualElements, gumpBuilder.StringsData);
 
         writer.Write(gumpBuilder._stringsCount);
         OutgoingGumpPackets.WritePacked(gumpBuilder.StringsData, ref writer);

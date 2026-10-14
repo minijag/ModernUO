@@ -912,6 +912,11 @@ namespace Server.Spells
 
         public static void Damage(Spell spell, TimeSpan delay, Mobile target, Mobile from, double damage)
         {
+            if (ProtectedRegion.PreventsPlayerHarm(from, target))
+            {
+                return;
+            }
+
             var damageGiven = (int)damage;
 
             if (delay == TimeSpan.Zero)
@@ -980,6 +985,11 @@ namespace Server.Spells
             int cold, int pois, int nrgy, int chaos = 0, DFAlgorithm dfa = DFAlgorithm.Standard
         )
         {
+            if (ProtectedRegion.PreventsPlayerHarm(from, target))
+            {
+                return;
+            }
+
             var dmg = (int)damage;
 
             if (delay == TimeSpan.Zero)
@@ -1071,6 +1081,12 @@ namespace Server.Spells
 
             protected override void OnTick()
             {
+                if (ProtectedRegion.PreventsPlayerHarm(m_From, m_Target))
+                {
+                    m_Spell?.RemoveDelayedDamageContext(m_Target);
+                    return;
+                }
+
                 (m_From as BaseCreature)?.AlterSpellDamageTo(m_Target, ref m_Damage);
                 (m_Target as BaseCreature)?.AlterSpellDamageFrom(m_From, ref m_Damage);
 

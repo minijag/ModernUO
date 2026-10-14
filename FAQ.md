@@ -14,11 +14,11 @@ and let us know how to reproduce it so we can get it fixed! Under the same vein,
 are errors, you are not in the dark.
 
 ## Where do I go to run ModernUO?
-Everything is run from the `Distribution` directory.
+The live server runs from `../Distribution/Live`, outside this source directory.
 This folder is portable, so it can be moved to the production server for deployments.
 
 ## I don't see my scripts compiling, what happened?
-Scripts are now compiled separately (UOContent project) and moved to the `Distribution/Assemblies` directory.
+Scripts compile separately (UOContent project) to `../Distribution/Build/Assemblies`. Deployment to `../Distribution/Live/Assemblies` is an explicit, separate step.
 
 ## Why can't I run ModernUO on a 32-bit operating system?
 ModernUO is optimized for modern hardware. We cannot support 32-bit systems, sorry.

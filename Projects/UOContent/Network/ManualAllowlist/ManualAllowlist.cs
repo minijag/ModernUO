@@ -25,7 +25,7 @@ namespace Server.Network.Bans;
 
 /// <summary>
 /// The operator's own "leave this address alone" list, read from the same files
-/// <c>tools/Export-IpBlocklist.ps1</c> subtracts at generation time.
+/// <c>../../humanTools/ServerAdministration/Source/Export-IpBlocklist.ps1</c> subtracts at generation time.
 /// </summary>
 /// <remarks>
 /// The generator already subtracts these from the blocklist, but that only covers being BLOCKED.

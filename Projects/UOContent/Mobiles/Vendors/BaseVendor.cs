@@ -1298,8 +1298,9 @@ namespace Server.Mobiles
         }
 
         public virtual bool CheckVendorAccess(Mobile from) =>
-            Region.GetRegion<GuardedRegion>()?.CheckVendorAccess(this, from) != false ||
-            Region != from.Region && from.Region.GetRegion<GuardedRegion>()?.CheckVendorAccess(this, from) != false;
+            !Server.Engines.TownStruggle.TownStruggleRuntime.IsEnrolled(from) &&
+            (Region.GetRegion<GuardedRegion>()?.CheckVendorAccess(this, from) != false ||
+             Region != from.Region && from.Region.GetRegion<GuardedRegion>()?.CheckVendorAccess(this, from) != false);
 
         [AfterDeserialization]
         private void AfterDeserialization()

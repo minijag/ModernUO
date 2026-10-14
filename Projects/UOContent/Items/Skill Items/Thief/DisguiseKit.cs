@@ -1,5 +1,6 @@
 using System;
 using ModernUO.Serialization;
+using Server.Engines.TownStruggle;
 using Server.Factions;
 using Server.Gumps;
 using Server.Mobiles;
@@ -25,6 +26,12 @@ public partial class DisguiseKit : Item
 
     public bool ValidateUse(Mobile from)
     {
+        if (TownStruggleRuntime.IsEnrolled(from))
+        {
+            from.SendMessage("Disguises cannot be used during Town Struggle.");
+            return false;
+        }
+
         var pm = from as PlayerMobile;
 
         if (!IsChildOf(from.Backpack))

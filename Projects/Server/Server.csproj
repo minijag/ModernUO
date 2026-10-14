@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk" ToolsVersion="Current">
     <PropertyGroup>
         <Product>ModernUO Core</Product>
-        <OutDir>..\..\Distribution</OutDir>
-        <PublishDir>..\..\Distribution</PublishDir>
+        <OutDir>..\..\..\Distribution\Build</OutDir>
+        <PublishDir>..\..\..\Distribution\Build</PublishDir>
         <Version>0.0.0</Version>
         <Configurations>Debug;Release;Analyze</Configurations>
         <RootNamespace>Server</RootNamespace>
@@ -11,26 +11,26 @@
     </PropertyGroup>
     <Target Name="CleanPub" AfterTargets="Clean">
         <Message Text="Server: Removing distribution files..." />
-        <Delete Files="..\..\Distribution\$(AssemblyName)" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).deps.json" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).dll.config" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).exe" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).pdb" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).runtimeconfig.dev.json" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\$(AssemblyName).runtimeconfig.json" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\ModernUO.Serialization.Annotations.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\CommunityToolkit.HighPerformance.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\IORingGroup.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\ioring.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\ref\$(AssemblyName).dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Serilog.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Serilog.Sinks.Async.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Serilog.Sinks.Console.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\LibDeflate.Bindings.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\libdeflate.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\libdeflate.dylib" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\System.IO.Hashing.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName)" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).deps.json" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).dll.config" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).exe" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).pdb" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).runtimeconfig.dev.json" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\$(AssemblyName).runtimeconfig.json" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\ModernUO.Serialization.Annotations.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\CommunityToolkit.HighPerformance.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\IORingGroup.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\ioring.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\ref\$(AssemblyName).dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Serilog.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Serilog.Sinks.Async.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Serilog.Sinks.Console.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\LibDeflate.Bindings.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\libdeflate.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\libdeflate.dylib" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\System.IO.Hashing.dll" ContinueOnError="true" />
     </Target>
     <ItemGroup>
         <ProjectReference Include="..\Logger\Logger.csproj" />

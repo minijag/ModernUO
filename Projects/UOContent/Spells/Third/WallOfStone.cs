@@ -1,5 +1,6 @@
 using System;
 using ModernUO.Serialization;
+using Server.Engines.TownStruggle;
 using Server.Misc;
 using Server.Mobiles;
 
@@ -27,6 +28,13 @@ public class WallOfStoneSpell : MagerySpell, ITargetingSpell<IPoint3D>
 
     public void Target(IPoint3D p)
     {
+        var fieldCenter = new Point3D(p);
+        if (!TownStruggleCombat.AllowsBlockingField(Caster, Caster.Map, fieldCenter,
+                SpellHelper.GetEastToWest(Caster.Location, fieldCenter), 1))
+        {
+            Caster.SendMessage("Blocking fields cannot cross the Town Struggle boundary or interfere with a match you have not joined.");
+            return;
+        }
         if (SpellHelper.CheckTown(p, Caster) && CheckSequence())
         {
             SpellHelper.Turn(Caster, p);

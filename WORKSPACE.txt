@@ -1,0 +1,23 @@
+This is server source only. Original Git history and uncommitted changes remain.
+
+Build: pwsh -File Build.ps1
+New compiled output: ../Distribution/Build (NOT the live server)
+Running server: ../Distribution/Live
+Start server: pwsh -File ../Start-Server.ps1
+Build intermediates: ../Build
+Account Keeper app: ../../humanTools/ShardAccountKeeper (Source/Distribution/Build)
+Only its server-side integration belongs in this server source project.
+
+The existing System.Security.Cryptography.Pkcs 10.0.0 dependency has NU1902 and
+NU1903 advisories. Default warnings-as-errors still blocks a clean build until
+that is reviewed. Migration compilation was checked with only these advisory
+codes treated as visible warnings, without changing dependencies or deploying
+the rebuilt binaries. Do not disable auditing or silently upgrade dependencies.
+
+Build.ps1 and publish.ps1/publish.sh use this source checkout and output to
+../Distribution/Build. Deployment tools use ../Distribution/Live. Historical
+inputs are under ../../Archive/Artifacts. Old signed plans and receipts retain
+their original provenance: regenerate and review a deployment plan before use;
+never weaken hash or process-identity checks to replay one. Archived scripts
+are records, not entry points. Never create compatibility junctions or runtime
+directories inside Source. Signing keys and accounts are not source inputs.

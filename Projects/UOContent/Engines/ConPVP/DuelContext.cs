@@ -2752,7 +2752,7 @@ public partial class DuelContext
         {
             m_Teleporter = tp;
 
-            ItemID = 0x1FD4;
+            ItemID = MoongateAppearance.Dark;
             Dispellable = false;
 
             GumpWidth = 300;

@@ -1,0 +1,14 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.RootboundCellarChest",
+  "properties": [
+    {
+      "name": "LootInitialized",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    }
+  ]
+}

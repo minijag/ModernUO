@@ -1,1 +1,0 @@
-27 spawners, target population 69. Physical stairs replace 2 deck portal pairs. Rescued 0 stranded creatures. World save confirmed 2026-09-28 14:19:47 local in Backups/ArborMazeV4-20260928/install.stdout.log. Installation request retired after confirmation.

@@ -67,7 +67,7 @@ public record ManualAllowlistSettings
 
     /// <summary>
     /// Addresses that must never be blocked and never escalated, in the blocklist's own format. The same
-    /// files <c>tools/Export-IpBlocklist.ps1</c> subtracts at generation time; the shard reads them so an
+    /// files <c>../../humanTools/ServerAdministration/Source/Export-IpBlocklist.ps1</c> subtracts at generation time; the shard reads them so an
     /// entry also suppresses ban contributions, which the generator alone cannot do.
     /// </summary>
     /// <remarks>

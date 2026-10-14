@@ -3,8 +3,8 @@
         <RootNamespace>Server</RootNamespace>
         <AssemblyName>Logger</AssemblyName>
         <Product>ModernUO Logger</Product>
-        <OutDir>..\..\Distribution\Assemblies</OutDir>
-        <PublishDir>..\..\Distribution\Assemblies</PublishDir>
+        <OutDir>..\..\..\Distribution\Build\Assemblies</OutDir>
+        <PublishDir>..\..\..\Distribution\Build\Assemblies</PublishDir>
         <Configurations>Debug;Release;Analyze</Configurations>
     </PropertyGroup>
     <ItemGroup>
@@ -12,8 +12,8 @@
     </ItemGroup>
     <Target Name="CleanPub" AfterTargets="Clean">
         <Message Text="Logger: Removing distribution assemblies..."/>
-        <Delete Files="..\..\Distribution\Assemblies\$(AssemblyName).deps.json" ContinueOnError="true"/>
-        <Delete Files="..\..\Distribution\Assemblies\$(AssemblyName).dll" ContinueOnError="true"/>
-        <Delete Files="..\..\Distribution\Assemblies\$(AssemblyName).pdb" ContinueOnError="true"/>
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\$(AssemblyName).deps.json" ContinueOnError="true"/>
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\$(AssemblyName).dll" ContinueOnError="true"/>
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\$(AssemblyName).pdb" ContinueOnError="true"/>
     </Target>
 </Project>

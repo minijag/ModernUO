@@ -24,7 +24,7 @@ namespace Server.Network.Bans;
 
 /// <summary>
 /// Accept-path gate for a large, file-sourced IP blocklist, hydrated from the file a generator
-/// (<c>tools/Export-IpBlocklist.ps1</c>) writes on a schedule. Holds an immutable snapshot swapped
+/// (<c>../../humanTools/ServerAdministration/Source/Export-IpBlocklist.ps1</c>) writes on a schedule. Holds an immutable snapshot swapped
 /// atomically by an off-loop reload poll, so accept-path reads are lock-free. Opt-in via
 /// <c>blocklist.json</c>'s <c>enabled</c>; inert when off, or when no file is configured or present.
 /// </summary>

@@ -76,12 +76,16 @@ namespace Server.Gumps
         private readonly int m_ListPage;
         private readonly AdminGumpPage m_PageType;
         private readonly object m_State;
+        private readonly string _broadcastDraft;
+
+        internal AdminGumpPage CurrentPage => m_PageType;
+        internal string BroadcastDraft => _broadcastDraft;
 
         public override bool Singleton => true;
 
         public AdminGump(
             Mobile from, AdminGumpPage pageType, int listPage = 0, List<object> list = null, string notice = null,
-            object state = null
+            object state = null, string broadcastDraft = null
         ) : base(50, 40)
         {
             m_From = from;
@@ -89,17 +93,20 @@ namespace Server.Gumps
             m_ListPage = listPage;
             m_State = state;
             m_List = list;
+            _broadcastDraft = broadcastDraft ?? "";
 
             FilterAccess(m_List, from);
 
             AddPage(0);
 
-            AddBackground(0, 0, 420, 480, 5054);
+            var hasCommandHelp = AdminCommandHelp.IsAdministerPage(pageType);
+            var contentWidth = hasCommandHelp ? 640 : 400;
+            AddBackground(0, 0, contentWidth + 20, 480, 5054);
 
             AddBlackAlpha(10, 10, 170, 100);
-            AddBlackAlpha(190, 10, 220, 100);
-            AddBlackAlpha(10, 120, 400, 300);
-            AddBlackAlpha(10, 430, 400, 40);
+            AddBlackAlpha(190, 10, contentWidth - 180, 100);
+            AddBlackAlpha(10, 120, contentWidth, 300);
+            AddBlackAlpha(10, 430, contentWidth, 40);
 
             AddPageButton(
                 10,
@@ -143,7 +150,11 @@ namespace Server.Gumps
 
             if (notice != null)
             {
-                AddHtml(20, 440, 396, 36, notice.Color(LabelColor32));
+                AddHtml(20, 440, contentWidth - 4, 36, notice.Color(LabelColor32));
+            }
+            else if (hasCommandHelp)
+            {
+                AddHtml(20, 440, contentWidth - 20, 24, "Arrow: run or open.  Info: read-only explanation.".Color(LabelColor32));
             }
 
             switch (pageType)
@@ -252,33 +263,18 @@ namespace Server.Gumps
                     }
                 case AdminGumpPage.Administer_WorldBuilding:
                     {
-                        AddHtml(10, 125, 400, 20, "Generating".Center(LabelColor32));
+                        AddHtml(10, 125, contentWidth, 20, "Generating".Center(LabelColor32));
 
                         AddButtonLabeled(20, 175, GetButtonID(3, 101), "Teleporters");
-                        AddButtonLabeled(220, 175, GetButtonID(3, 102), "Moongates");
-
-                        AddButtonLabeled(220, 200, GetButtonID(3, 106), "Decorations");
-
-                        AddButtonLabeled(20, 225, GetButtonID(3, 104), "Doors");
-                        AddButtonLabeled(220, 225, GetButtonID(3, 105), "Signs");
-
-                        AddButtonLabeled(20, 250, GetButtonID(3, 107), "Champions");
-                        AddButtonLabeled(220, 250, GetButtonID(3, 108), "Magincia (AOS+)");
-
-                        AddButtonLabeled(20, 275, GetButtonID(3, 109), "Stealable Artifacts");
-                        AddButtonLabeled(220, 275, GetButtonID(3, 110), "SH Teleporters");
-
-                        AddButtonLabeled(20, 300, GetButtonID(3, 111), "Secret Locations");
-                        AddButtonLabeled(220, 300, GetButtonID(3, 112), "Doom");
-
-                        AddButtonLabeled(20, 325, GetButtonID(3, 113), "Khaldun Puzzles");
-                        AddButtonLabeled(220, 325, GetButtonID(3, 114), "Do everything");
+                        AddButtonLabeled(220, 175, GetButtonID(3, 106), "Decorations");
+                        AddButtonLabeled(20, 210, GetButtonID(3, 104), "Doors");
+                        AddButtonLabeled(220, 210, GetButtonID(3, 112), "Doom");
 
                         goto case AdminGumpPage.Administer;
                     }
                 case AdminGumpPage.Administer_Server:
                     {
-                        AddHtml(10, 125, 400, 20, "Server".Center(LabelColor32));
+                        AddHtml(10, 125, contentWidth, 20, "Server".Center(LabelColor32));
 
                         AddButtonLabeled(20, 150, GetButtonID(3, 200), "Save");
 
@@ -298,9 +294,9 @@ namespace Server.Gumps
                           AddLabel( 20, 215, LabelHue, "Shutdown/Restart not available." );
                         }*/
 
-                        AddHtml(10, 295, 400, 20, "Broadcast".Center(LabelColor32));
+                        AddHtml(10, 295, contentWidth, 20, "Broadcast".Center(LabelColor32));
 
-                        AddTextField(20, 320, 380, 20, 0);
+                        AddTextField(20, 320, contentWidth - 20, 20, 0, _broadcastDraft);
                         AddButtonLabeled(20, 350, GetButtonID(3, 210), "To Everyone");
                         AddButtonLabeled(220, 350, GetButtonID(3, 211), "To Staff");
 
@@ -308,12 +304,12 @@ namespace Server.Gumps
                     }
                 case AdminGumpPage.Administer_Access_Lockdown:
                     {
-                        AddHtml(10, 125, 400, 20, "Server Lockdown".Center(LabelColor32));
+                        AddHtml(10, 125, contentWidth, 20, "Server Lockdown".Center(LabelColor32));
 
                         AddHtml(
                             20,
                             150,
-                            380,
+                            contentWidth - 20,
                             80,
                             "When enabled, only clients with an access level equal to or greater than the specified lockdown level may access the server. After setting a lockdown level, use the <em>Purge Invalid Clients</em> button to disconnect those clients without access.".Color(
                                 LabelColor32
@@ -353,9 +349,9 @@ namespace Server.Gumps
                     }
                 case AdminGumpPage.Administer_Access:
                     {
-                        AddHtml(10, 125, 400, 20, "Access".Center(LabelColor32));
+                        AddHtml(10, 125, contentWidth, 20, "Access".Center(LabelColor32));
 
-                        AddHtml(10, 155, 400, 20, "Connectivity".Center(LabelColor32));
+                        AddHtml(10, 155, contentWidth, 20, "Connectivity".Center(LabelColor32));
 
                         AddButtonLabeled(20, 180, GetButtonID(3, 300), "Kick");
                         AddButtonLabeled(220, 180, GetButtonID(3, 301), "Ban");
@@ -363,7 +359,7 @@ namespace Server.Gumps
                         AddButtonLabeled(20, 210, GetButtonID(3, 302), "Firewall");
                         AddButtonLabeled(220, 210, GetButtonID(3, 303), "Lockdown");
 
-                        AddHtml(10, 245, 400, 20, "Staff".Center(LabelColor32));
+                        AddHtml(10, 245, contentWidth, 20, "Staff".Center(LabelColor32));
 
                         AddButtonLabeled(20, 270, GetButtonID(3, 310), "Make Player");
                         AddButtonLabeled(20, 290, GetButtonID(3, 311), "Make Counselor");
@@ -389,7 +385,7 @@ namespace Server.Gumps
                     }
                 case AdminGumpPage.Administer_Commands:
                     {
-                        AddHtml(10, 125, 400, 20, "Commands".Center(LabelColor32));
+                        AddHtml(10, 125, contentWidth, 20, "Commands".Center(LabelColor32));
 
                         AddButtonLabeled(20, 150, GetButtonID(3, 400), "Add");
                         AddButtonLabeled(220, 150, GetButtonID(3, 401), "Remove");
@@ -1331,14 +1327,39 @@ namespace Server.Gumps
 
         public void AddSelectedButton(int x, int y, int buttonID, string text, bool isSelection)
         {
+            if (TryAddCommandHelpRow(x, y, buttonID, text, isSelection))
+            {
+                return;
+            }
             AddButton(x, y - 1, isSelection ? 4006 : 4005, 4007, buttonID);
             AddHtml(x + 35, y, 200, 20, text.Color(isSelection ? SelectedColor32 : LabelColor32));
         }
 
         public void AddButtonLabeled(int x, int y, int buttonID, string text)
         {
+            if (TryAddCommandHelpRow(x, y, buttonID, text, false))
+            {
+                return;
+            }
             AddButton(x, y - 1, 4005, 4007, buttonID);
             AddHtml(x + 35, y, 240, 20, text.Color(LabelColor32));
+        }
+
+        private bool TryAddCommandHelpRow(int x, int y, int buttonId, string text, bool selected)
+        {
+            if (!AdminCommandHelp.TryGetAction(buttonId, m_PageType, m_From, out var entry))
+            {
+                return false;
+            }
+            var navigation = entry.Index < 4;
+            var fullWidth = navigation || entry.Index is >= 200 and <= 205 or >= 500;
+            var rowX = x == 220 ? 340 : x;
+            var infoX = fullWidth || rowX >= 340 ? 584 : 264;
+            AddButton(rowX, y - 1, selected ? 4006 : 4005, 4007, buttonId);
+            AddHtml(rowX + 35, y, infoX - rowX - 45, 20, text.Color(selected ? SelectedColor32 : LabelColor32));
+            AddButton(infoX, y, 0x4B9, 0x4BA, AdminCommandHelp.InfoButton(entry.Index));
+            AddHtml(infoX + 24, y, 40, 20, "Info".Color(0xFFE8A6));
+            return true;
         }
 
         public void AddBlackAlpha(int x, int y, int width, int height)
@@ -1469,10 +1490,10 @@ namespace Server.Gumps
             return "Unknown";
         }
 
-        public void AddTextField(int x, int y, int width, int height, int index)
+        public void AddTextField(int x, int y, int width, int height, int index, string initialText = "")
         {
             AddBackground(x - 2, y - 2, width + 4, height + 4, 0x2486);
-            AddTextEntry(x + 2, y + 2, width - 4, height - 4, 0, index, "");
+            AddTextEntry(x + 2, y + 2, width - 4, height - 4, 0, index, initialText);
         }
 
         public void AddClientHeader()
@@ -1885,6 +1906,17 @@ namespace Server.Gumps
 
         public override void OnResponse(NetState sender, in RelayInfo info)
         {
+            // Reserved help replies never enter the command dispatch below, including forged IDs.
+            if (info.ButtonID >= AdminCommandHelp.FirstInfoButton)
+            {
+                if (sender?.Mobile == m_From && AdminCommandHelp.TryGet(info.ButtonID - AdminCommandHelp.FirstInfoButton, out var entry) &&
+                    AdminCommandHelp.CanRead(m_From, m_PageType, entry))
+                {
+                    var draft = m_PageType == AdminGumpPage.Administer_Server ? info.GetTextEntry(0) ?? _broadcastDraft : _broadcastDraft;
+                    AdminCommandHelpGump.DisplayTo(m_From, entry.Index, m_PageType, draft);
+                }
+                return;
+            }
             var val = info.ButtonID - 1;
 
             if (val < 0)
@@ -2054,58 +2086,16 @@ namespace Server.Gumps
                                     notice = "Teleporters have been generated.";
                                     break;
                                 }
-                            case 102:
-                                {
-                                    InvokeCommand("MoonGen");
-                                    notice = "Moongates have been generated.";
-                                    break;
-                                }
                             case 104:
                                 {
                                     InvokeCommand("DoorGen");
                                     notice = "Doors have been generated.";
                                     break;
                                 }
-                            case 105:
-                                {
-                                    InvokeCommand("SignGen");
-                                    notice = "Signs have been generated.";
-                                    break;
-                                }
                             case 106:
                                 {
                                     InvokeCommand("Decorate");
                                     notice = "Decorations have been generated.";
-                                    break;
-                                }
-                            case 107:
-                                {
-                                    InvokeCommand("GenChamps");
-                                    notice = "Champions have been generated.";
-                                    break;
-                                }
-                            case 108:
-                                {
-                                    InvokeCommand("DecorateMag");
-                                    notice = "Magincia Ruins decorations have been generated.";
-                                    break;
-                                }
-                            case 109:
-                                {
-                                    InvokeCommand("GenStealArties");
-                                    notice = "Stealable Artifacts have been generated.";
-                                    break;
-                                }
-                            case 110:
-                                {
-                                    InvokeCommand("SHTelGen");
-                                    notice = "Solen Hive teleporters have been generated.";
-                                    break;
-                                }
-                            case 111:
-                                {
-                                    InvokeCommand("SecretLocGen");
-                                    notice = "Secret Locations have been generated.";
                                     break;
                                 }
                             case 112:
@@ -2115,59 +2105,6 @@ namespace Server.Gumps
                                     notice = "Doom  has been generated.";
                                     break;
                                 }
-                            case 113:
-                                {
-                                    InvokeCommand("GenKhaldun");
-                                    notice = "Khaldun puzzles have been generated.";
-                                    break;
-                                }
-
-                            case 114:
-                                {
-                                    // 101
-                                    InvokeCommand("TelGen");
-
-                                    // 102
-                                    InvokeCommand("MoonGen");
-
-                                    // 103
-                                    InvokeCommand("DoorGen");
-
-                                    // 104
-                                    GenerateSpawners();
-
-                                    // 105
-                                    InvokeCommand("SignGen");
-
-                                    // 106
-                                    InvokeCommand("Decorate");
-
-                                    // 107
-                                    InvokeCommand("GenChamps");
-
-                                    // 108
-                                    InvokeCommand("DecorateMag");
-
-                                    // 109
-                                    InvokeCommand("GenStealArties");
-
-                                    // 110
-                                    InvokeCommand("SHTelGen");
-
-                                    // 111
-                                    InvokeCommand("SecretLocGen");
-
-                                    // 112
-                                    InvokeCommand("GenLeverPuzzle");
-                                    InvokeCommand("GenGauntlet");
-
-                                    // 113
-                                    InvokeCommand("GenKhaldun");
-
-                                    notice = "All the above options have been generated at once.";
-                                    break;
-                                }
-
                             case 200:
                                 {
                                     InvokeCommand("Save");

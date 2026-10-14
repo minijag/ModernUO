@@ -39,7 +39,7 @@ description: >
 
 ### Static Region (JSON-Defined)
 
-Add to `Distribution/Data/regions.json`:
+Add to `../Distribution/Live/Data/regions.json`:
 ```json
 {
   "$type": "NoTravelSpellsAllowedRegion",

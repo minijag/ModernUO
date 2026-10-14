@@ -2,6 +2,7 @@ using ModernUO.Serialization;
 using System.Collections.Generic;
 using Server.Collections;
 using Server.ContextMenus;
+using Server.Engines.TownStruggle;
 using Server.Gumps;
 using Server.Items;
 using Server.Network;
@@ -350,7 +351,8 @@ namespace Server.Mobiles
             }
         }
 
-        public bool CanClaim(Mobile from, BaseCreature pet) => from.Followers + pet.ControlSlots <= from.FollowersMax;
+        public bool CanClaim(Mobile from, BaseCreature pet) =>
+            !TownStruggleRuntime.IsEnrolled(from) && from.Followers + pet.ControlSlots <= from.FollowersMax;
 
         private void DoClaim(Mobile from, BaseCreature pet)
         {

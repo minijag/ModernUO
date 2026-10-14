@@ -11,6 +11,7 @@ using Server.Guilds;
 using Server.Misc;
 using Server.Mobiles;
 using Server.Network;
+using Server.Regions;
 
 namespace Server.Items;
 
@@ -858,7 +859,9 @@ public partial class Corpse : Container, ICarvable
     }
 
     public bool CanLoot(Mobile from, Item item) =>
-        !IsCriminalAction(from) || (Map.Rules & MapRules.HarmfulRestrictions) == 0;
+        !(Owner?.Player == true && ProtectedRegion.ProtectsInteraction(
+            from, Owner, ProtectedInteraction.CorpseLooting, Location, Map
+        )) && (!IsCriminalAction(from) || (Map.Rules & MapRules.HarmfulRestrictions) == 0);
 
     public bool CheckLoot(Mobile from, Item item)
     {

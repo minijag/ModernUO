@@ -4,36 +4,36 @@
         <RootNamespace>Server</RootNamespace>
         <AssemblyName>UOContent</AssemblyName>
         <Product>ModernUO Content</Product>
-        <OutDir>..\..\Distribution\Assemblies</OutDir>
-        <PublishDir>..\..\Distribution\Assemblies</PublishDir>
+        <OutDir>..\..\..\Distribution\Build\Assemblies</OutDir>
+        <PublishDir>..\..\..\Distribution\Build\Assemblies</PublishDir>
         <Configurations>Debug;Release;Analyze</Configurations>
     </PropertyGroup>
     <Target Name="CleanPub" AfterTargets="Clean">
         <Message Text="UOContent: Removing distribution assemblies..." />
-        <Delete Files="..\..\Distribution\Assemblies\Argon2.Bindings.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\libargon2.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\BouncyCastle.Cryptography.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\MailKit.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\MimeKit.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\Microsoft.Toolkit.HighPerformance.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\CommunityToolkit.HighPerformance.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\Microsoft.Extensions.FileSystemGlobbing.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\Serilog.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\Serilog.Sinks.Async.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\Serilog.Sinks.Console.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\System.Security.Cryptography.Pkcs.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\$(AssemblyName).dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\ref\$(AssemblyName).dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\$(AssemblyName).deps.json" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\$(AssemblyName).pdb" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\LibDeflate.Bindings.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\libdeflate.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\libdeflate.dylib" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\ZstdNet.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\libzstd.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\ModernUO.Serialization.Annotations.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\ModernUO.CodeGeneratedEvents.Annotations.dll" ContinueOnError="true" />
-        <Delete Files="..\..\Distribution\Assemblies\ModernUO.CodeGeneratedEvents.Generator.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\Argon2.Bindings.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\libargon2.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\BouncyCastle.Cryptography.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\MailKit.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\MimeKit.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\Microsoft.Toolkit.HighPerformance.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\CommunityToolkit.HighPerformance.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\Microsoft.Extensions.FileSystemGlobbing.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\Serilog.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\Serilog.Sinks.Async.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\Serilog.Sinks.Console.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\System.Security.Cryptography.Pkcs.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\$(AssemblyName).dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\ref\$(AssemblyName).dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\$(AssemblyName).deps.json" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\$(AssemblyName).pdb" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\LibDeflate.Bindings.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\libdeflate.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\libdeflate.dylib" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\ZstdNet.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\libzstd.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\ModernUO.Serialization.Annotations.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\ModernUO.CodeGeneratedEvents.Annotations.dll" ContinueOnError="true" />
+        <Delete Files="..\..\..\Distribution\Build\Assemblies\ModernUO.CodeGeneratedEvents.Generator.dll" ContinueOnError="true" />
     </Target>
     <ItemGroup>
         <ProjectReference Include="..\Logger\Logger.csproj" />

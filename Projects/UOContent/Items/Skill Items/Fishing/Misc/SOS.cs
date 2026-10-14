@@ -284,7 +284,7 @@ public partial class SOS : Item
 
         protected override void BuildStrings(ref GumpStringsBuilder builder)
         {
-            builder.SetStringSlot("fmt", _fmt);
+            builder.SetHtmlText("fmt", _fmt, CustomGumpStyle.TextColor);
         }
     }
 
@@ -338,7 +338,7 @@ public partial class SOS : Item
 
         protected override void BuildStrings(ref GumpStringsBuilder builder)
         {
-            builder.SetStringSlot("message", _message);
+            builder.SetHtmlText("message", _message, CustomGumpStyle.TextColor);
         }
     }
 }

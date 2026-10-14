@@ -7,6 +7,7 @@ using Server.Factions;
 using Server.Items;
 using Server.Misc;
 using Server.Mobiles;
+using Server.Regions;
 using Server.Spells;
 using Server.Spells.Fifth;
 using Server.Spells.Ninjitsu;
@@ -91,6 +92,12 @@ public static class Stealing
             var root = toSteal.RootParent;
             var mobRoot = root as Mobile;
             var rootIsPlayer = mobRoot?.Player == true;
+
+            if (ProtectedRegion.ProtectsInteraction(_thief, mobRoot, ProtectedInteraction.Stealing))
+            {
+                _thief.SendMessage("You may not steal from this target in a protected area.");
+                return null;
+            }
 
             var si = toSteal.Parent == null || !toSteal.Movable
                 ? StealableArtifacts.GetStealableInstance(toSteal)
@@ -344,6 +351,13 @@ public static class Stealing
         protected override void OnTarget(Mobile from, object target)
         {
             from.RevealingAction();
+
+            var targetOwner = target is Item targetedItem ? targetedItem.RootParent as Mobile : target as Mobile;
+            if (ProtectedRegion.ProtectsInteraction(_thief, targetOwner, ProtectedInteraction.Stealing))
+            {
+                _thief.SendMessage("You may not steal from this target in a protected area.");
+                return;
+            }
 
             Item stolen = null;
             IEntity root = null;

@@ -51,14 +51,9 @@ public class WarningGump : DynamicGump
 
         builder.AddPage();
 
-        builder.AddBackground(0, 0, _width, _height, 5054);
-
-        builder.AddImageTiled(10, 10, _width - 20, 20, 2624);
-        builder.AddAlphaRegion(10, 10, _width - 20, 20);
-        builder.AddHtmlLocalized(10, 10, _width - 20, 20, _header, _headerColor);
-
-        builder.AddImageTiled(10, 40, _width - 20, _height - 80, 2624);
-        builder.AddAlphaRegion(10, 40, _width - 20, _height - 80);
+        CustomGumpStyle.AddContentPanel(ref builder, 0, 0, _width, _height);
+        builder.AddHtmlLocalized(10, 10, _width - 20, 20, _header,
+            _headerColor == 0 ? CustomGumpStyle.LocalizedTextColor : _headerColor);
 
         _content.AddHtmlText(
             ref builder,
@@ -67,12 +62,9 @@ public class WarningGump : DynamicGump
             _width - 20,
             _height - 80,
             scroll: true,
-            numberColor: _contentColor,
-            stringColor: _contentColor
+            numberColor: _contentColor == 0 ? CustomGumpStyle.LocalizedTextColor : _contentColor,
+            stringColor: _contentColor == 0 ? 0xFFFFFF : _contentColor
         );
-
-        builder.AddImageTiled(10, _height - 30, _width - 20, 20, 2624);
-        builder.AddAlphaRegion(10, _height - 30, _width - 20, 20);
 
         builder.AddButton(10, _height - 30, 4005, 4007, 1);
         builder.AddHtmlLocalized(40, _height - 30, 170, 20, 1011036, 0x7FFF); // OKAY

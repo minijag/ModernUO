@@ -15,11 +15,13 @@ namespace Server.Items;
 public partial class PublicMoongate : Item
 {
     [Constructible]
-    public PublicMoongate() : base(0xF6C)
+    public PublicMoongate() : base(MoongateAppearance.Blue)
     {
         Movable = false;
         Light = LightType.Circle300;
     }
+
+    public override int LabelNumber => MoongateAppearance.IsReplacement(ItemID) ? MoongateAppearance.LegacyLabelNumber(ItemID) : base.LabelNumber;
 
     public override bool ForceShowProperties => ObjectPropertyList.Enabled;
 
@@ -314,19 +316,26 @@ public class MoongateGump : DynamicGump
     private readonly PMList[] _lists;
     private readonly PMList[] _tabOrder;
     private readonly Item _moongate;
+    private readonly Mobile _owner;
+    private readonly Point3D _source;
+    private readonly Map _sourceMap;
+    private bool _used;
 
     public override bool Singleton => true;
 
-    private MoongateGump(Item moongate, PMList[] lists, PMList[] tabOrder) : base(100, 100)
+    private MoongateGump(Mobile owner, Item moongate, PMList[] lists, PMList[] tabOrder) : base(100, 100)
     {
+        _owner = owner;
         _moongate = moongate;
+        _source = moongate.Location;
+        _sourceMap = moongate.Map;
         _lists = lists;
         _tabOrder = tabOrder;
     }
 
     public static void DisplayTo(Mobile mobile, Item moongate)
     {
-        if (mobile?.NetState == null || moongate == null || moongate.Deleted)
+        if (mobile?.NetState == null || !MoongateTravelConfirmation.IsInRange(mobile, moongate))
         {
             return;
         }
@@ -395,28 +404,28 @@ public class MoongateGump : DynamicGump
             }
         }
 
-        mobile.SendGump(new MoongateGump(moongate, lists, tabOrder));
+        mobile.SendGump(new MoongateGump(mobile, moongate, lists, tabOrder));
     }
 
     protected override void BuildLayout(ref DynamicGumpBuilder builder)
     {
         builder.AddPage();
 
-        builder.AddBackground(0, 0, 380, 280, 5054);
+        CustomGumpStyle.AddContentPanel(ref builder, 0, 0, 380, 280, "MOONGATE");
 
         builder.AddButton(10, 210, 4005, 4007, 1);
-        builder.AddHtmlLocalized(45, 210, 140, 25, 1011036); // OKAY
+        builder.AddHtmlLocalized(45, 210, 140, 25, 1011036, CustomGumpStyle.LocalizedTextColor); // OKAY
 
         builder.AddButton(10, 235, 4005, 4007, 0);
-        builder.AddHtmlLocalized(45, 235, 140, 25, 1011012); // CANCEL
+        builder.AddHtmlLocalized(45, 235, 140, 25, 1011012, CustomGumpStyle.LocalizedTextColor); // CANCEL
 
-        builder.AddHtmlLocalized(5, 5, 200, 20, 1012011); // Pick your destination:
+        builder.AddHtmlLocalized(5, 5, 200, 20, 1012011, CustomGumpStyle.LocalizedTextColor); // Pick your destination:
 
         // Tab buttons on page 0 — rendered in original (pre-swap) order so the active map appears at its expected slot.
         for (var i = 0; i < _tabOrder.Length; ++i)
         {
             builder.AddButton(10, 35 + i * 25, 2117, 2118, 0, GumpButtonType.Page, Array.IndexOf(_lists, _tabOrder[i]) + 1);
-            builder.AddHtmlLocalized(30, 35 + i * 25, 150, 20, _tabOrder[i].Number);
+            builder.AddHtmlLocalized(30, 35 + i * 25, 150, 20, _tabOrder[i].Number, CustomGumpStyle.LocalizedTextColor);
         }
 
         for (var i = 0; i < _lists.Length; ++i)
@@ -432,20 +441,26 @@ public class MoongateGump : DynamicGump
         builder.AddPage(index + 1);
 
         builder.AddButton(10, 35 + offset * 25, 2117, 2118, 0, GumpButtonType.Page, index + 1);
-        builder.AddHtmlLocalized(30, 35 + offset * 25, 150, 20, list.SelNumber);
+        builder.AddHtmlLocalized(30, 35 + offset * 25, 150, 20, list.SelNumber, CustomGumpStyle.LocalizedTextColor);
 
         var entries = list.Entries;
 
         for (var i = 0; i < entries.Length; ++i)
         {
             builder.AddRadio(200, 35 + i * 25, 210, 211, false, index * 100 + i);
-            builder.AddHtmlLocalized(225, 35 + i * 25, 150, 20, entries[i].Number);
+            builder.AddHtmlLocalized(225, 35 + i * 25, 150, 20, entries[i].Number, CustomGumpStyle.LocalizedTextColor);
         }
     }
 
     public override void OnResponse(NetState state, in RelayInfo info)
     {
-        if (info.ButtonID == 0 || _moongate.Deleted)
+        if (_used)
+        {
+            return;
+        }
+        _used = true;
+        if (info.ButtonID != 1 || state?.Mobile != _owner || _owner.NetState != state ||
+            !MoongateTravelConfirmation.IsInRange(_owner, _moongate) || _moongate.Location != _source || _moongate.Map != _sourceMap)
         {
             return;
         }

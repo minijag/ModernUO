@@ -856,6 +856,12 @@ namespace Server.Mobiles
 
         public override bool OnDroppedItemToWorld(Item item, Point3D location)
         {
+            if (Server.Engines.TownStruggle.TownStruggleRuntime.IsEnrolled(this))
+            {
+                SendMessage("Town Struggle supplies cannot be passed through the ground.");
+                return false;
+            }
+
             if (!base.OnDroppedItemToWorld(item, location))
             {
                 return false;
@@ -2135,6 +2141,12 @@ namespace Server.Mobiles
             int plusItems, int plusWeight
         )
         {
+            if (!Server.Engines.TownStruggle.TownStruggleInteractions.CanExchange(this, to))
+            {
+                if (message) { SendMessage("Town Struggle participants cannot trade with people outside their team."); }
+                return false;
+            }
+
             var msgNum = 0;
 
             if (cont == null)
@@ -2229,6 +2241,11 @@ namespace Server.Mobiles
 
         public override bool CheckNonlocalDrop(Mobile from, Item item, Item target)
         {
+            if (!Server.Engines.TownStruggle.TownStruggleInteractions.CanExchange(from, this))
+            {
+                return false;
+            }
+
             if (!base.CheckNonlocalDrop(from, item, target))
             {
                 return false;
@@ -2258,6 +2275,7 @@ namespace Server.Mobiles
 
         protected override void OnLocationChange(Point3D oldLocation)
         {
+            ObserveTownStruggleLocation();
             CheckLightLevels(false);
 
             DuelContext?.OnLocationChanged(this);
@@ -2299,20 +2317,23 @@ namespace Server.Mobiles
         }
 
         public override bool OnMoveOver(Mobile m) =>
-            m is BaseCreature creature && !creature.Controlled
+            Server.Engines.TownStruggle.TownStruggleCombat.IgnoreCollision(this, m) ||
+            (m is BaseCreature creature && !creature.Controlled
                 ? !Alive || !creature.Alive || IsDeadBondedPet || creature.IsDeadBondedPet ||
                   Hidden && AccessLevel > AccessLevel.Player
                 : Region.IsPartOf<SafeZone>() && m is PlayerMobile pm &&
                 (pm.DuelContext == null || pm.DuelPlayer == null || !pm.DuelContext.Started || pm.DuelContext.Finished ||
-                 pm.DuelPlayer.Eliminated) || base.OnMoveOver(m);
+                 pm.DuelPlayer.Eliminated) || base.OnMoveOver(m));
 
         public override bool CheckShove(Mobile shoved) =>
+            Server.Engines.TownStruggle.TownStruggleCombat.IgnoreCollision(this, shoved) ||
             IgnoreMobiles || shoved.IgnoreMobiles ||
             TransformationSpellHelper.UnderTransformation(shoved, typeof(WraithFormSpell)) ||
             base.CheckShove(shoved);
 
         protected override void OnMapChange(Map oldMap)
         {
+            ObserveTownStruggleLocation();
             if (Map != Faction.Facet && oldMap == Faction.Facet || Map == Faction.Facet && oldMap != Faction.Facet)
             {
                 InvalidateProperties();
@@ -2348,6 +2369,8 @@ namespace Server.Mobiles
 
         public override void OnDamage(int amount, Mobile from, bool willKill)
         {
+            Server.Engines.TownStruggle.TownStruggleCombat.RecordDamage(this, from, amount);
+
             int disruptThreshold;
 
             if (!Core.AOS)
@@ -2432,6 +2455,11 @@ namespace Server.Mobiles
 
         public override DeathMoveResult GetParentMoveResultFor(Item item)
         {
+            if (Server.Engines.ModularDungeon.ExtractionEventDeath.MustDropOnDeath(this, item))
+            {
+                return DeathMoveResult.MoveToCorpse;
+            }
+
             // It seems all items are unmarked on death, even blessed/insured ones
             if (item.QuestItem)
             {
@@ -2455,6 +2483,11 @@ namespace Server.Mobiles
 
         public override DeathMoveResult GetInventoryMoveResultFor(Item item)
         {
+            if (Server.Engines.ModularDungeon.ExtractionEventDeath.MustDropOnDeath(this, item))
+            {
+                return DeathMoveResult.MoveToCorpse;
+            }
+
             // It seems all items are unmarked on death, even blessed/insured ones
             if (item.QuestItem)
             {
@@ -2695,6 +2728,16 @@ namespace Server.Mobiles
 
         public override void Damage(int amount, Mobile from = null, bool informMount = true, bool ignoreEvilOmen = false)
         {
+            if (!Server.Engines.TownStruggle.TownStruggleCombat.AllowsDamage(this, from))
+            {
+                return;
+            }
+
+            if (ProtectedRegion.PreventsPlayerHarm(from, this))
+            {
+                return;
+            }
+
             var damageBonus = 1.0;
 
             if (EvilOmenSpell.EndEffect(this) && !ignoreEvilOmen)
@@ -3424,6 +3467,11 @@ namespace Server.Mobiles
 
         protected override bool OnMove(Direction d)
         {
+            if (!Server.Engines.TownStruggle.TownStruggleCombat.AllowsMovement(this, d))
+            {
+                return false;
+            }
+
             if (!Core.SE)
             {
                 return base.OnMove(d);
@@ -3586,6 +3634,12 @@ namespace Server.Mobiles
 
         public void ClaimAutoStabledPets()
         {
+            if (Server.Engines.TownStruggle.TownStruggleRuntime.IsEnrolled(this))
+            {
+                SendMessage("Your pets will remain safely stabled while you are in Town Struggle.");
+                return;
+            }
+
             if (!Core.SE || !(AutoStabled?.Count > 0))
             {
                 return;

@@ -1,0 +1,194 @@
+{
+  "version": 0,
+  "type": "Server.Engines.TownStruggle.TownStruggleController",
+  "properties": [
+    {
+      "name": "Phase",
+      "type": "Server.Engines.TownStruggle.TownStrugglePhase",
+      "rule": "EnumMigrationRule"
+    },
+    {
+      "name": "VenueJson",
+      "type": "string",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "SignupDeadline",
+      "type": "System.DateTime",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "MatchDeadline",
+      "type": "System.DateTime",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "ResultsDeadline",
+      "type": "System.DateTime",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "NextControlCheck",
+      "type": "System.DateTime",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "RoundNumber",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "OrderScore",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "ChaosScore",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "FaultMessage",
+      "type": "string",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "Roster",
+      "type": "System.Collections.Generic.List\u003CServer.Engines.TownStruggle.TownStruggleParticipant\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "Server.Engines.TownStruggle.TownStruggleParticipant",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "Progress",
+      "type": "int[]",
+      "rule": "ArrayMigrationRule",
+      "ruleArguments": [
+        "int",
+        "PrimitiveTypeMigrationRule",
+        ""
+      ]
+    },
+    {
+      "name": "Owners",
+      "type": "int[]",
+      "rule": "ArrayMigrationRule",
+      "ruleArguments": [
+        "int",
+        "PrimitiveTypeMigrationRule",
+        ""
+      ]
+    },
+    {
+      "name": "GuildPrestigeLedger",
+      "type": "System.Collections.Generic.Dictionary\u003Cint, int\u003E",
+      "rule": "DictionaryMigrationRule",
+      "ruleArguments": [
+        "int",
+        "PrimitiveTypeMigrationRule",
+        "1",
+        "",
+        "int",
+        "PrimitiveTypeMigrationRule",
+        "1",
+        ""
+      ]
+    },
+    {
+      "name": "GuildRewardLedger",
+      "type": "System.Collections.Generic.Dictionary\u003Cint, int\u003E",
+      "rule": "DictionaryMigrationRule",
+      "ruleArguments": [
+        "int",
+        "PrimitiveTypeMigrationRule",
+        "1",
+        "",
+        "int",
+        "PrimitiveTypeMigrationRule",
+        "1",
+        ""
+      ]
+    },
+    {
+      "name": "RewardsCalculated",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "SignupDuration",
+      "type": "System.TimeSpan",
+      "rule": "PrimitiveTypeMigrationRule"
+    },
+    {
+      "name": "MatchDuration",
+      "type": "System.TimeSpan",
+      "rule": "PrimitiveTypeMigrationRule"
+    },
+    {
+      "name": "MarkerReferences",
+      "type": "System.Collections.Generic.List\u003CServer.Engines.TownStruggle.TownStruggleControlMarker\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "Server.Engines.TownStruggle.TownStruggleControlMarker",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "VenueIndex",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "SelectiveLootEnabled",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "AuxiliaryReferences",
+      "type": "System.Collections.Generic.List\u003CServer.Item\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "Server.Item",
+        "SerializableInterfaceMigrationRule"
+      ]
+    }
+  ]
+}

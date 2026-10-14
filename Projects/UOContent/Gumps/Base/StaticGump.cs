@@ -33,6 +33,7 @@ public abstract class StaticGump<TSelf> : BaseGump where TSelf : StaticGump<TSel
     private static bool _cachedHasVisualElements;
     private static int _staticStringsCount;
     private static byte[] _staticStrings;
+    private static Point2D _minimumPosition;
 
     // Turn this off if you want to generate a new gump each time for testing
     protected virtual bool Cached => false;
@@ -51,10 +52,12 @@ public abstract class StaticGump<TSelf> : BaseGump where TSelf : StaticGump<TSel
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void WriteLayout(ref SpanWriter writer, ref StaticGumpBuilder gumpBuilder)
+    private static void WriteLayout(ref SpanWriter writer, ref StaticGumpBuilder gumpBuilder,
+        ReadOnlySpan<byte> dynamicStrings = default)
     {
         var layoutPos = writer.Position;
-        OutgoingGumpPackets.WritePacked(gumpBuilder.LayoutData, ref writer);
+        _minimumPosition = StandardGumpStyle.WriteLayout(gumpBuilder.LayoutData, ref writer,
+            gumpBuilder.HasVisualElements, gumpBuilder.StringsData, dynamicStrings);
         var layoutLength = writer.Position - layoutPos;
 
         _compressedLayoutData = GC.AllocateUninitializedArray<byte>(layoutLength);
@@ -74,6 +77,7 @@ public abstract class StaticGump<TSelf> : BaseGump where TSelf : StaticGump<TSel
         if (Cached && _compressedLayoutData != null)
         {
             HasVisualElements = _cachedHasVisualElements;
+            StandardGumpStyle.AdjustPosition(ref writer, _minimumPosition);
             writer.Write(_compressedLayoutData);
 
             if (_compressedStringsData != null)
@@ -135,7 +139,7 @@ public abstract class StaticGump<TSelf> : BaseGump where TSelf : StaticGump<TSel
                 BuildStrings(ref stringsBuilder);
                 stringsBuilder.FinalizeStrings(ref gumpBuilder); // Modifies the layout
 
-                WriteLayout(ref writer, ref gumpBuilder);
+                WriteLayout(ref writer, ref gumpBuilder, stringsBuilder.StringsBuffer);
 
                 writer.Write(_staticStringsCount + stringsBuilder._stringsCount);
 

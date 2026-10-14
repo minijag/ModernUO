@@ -211,7 +211,9 @@ public partial class SummonedPaladin : BaseCreature
 [SerializationGenerator(0, false)]
 public partial class SummonedPaladinMoongate : Item
 {
-    public SummonedPaladinMoongate() : base(0xF6C)
+    public override int LabelNumber => MoongateAppearance.IsReplacement(ItemID) ? MoongateAppearance.LegacyLabelNumber(ItemID) : base.LabelNumber;
+
+    public SummonedPaladinMoongate() : base(MoongateAppearance.Blue)
     {
         Movable = false;
         Hue = 0x482;

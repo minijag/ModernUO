@@ -65,7 +65,7 @@ public class BlocklistConfigurationTests
         Assert.False(new BlocklistSettings().Enabled);
     }
 
-    // The generator (tools/Export-IpBlocklist.ps1) writes to this path by default; if one side moves
+    // The generator (../../humanTools/ServerAdministration/Source/Export-IpBlocklist.ps1) writes to this path by default; if one side moves
     // without the other, a shard silently enforces nothing.
     [Fact]
     public void Default_file_matches_the_generator_output_path()

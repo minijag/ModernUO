@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ModernUO.Serialization;
 using Server.Gumps;
+using Server.Items;
 using Server.Mobiles;
 using Server.Network;
 using Server.Text;
@@ -11,7 +12,7 @@ namespace Server.Engines.ConPVP;
 public partial class ArenasMoongate : Item
 {
     [Constructible]
-    public ArenasMoongate() : base(0x1FD4)
+    public ArenasMoongate() : base(MoongateAppearance.Dark)
     {
         Movable = false;
         Light = LightType.Circle300;

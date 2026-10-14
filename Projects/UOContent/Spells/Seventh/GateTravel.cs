@@ -162,7 +162,7 @@ public partial class GateTravelMoongate : Moongate
 
         if (ShowFeluccaWarning && map == Map.Felucca)
         {
-            ItemID = 0xDDA;
+            ItemID = MoongateAppearance.Dark;
         }
 
         Dispellable = true;
@@ -176,6 +176,16 @@ public partial class GateTravelMoongate : Moongate
     public Moongate LinkedGate { get; set; }
 
     public override bool ShowFeluccaWarning => Core.AOS;
+
+    protected override Func<Mobile, bool> CaptureConfirmationValidation()
+    {
+        var validate = base.CaptureConfirmationValidation();
+        var linkedGate = LinkedGate;
+        var linkedLocation = linkedGate?.Location ?? Point3D.Zero;
+        var linkedMap = linkedGate?.Map;
+        return from => validate(from) && LinkedGate == linkedGate && linkedGate is { Deleted: false } &&
+                       linkedGate.Location == linkedLocation && linkedGate.Map == linkedMap;
+    }
 
     public override void UseGate(Mobile m)
     {

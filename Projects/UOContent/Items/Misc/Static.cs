@@ -5,6 +5,8 @@ namespace Server.Items;
 [SerializationGenerator(0, false)]
 public partial class Static : Item
 {
+    public override int LabelNumber => MoongateAppearance.IsReplacement(ItemID) ? MoongateAppearance.LegacyLabelNumber(ItemID) : base.LabelNumber;
+
     public Static() : base(0x80) => Movable = false;
 
     [Constructible]

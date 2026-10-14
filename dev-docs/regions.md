@@ -219,7 +219,7 @@ Both the **current** region and the **destination** region are checked by `Spell
 
 ## JSON Region Loading
 
-Regions are defined in `Distribution/Data/regions.json` and loaded at startup by `RegionJsonSerializer.LoadRegions()`.
+Regions are defined in `../Distribution/Live/Data/regions.json` and loaded at startup by `RegionJsonSerializer.LoadRegions()`.
 
 ### JSON Schema
 
@@ -564,4 +564,4 @@ public override void SpellDamageScalar(Mobile caster, Mobile target, ref double 
 | `Projects/UOContent/Engines/CannedEvil/ChampionSpawn.cs` | Dynamic region lifecycle example |
 | `Projects/UOContent/Multis/Houses/BaseHouse.cs` | House region lifecycle example |
 | `Projects/UOContent/Spells/Base/SpellHelper.cs` | Travel check dispatch |
-| `Distribution/Data/regions.json` | Static region definitions |
+| `../Distribution/Live/Data/regions.json` | Static region definitions |

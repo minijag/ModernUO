@@ -23,9 +23,10 @@ namespace Server.Network
         private static PacketHandler[] _handlers;
 
         [CallPriority(10)]
-        public static void Configure()
+        public static unsafe void Configure()
         {
             _handlers = ProtocolExtensions<FreeshardProtocolInfo>.Register(new FreeshardProtocolInfo());
+            Register(ClientPatchAdmission.Subcommand, false, true, &ClientPatchAdmission.Receive);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

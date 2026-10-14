@@ -118,7 +118,7 @@ core.enableIdleCPU
 
 ### modernuo.json Structure
 
-Located at `Distribution/Configuration/modernuo.json`:
+Located at `../Distribution/Live/Configuration/modernuo.json`:
 
 ```json
 {
@@ -255,12 +255,12 @@ var data = JsonConfig.Deserialize<MyType>(path, options);
 
 | File | Purpose |
 |---|---|
-| `Distribution/Configuration/modernuo.json` | Main server settings |
-| `Distribution/Configuration/expansion.json` | Target expansion |
-| `Distribution/Data/expansions.json` | Expansion metadata |
-| `Distribution/Configuration/` | Custom config directory |
+| `../Distribution/Live/Configuration/modernuo.json` | Main server settings |
+| `../Distribution/Live/Configuration/expansion.json` | Target expansion |
+| `../Distribution/Live/Data/expansions.json` | Expansion metadata |
+| `../Distribution/Live/Configuration/` | Custom config directory |
 
-Custom config files should be placed under `Distribution/Configuration/` in a subdirectory named after your system.
+Custom config files should be placed under `../Distribution/Live/Configuration/` in a subdirectory named after your system.
 
 ## Best Practices
 
@@ -278,6 +278,6 @@ Custom config files should be placed under `Distribution/Configuration/` in a su
 |---|---|
 | `Projects/Server/Configuration/ServerConfiguration.cs` | ServerConfiguration class |
 | `Projects/Server/Json/JsonConfig.cs` | JsonConfig utility |
-| `Distribution/Configuration/modernuo.json` | Main config file |
+| `../Distribution/Live/Configuration/modernuo.json` | Main config file |
 | `Projects/UOContent/Skills/SkillCheck.cs` | Config usage example |
 | `Projects/Server/Timer/Timer.Pool.cs` | Config usage example |

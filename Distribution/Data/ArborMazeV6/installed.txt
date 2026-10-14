@@ -1,1 +1,0 @@
-Installed three hedge tiles, Whispering Shrine, two spawners and return teleporter. Movement passed (9532 positions, 46 targets); teleport tested. World save snapshot confirmed September 28, 2026 at 14:58:39 local. Installation marker retired.

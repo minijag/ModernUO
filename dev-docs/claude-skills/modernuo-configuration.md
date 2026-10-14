@@ -18,7 +18,7 @@ description: >
 2. **Use `GetOrUpdateSetting()`** when you want the setting created with a default if missing
 3. **Use `GetSetting()`** for read-only access (won't write default to file)
 4. **Custom config files use `JsonConfig.Serialize/Deserialize<T>()`**
-5. **Config path base**: `Distribution/Configuration/`
+5. **Config path base**: `../Distribution/Live/Configuration/`
 
 ## ServerConfiguration
 
@@ -121,7 +121,7 @@ public class MyConfig
 
 ## modernuo.json Structure
 
-Location: `Distribution/Configuration/modernuo.json`
+Location: `../Distribution/Live/Configuration/modernuo.json`
 
 ```json
 {
@@ -169,7 +169,7 @@ Examples:
 - JsonConfig: `Projects/Server/Json/JsonConfig.cs`
 - Config usage: `Projects/UOContent/Skills/SkillCheck.cs` (Configure method)
 - Timer pool config: `Projects/Server/Timer/Timer.Pool.cs`
-- Main config: `Distribution/Configuration/modernuo.json`
+- Main config: `../Distribution/Live/Configuration/modernuo.json`
 
 ## See Also
 - `dev-docs/configuration.md` - Complete configuration documentation

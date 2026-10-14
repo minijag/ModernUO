@@ -1,1 +1,0 @@
-Added 16 spawners (43 total, configured population 85). Six POI gates replace nine corridor/shortcut gates. Exact reciprocal travel tested. Rescued 0 wild creatures. World save confirmed 2026-09-28 14:40:55 local in Backups/ArborMazeV5-20260928/install.stdout.log. Installation request retired after confirmation.

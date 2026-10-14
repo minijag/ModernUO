@@ -1,6 +1,7 @@
 using System;
 using System.Buffers;
 using System.IO;
+using System.Text;
 using Server.Gumps;
 using Server.Tests.Network;
 using Xunit;
@@ -14,7 +15,10 @@ public class TestLayoutGumps
     public void TestDynamicGumpPacket()
     {
         var legacyGump = new LegacyTestGump("Test");
-        var legacyPacketData = legacyGump.Compile().Compile();
+        var legacyWriter = new SpanWriter(new byte[0x10000]);
+        legacyGump.Compile(ref legacyWriter);
+        var legacyPacketData = legacyWriter.Span.ToArray();
+        legacyWriter.Dispose();
 
         var staticGump = new DynamicTestGump("Test");
         var buffer = GC.AllocateUninitializedArray<byte>(512);
@@ -32,7 +36,7 @@ public class TestLayoutGumps
 
         string[] strings =
         [
-            "<div align=center>Wilt thou sanctify the resurrection of:</div>",
+            "<BASEFONT COLOR=#F2F0E8><div align=center>Wilt thou sanctify the resurrection of:</div></BASEFONT>",
             "<CENTER>Test</CENTER>"
         ];
 
@@ -47,7 +51,7 @@ public class TestLayoutGumps
 
         string[] strings =
         [
-            "<div align=center>Wilt thou sanctify the resurrection of:</div>",
+            "<BASEFONT COLOR=#F2F0E8><div align=center>Wilt thou sanctify the resurrection of:</div></BASEFONT>",
             "<CENTER>Test</CENTER>"
         ];
 
@@ -102,6 +106,8 @@ public class TestLayoutGumps
     private static void InternalTestStaticGump<T>(ReadOnlySpan<byte> expectedLayout, StaticGump<T> staticGump, string[] strings)
         where T : StaticGump<T>
     {
+        expectedLayout = ThemeExpectedLayout(expectedLayout);
+
         // Expected layout
         var expectedBuffer = GC.AllocateUninitializedArray<byte>(512);
         var expectedBufferWriter = new SpanWriter(expectedBuffer);
@@ -140,9 +146,32 @@ public class TestLayoutGumps
         AssertThat.Equal(writer.Span[(19 + layoutLength + 4)..], expectedBufferWriter.Span);
     }
 
+    private static byte[] ThemeExpectedLayout(ReadOnlySpan<byte> original)
+    {
+        var writer = new SpanWriter(new byte[0x10000]);
+        try
+        {
+            StandardGumpStyle.Apply(original, ref writer);
+            var layout = Encoding.ASCII.GetString(writer.Span);
+            Assert.Contains("60002", layout);
+            Assert.Contains("60009", layout);
+            Assert.Contains("2624", layout);
+            Assert.DoesNotContain("resizepic 10 10 9260 265 140", layout);
+            Assert.Contains("button 40 105 2074 2075 1 0 1", layout);
+            Assert.Contains("button 110 105 2073 2072 1 0 2", layout);
+            return writer.Span.ToArray();
+        }
+        finally
+        {
+            writer.Dispose();
+        }
+    }
+
     private class CachedGump : StaticGump<CachedGump>
     {
         private bool _isCachedLayout;
+
+        protected override bool Cached => true;
 
         public CachedGump() : base(50, 50)
         {

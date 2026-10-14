@@ -6,6 +6,19 @@
 - **Game content**: `Projects/UOContent/` — primary editing target
 - **Build**: `dotnet build` from repo root
 
+## User Worldbuilding Preference: Abundance
+
+Dungeon rooms and environmental decoration should be visually abundant by
+default. Use substantial piles, dense shelves, plentiful themed props and
+layered compositions that strongly sell the room's identity; a few token
+objects are not enough. The approved Ember Forge V35 ingot heaps are a useful
+density reference, not a mandatory object count for every room.
+
+Abundance should be organized and purposeful, with correct native assemblies,
+supported heights and no clipping. Keep doors, chest approaches, stairs and
+escape routes usable. Specific requests for fewer objects or no additional
+objects of a particular type still take precedence.
+
 ## Code Audit Rules
 
 Apply these when writing or reviewing `.cs` files under `Projects/`.
@@ -33,6 +46,49 @@ Apply these when writing or reviewing `.cs` files under `Projects/`.
 21. **Comments explain why, never what changed** — keep invariants, protocol/era quirks, value couplings, and the reason a workaround exists; one line where one line will do; `///` docs and terse `//TODO` stay. Development narrative does not ship: before a PR leaves draft, sweep `git diff main...HEAD` for added `//` lines and remove change narrative ("previously", "changed from", "moved from", "no longer"), review dialogue ("per review", "as discussed"), hedges ("I think", "not sure"), and commented-out code — what a future reader still needs goes in the commit message or PR description → `dev-docs/code-standards.md` § Comments
 
 ## Workflow Rules
+
+### Assistant Tools Workspace
+
+Put one-off AI inspection, generation, migration and experiment scripts in
+`C:/workspace/Ultima_online/WORKSPACE/AI`, not in application source directories.
+Use AI/Tools for reusable helpers, AI/Scratch for experiments, AI/Artifacts for
+generated output and AI/Build for compiled helper intermediates. Product code,
+permanent regression tests, release packaging and operational administration
+tools remain with their owning projects. Historical archives remain intact.
+Standalone owner-facing applications belong in WORKSPACE/humanTools, with their
+own Source, Build and Distribution folders. Only their server-side integration
+code stays in this server project.
+
+### Single Launcher Directory
+
+The workspace is `C:/workspace/Ultima_online/WORKSPACE`. Server, Launcher, Client,
+and Downloads each have separate Source and Distribution directories. Keep all
+build/test intermediates in each project's Build directory, never inside Source.
+The one player-ready launcher directory is `WORKSPACE/Launcher/Distribution`.
+Server runtime is `WORKSPACE/Server/Distribution/Live`; new server builds go to
+`WORKSPACE/Server/Distribution/Build` and must not overwrite Live automatically.
+Historical artifacts and the former local-test launcher are preserved in
+`WORKSPACE/Archive`. Do not restore archived hardcoded deployment paths or make
+compatibility junctions back into Source. Preserve profiles, saves and signed
+trust state. Private signing keys remain outside the workspace.
+
+### Standard Gump Appearance
+
+All server-created gumps use the shared `CustomGumpStyle` walnut-and-metal
+frame with black backing as their foundation. Do not introduce a separate
+stone, parchment, or plain-gray dialog theme. The shared compilation path
+applies this foundation to legacy, dynamic, and static gumps; explicitly styled
+layouts use the same helper and must not receive a second frame. Preserve
+specialized content artwork, readable text, controls, and response behavior.
+See `Projects/UOContent/zCUSTOM_CONTENT/Gumps/README.md` for layout conventions.
+
+For requested shard deployments, check whether ClassicUO is running before
+asking the user to log out. If it is closed and the shard has no connected
+players, proceed with the save, backup and restart without another prompt.
+If ClassicUO is open, ask the user to log out before restarting.
+Keep localized content swaps short: run focused checks for the affected
+mechanic, not unrelated full-dungeon suites. Avoid extra restarts when the
+required persistence checks already have sufficient evidence.
 
 Apply these in every session, in this repository and in any fork or custom project built on it.
 

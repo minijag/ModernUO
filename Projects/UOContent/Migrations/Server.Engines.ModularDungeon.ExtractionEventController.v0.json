@@ -1,0 +1,132 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.ExtractionEventController",
+  "properties": [
+    {
+      "name": "Phase",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventPhase",
+      "rule": "EnumMigrationRule"
+    },
+    {
+      "name": "MatchDeadline",
+      "type": "System.DateTime",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "WaitingDeadline",
+      "type": "System.DateTime",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "RoundNumber",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "WaitingInterval",
+      "type": "System.TimeSpan",
+      "rule": "PrimitiveTypeMigrationRule"
+    },
+    {
+      "name": "AutomaticRounds",
+      "type": "bool",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "ParticipantReferences",
+      "type": "System.Collections.Generic.List\u003CServer.Mobile\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "@Tidy",
+        "Server.Mobile",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "QueuedReferences",
+      "type": "System.Collections.Generic.List\u003CServer.Mobile\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "@Tidy",
+        "Server.Mobile",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "CreatureReferences",
+      "type": "System.Collections.Generic.List\u003CServer.Mobiles.BaseCreature\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "@Tidy",
+        "Server.Mobiles.BaseCreature",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "ManagedReferences",
+      "type": "System.Collections.Generic.List\u003CServer.Item\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "@Tidy",
+        "Server.Item",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "LootReferences",
+      "type": "System.Collections.Generic.List\u003CServer.Item\u003E",
+      "rule": "ListMigrationRule",
+      "ruleArguments": [
+        "@Tidy",
+        "Server.Item",
+        "SerializableInterfaceMigrationRule"
+      ]
+    },
+    {
+      "name": "FinishReason",
+      "type": "Server.Engines.ModularDungeon.ExtractionFinishReason",
+      "rule": "EnumMigrationRule"
+    },
+    {
+      "name": "AdmissionCursor",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "AdmittedCount",
+      "type": "int",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "FaultMessage",
+      "type": "string",
+      "rule": "PrimitiveTypeMigrationRule",
+      "ruleArguments": [
+        ""
+      ]
+    },
+    {
+      "name": "RecoveryStorage",
+      "type": "Server.Items.Container",
+      "rule": "SerializableInterfaceMigrationRule"
+    }
+  ]
+}

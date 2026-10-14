@@ -22,6 +22,11 @@ public abstract partial class BaseGuard : Mobile
 
     public static void Spawn(Region region, Mobile target, int amount = 1, bool onlyAdditional = false)
     {
+        if (Server.Engines.TownStruggle.TownStruggleRuntime.IsGuardExempt(target))
+        {
+            return;
+        }
+
         if (target?.Deleted != false)
         {
             return;

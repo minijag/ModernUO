@@ -1,0 +1,11 @@
+{
+  "version": 0,
+  "type": "Server.Engines.ModularDungeon.ExtractionEventShrine",
+  "properties": [
+    {
+      "name": "Controller",
+      "type": "Server.Engines.ModularDungeon.ExtractionEventController",
+      "rule": "SerializableInterfaceMigrationRule"
+    }
+  ]
+}

@@ -62,13 +62,13 @@ public sealed class LeaderboardGump : DynamicGump
         const int font = CustomGumpStyle.StandardFontSize;
 
         builder.AddPage();
-        CustomGumpStyle.AddPanel(ref builder, 0, 0, 700, 540, "LEADERBOARDS");
+        CustomGumpStyle.AddPanel(ref builder, 0, 0, 700, 580, "LEADERBOARDS");
         builder.AddHtml(28, 54, 220, 24, "CATEGORIES", gold, font);
         for (var i = 0; i < _visibleStats.Length; i++)
         {
             var category = _visibleStats[i];
             var y = 102 + i * 50;
-            builder.AddButton(28, y + 1, 4005, 4007, i + 1);
+            CustomGumpStyle.AddOptionButton(ref builder, 28, y + 1, i + 1, category == stat);
             AddCategoryIcon(ref builder, category, 84, y + 20);
             var labelY = category == LeaderboardStat.TreasureMapsCompleted ? y : y + 8;
             builder.AddHtml(114, labelY, 142, 40, GetName(category), category == stat ? gold : white, font);
@@ -98,30 +98,32 @@ public sealed class LeaderboardGump : DynamicGump
 
         if (page.PageIndex > 0)
         {
-            builder.AddButton(278, 446, 4023, 4025, PreviousPageButton);
+            CustomGumpStyle.AddOptionButton(ref builder, 278, 446, PreviousPageButton);
+            builder.AddHtml(315, 449, 90, 24, "PREVIOUS", white, font);
         }
 
-        builder.AddHtml(314, 445, 314, 24, $"PAGE {page.PageIndex + 1:N0} / {page.PageCount:N0}", gold, font,
+        builder.AddHtml(406, 449, 158, 24, $"PAGE {page.PageIndex + 1:N0} / {page.PageCount:N0}", gold, font,
             align: TextAlignment.Center);
         if (page.PageIndex + 1 < page.PageCount)
         {
-            builder.AddButton(640, 446, 4005, 4007, NextPageButton);
+            CustomGumpStyle.AddOptionButton(ref builder, 576, 446, NextPageButton);
+            builder.AddHtml(612, 449, 60, 24, "NEXT", white, font);
         }
 
-        builder.AddHtml(278, 473, 250, 24, $"YOUR TOTAL: {page.OwnTotal:N0}", white, font);
+        builder.AddHtml(278, 490, 250, 24, $"YOUR TOTAL: {page.OwnTotal:N0}", white, font);
         if (page.OwnRank is { } ownRank)
         {
-            builder.AddHtml(532, 473, 140, 24, $"YOUR RANK: {ownRank:N0}", gold, font, align: TextAlignment.Right);
+            builder.AddHtml(532, 490, 140, 24, $"YOUR RANK: {ownRank:N0}", gold, font, align: TextAlignment.Right);
         }
         else
         {
-            builder.AddHtml(532, 473, 140, 24, "UNRANKED", white, font, align: TextAlignment.Right);
+            builder.AddHtml(532, 490, 140, 24, "UNRANKED", white, font, align: TextAlignment.Right);
         }
 
-        builder.AddButton(278, 504, 4005, 4007, ShowMyRankingButton);
-        builder.AddHtml(310, 503, 210, 24, "SHOW MY RANKING", CustomGumpStyle.ActionColor, font);
-        builder.AddButton(560, 504, 4005, 4007, 0);
-        builder.AddHtml(595, 503, 77, 24, "CLOSE", white, font);
+        CustomGumpStyle.AddOptionButton(ref builder, 278, 526, ShowMyRankingButton);
+        builder.AddHtml(317, 529, 210, 24, "SHOW MY RANKING", CustomGumpStyle.ActionColor, font);
+        CustomGumpStyle.AddOptionButton(ref builder, 560, 526, 0);
+        builder.AddHtml(599, 529, 73, 24, "CLOSE", white, font);
     }
 
     private static void AddCategoryIcon(ref DynamicGumpBuilder builder, LeaderboardStat stat, int centerX, int centerY)
